@@ -173,3 +173,9 @@ export type {
   NativeNavigationProvider,
   NavigationProgressSnapshot,
 } from './navigation/contracts'
+
+export {
+  NavigationSession,
+  type NavigationSessionOptions,
+  type PlannedRoute,
+} from './navigation/session'
