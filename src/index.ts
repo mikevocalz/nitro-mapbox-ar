@@ -179,3 +179,13 @@ export {
   type NavigationSessionOptions,
   type PlannedRoute,
 } from './navigation/session'
+
+export { SpatialAgentRuntime, type SpatialAgentRuntimeOptions } from './agent/runtime'
+export type {
+  MapboxAgentToolkitBridge,
+  SpatialAgentAction,
+  SpatialAgentAuditEvent,
+  SpatialAgentContext,
+  SpatialAgentEffects,
+  SpatialAgentPermissionPolicy,
+} from './agent/types'
