@@ -147,3 +147,29 @@ export {
   getSpatialSearchAnchor,
   type SpatialSearchAnchor,
 } from './search/anchor'
+
+export {
+  MapboxNavigationClient,
+  type DirectionsAnnotation,
+  type DirectionsOptions,
+  type DirectionsResponse,
+  type MapboxNavigationClientOptions,
+  type MapMatchingOptions,
+  type MapMatchingResponse,
+  type NavigationCoordinate,
+  type NavigationProfile,
+  type NavigationRoute,
+  type NavigationRouteLeg,
+  type RouteLegAnnotation,
+} from './navigation/client'
+export {
+  summarizeRouteTraffic,
+  type RouteTrafficSummary,
+} from './navigation/traffic'
+export type {
+  ElectronicHorizonEdge,
+  ElectronicHorizonSnapshot,
+  NativeNavigationCapabilities,
+  NativeNavigationProvider,
+  NavigationProgressSnapshot,
+} from './navigation/contracts'
