@@ -1,0 +1,40 @@
+{
+  "name": "@mapbox/react-native-mapbox-ar-native-map",
+  "version": "0.0.1",
+  "description": "Optional Nitro HybridView backed directly by Mapbox Maps SDK v11",
+  "main": "src/index.ts",
+  "react-native": "src/index.ts",
+  "source": "src/index.ts",
+  "files": [
+    "src",
+    "android",
+    "ios",
+    "nitrogen/generated",
+    "nitro.json",
+    "react-native.config.js",
+    "NitroMapboxARNativeMap.podspec",
+    "README.md"
+  ],
+  "scripts": {
+    "codegen": "nitrogen",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prepare": "npm run codegen",
+    "prepack": "npm run codegen"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-native": ">=0.86.0",
+    "react-native-nitro-modules": "^0.37.1"
+  },
+  "devDependencies": {
+    "nitrogen": "0.37.1",
+    "react-native-nitro-modules": "0.37.1",
+    "typescript": "7.0.2"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mikevocalz/nitro-mapbox-ar.git",
+    "directory": "packages/native-mapbox"
+  }
+}

@@ -5,7 +5,12 @@ export type BBox = readonly [
   north: number,
 ]
 
-export type RendererPreference = 'auto' | 'graphite' | 'webgpu' | 'nitro'
+export type RendererPreference =
+  | 'auto'
+  | 'graphite'
+  | 'webgpu'
+  | 'nitro'
+  | 'cpu'
 export type TerrainQuality = 'performance' | 'balanced' | 'quality'
 export type ImageryMode = 'satellite' | 'none'
 
