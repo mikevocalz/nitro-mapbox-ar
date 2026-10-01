@@ -43,6 +43,22 @@ export {
   type TerrainRgbDecodeOptions,
 } from './terrain/gpu/terrainRgb'
 export { getTerrainGpuRoot } from './terrain/gpu/root'
+export {
+  getTerrainGridLayout,
+  tileCenterLatitude,
+  tileMetersPerPixel,
+  type TerrainGridLayout,
+} from './terrain/gpu/grid'
+export {
+  createTerrainSurfaceRenderer,
+  type Matrix4,
+  type RenderedTerrainFrame,
+  type TerrainFrameOptions,
+  type TerrainSurfaceRenderer,
+  type TerrainSurfaceRendererOptions,
+  type Vec3,
+  type Vec4,
+} from './terrain/gpu/surface'
 export type {
   BBox,
   CacheOptions,
