@@ -60,5 +60,13 @@
     "docs",
     "README.md",
     "LICENSE"
-  ]
+  ],
+  "browser": "src/index.web.ts",
+  "exports": {
+    ".": {
+      "browser": "./src/index.web.ts",
+      "react-native": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  }
 }
