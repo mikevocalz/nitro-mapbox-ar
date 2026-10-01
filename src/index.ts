@@ -43,6 +43,21 @@ export {
   type TerrainRgbDecodeOptions,
 } from './terrain/gpu/terrainRgb'
 export { getTerrainGpuRoot } from './terrain/gpu/root'
+export {
+  createTerrainGpuRenderer,
+  createTerrainRenderTarget,
+  type SharedTerrainTexture,
+  type TerrainDrawOptions,
+  type TerrainGpuRenderer,
+  type TerrainRenderOptions,
+  type TerrainRenderTarget,
+  type TerrainRendererOptions,
+} from './terrain/gpu/renderer'
+export {
+  assertTerrainLodStride,
+  terrainGridSize,
+  type TerrainGridSize,
+} from './terrain/lod'
 export type {
   BBox,
   CacheOptions,
