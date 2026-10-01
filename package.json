@@ -7,6 +7,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "check": "npm run typecheck",
+    "check:gpu-stack": "node scripts/check-gpu-stack.mjs",
     "test": "echo \"Tests land with the implementation PRs\""
   },
   "repository": {
@@ -17,9 +18,11 @@
     "node": ">=22.11.0"
   },
   "peerDependencies": {
+    "@shopify/react-native-skia": ">=2.12.0-0",
     "react": ">=19.0.0",
     "react-native": ">=0.86.0",
-    "react-native-nitro-modules": "^0.37.1"
+    "react-native-nitro-modules": "^0.37.1",
+    "react-native-webgpu": "^0.10.0"
   },
   "author": "Nick Italiano",
   "license": "MIT",
@@ -32,7 +35,9 @@
     "@turf/midpoint": "^5.1.5"
   },
   "devDependencies": {
+    "@shopify/react-native-skia": "2.13.1",
     "react-native-nitro-modules": "0.37.1",
+    "react-native-webgpu": "0.10.4",
     "typescript": "7.0.2"
   }
 }

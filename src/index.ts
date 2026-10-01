@@ -2,6 +2,14 @@ export { normalizeMapboxARConfig } from './core/config'
 export { bboxCrossesAntimeridian, validateBBox } from './geo/bbox'
 export { getMapboxARCore, type MapboxARCore } from './native/MapboxARCore'
 export {
+  getGraphiteWebGPUContext,
+  isGraphiteWebGPUAvailable,
+  makeSkiaImageFromWebGPUTexture,
+  type GraphiteWebGPUContext,
+  type NativeWebGPUTexture,
+  type SharedGraphiteDevice,
+} from './rendering/graphite'
+export {
   selectRendererBackend,
   type RendererBackend,
   type RendererCapabilities,
