@@ -25,6 +25,8 @@ const paths = report.files.map((entry) => entry.path)
 const required = [
   'package.json',
   'src/index.ts',
+  'src/index.web.ts',
+  'src/native/MapboxARCore.web.ts',
   'cpp/HybridMapboxARCore.cpp',
   'android/build.gradle',
   'android/CMakeLists.txt',
