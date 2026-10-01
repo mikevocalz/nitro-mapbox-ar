@@ -52,3 +52,23 @@ jobs:
 
       - name: Verify browser package surface
         run: npm run check:web-surface
+
+
+  web-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+
+      - name: Install browser harness
+        working-directory: examples/web-test
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Build browser harness
+        working-directory: examples/web-test
+        run: npm run build
