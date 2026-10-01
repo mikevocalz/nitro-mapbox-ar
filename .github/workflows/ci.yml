@@ -49,3 +49,6 @@ jobs:
 
       - name: Verify npm package surface
         run: npm run check:package-surface
+
+      - name: Verify browser package surface
+        run: npm run check:web-surface
