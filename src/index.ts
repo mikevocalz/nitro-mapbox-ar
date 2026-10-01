@@ -1,5 +1,6 @@
 export { normalizeMapboxARConfig } from './core/config'
 export { bboxCrossesAntimeridian, validateBBox } from './geo/bbox'
+export { getMapboxARCore, type MapboxARCore } from './native/MapboxARCore'
 export {
   selectRendererBackend,
   type RendererBackend,

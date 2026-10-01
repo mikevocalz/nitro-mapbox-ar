@@ -18,7 +18,8 @@
   },
   "peerDependencies": {
     "react": ">=19.0.0",
-    "react-native": ">=0.86.0"
+    "react-native": ">=0.86.0",
+    "react-native-nitro-modules": "^0.37.1"
   },
   "author": "Nick Italiano",
   "license": "MIT",
@@ -31,6 +32,7 @@
     "@turf/midpoint": "^5.1.5"
   },
   "devDependencies": {
+    "react-native-nitro-modules": "0.37.1",
     "typescript": "7.0.2"
   }
 }
