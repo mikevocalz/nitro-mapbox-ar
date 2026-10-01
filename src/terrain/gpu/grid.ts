@@ -10,6 +10,8 @@ export interface TerrainGridLayout {
   readonly cellRows: number
   readonly cellCount: number
   readonly vertexCount: number
+  readonly skirtSegmentCount: number
+  readonly skirtVertexCount: number
 }
 
 function assertPositiveInteger(value: number, label: string): void {
@@ -62,8 +64,10 @@ export function getTerrainGridLayout(
   const cellRows = Math.ceil((height - 1) / stride)
   const cellCount = cellColumns * cellRows
   const vertexCount = cellCount * 6
+  const skirtSegmentCount = 2 * cellColumns + 2 * cellRows
+  const skirtVertexCount = skirtSegmentCount * 6
 
-  if (!Number.isSafeInteger(vertexCount)) {
+  if (!Number.isSafeInteger(vertexCount) || !Number.isSafeInteger(skirtVertexCount)) {
     throw new RangeError('terrain grid is too large')
   }
 
@@ -75,6 +79,8 @@ export function getTerrainGridLayout(
     cellRows,
     cellCount,
     vertexCount,
+    skirtSegmentCount,
+    skirtVertexCount,
   }
 }
 
@@ -108,4 +114,37 @@ export function tileMetersPerPixel(
     (Math.cos(latitudeRadians) * WEB_MERCATOR_CIRCUMFERENCE_METERS) /
     (decodedTileWidth * 2 ** tile.z)
   )
+}
+
+
+/**
+ * Ground width/depth of one XYZ tile at its center latitude.
+ *
+ * This is the local-tangent-plane span used to make adjacent terrain tiles
+ * meet exactly at their boundaries.
+ */
+export function tileGroundSpanMeters(tile: TileId): number {
+  assertTile(tile)
+
+  const latitudeRadians = (tileCenterLatitude(tile) * Math.PI) / 180
+  return (
+    (Math.cos(latitudeRadians) * WEB_MERCATOR_CIRCUMFERENCE_METERS) /
+    2 ** tile.z
+  )
+}
+
+/**
+ * Distance between the first and last decoded terrain samples when those
+ * samples are stretched to the exact geographic tile boundaries.
+ */
+export function tileSampleSpacingMeters(
+  tile: TileId,
+  decodedTileWidth: number,
+): number {
+  assertPositiveInteger(decodedTileWidth, 'decodedTileWidth')
+  if (decodedTileWidth < 2) {
+    throw new RangeError('decodedTileWidth must be at least 2')
+  }
+
+  return tileGroundSpanMeters(tile) / (decodedTileWidth - 1)
 }
