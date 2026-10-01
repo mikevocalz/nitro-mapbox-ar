@@ -5,6 +5,7 @@ import type { GpuSatelliteTile } from './imagery'
 import {
   getTerrainGridLayout,
   tileMetersPerPixel,
+  tileSampleSpacingMeters,
   type TerrainGridLayout,
 } from './grid'
 
@@ -14,6 +15,7 @@ struct Frame {
   light: vec4<f32>,
   baseColor: vec4<f32>,
   params: vec4<f32>,
+  skirt: vec4<f32>,
 }
 
 struct Grid {
@@ -50,8 +52,32 @@ fn cornerForVertex(vertexInCell: u32) -> vec2<u32> {
   }
 }
 
-@vertex
-fn vsMain(@builtin(vertex_index) vertexIndex: u32) -> VertexOut {
+fn makeVertex(
+  x: u32,
+  y: u32,
+  height: f32,
+  normal: vec3<f32>,
+) -> VertexOut {
+  let sampleSpacing = frame.params.x;
+  let spanX = f32(grid.width - 1u) * sampleSpacing;
+  let spanZ = f32(grid.height - 1u) * sampleSpacing;
+  let local = vec3<f32>(
+    f32(x) * sampleSpacing - spanX * 0.5,
+    height,
+    f32(y) * sampleSpacing - spanZ * 0.5,
+  );
+
+  var out: VertexOut;
+  out.position = frame.mvp * vec4<f32>(local, 1.0);
+  out.normal = normal;
+  out.uv = vec2<f32>(
+    f32(x) / f32(grid.width - 1u),
+    f32(y) / f32(grid.height - 1u),
+  );
+  return out;
+}
+
+fn surfaceVertex(vertexIndex: u32) -> VertexOut {
   let cellIndex = vertexIndex / 6u;
   let vertexInCell = vertexIndex % 6u;
   let cellX = cellIndex % grid.cellColumns;
@@ -74,30 +100,95 @@ fn vsMain(@builtin(vertex_index) vertexIndex: u32) -> VertexOut {
   let hUp = terrainHeight(x, upY);
   let hDown = terrainHeight(x, downY);
 
-  let metersPerPixel = frame.params.x;
-  let dx = max(f32(rightX - leftX) * metersPerPixel, 0.0001);
-  let dz = max(f32(downY - upY) * metersPerPixel, 0.0001);
+  let sampleSpacing = frame.params.x;
+  let dx = max(f32(rightX - leftX) * sampleSpacing, 0.0001);
+  let dz = max(f32(downY - upY) * sampleSpacing, 0.0001);
 
   let tangentX = vec3<f32>(dx, hRight - hLeft, 0.0);
   let tangentZ = vec3<f32>(0.0, hDown - hUp, dz);
   let normal = normalize(cross(tangentZ, tangentX));
 
-  let spanX = f32(grid.width - 1u) * metersPerPixel;
-  let spanZ = f32(grid.height - 1u) * metersPerPixel;
-  let local = vec3<f32>(
-    f32(x) * metersPerPixel - spanX * 0.5,
-    h,
-    f32(y) * metersPerPixel - spanZ * 0.5,
-  );
+  return makeVertex(x, y, h, normal);
+}
 
-  var out: VertexOut;
-  out.position = frame.mvp * vec4<f32>(local, 1.0);
-  out.normal = normal;
-  out.uv = vec2<f32>(
-    f32(x) / f32(grid.width - 1u),
-    f32(y) / f32(grid.height - 1u),
-  );
-  return out;
+fn skirtCorner(vertexInSegment: u32) -> vec2<u32> {
+  switch vertexInSegment {
+    case 0u: { return vec2<u32>(0u, 0u); }
+    case 1u: { return vec2<u32>(1u, 0u); }
+    case 2u: { return vec2<u32>(0u, 1u); }
+    case 3u: { return vec2<u32>(0u, 1u); }
+    case 4u: { return vec2<u32>(1u, 0u); }
+    default: { return vec2<u32>(1u, 1u); }
+  }
+}
+
+fn skirtVertex(vertexIndex: u32) -> VertexOut {
+  let cellRows =
+    (grid.height - 1u + grid.stride - 1u) / grid.stride;
+  let segmentIndex = vertexIndex / 6u;
+  let vertexInSegment = vertexIndex % 6u;
+
+  let northEnd = grid.cellColumns;
+  let eastEnd = northEnd + cellRows;
+  let southEnd = eastEnd + grid.cellColumns;
+
+  var start = vec2<u32>(0u, 0u);
+  var end = vec2<u32>(0u, 0u);
+  var normal = vec3<f32>(0.0, 0.0, -1.0);
+
+  if (segmentIndex < northEnd) {
+    let column = segmentIndex;
+    start = vec2<u32>(column * grid.stride, 0u);
+    end = vec2<u32>(
+      min((column + 1u) * grid.stride, grid.width - 1u),
+      0u,
+    );
+    normal = vec3<f32>(0.0, 0.0, -1.0);
+  } else if (segmentIndex < eastEnd) {
+    let row = segmentIndex - northEnd;
+    start = vec2<u32>(grid.width - 1u, row * grid.stride);
+    end = vec2<u32>(
+      grid.width - 1u,
+      min((row + 1u) * grid.stride, grid.height - 1u),
+    );
+    normal = vec3<f32>(1.0, 0.0, 0.0);
+  } else if (segmentIndex < southEnd) {
+    let column = segmentIndex - eastEnd;
+    start = vec2<u32>(
+      min((column + 1u) * grid.stride, grid.width - 1u),
+      grid.height - 1u,
+    );
+    end = vec2<u32>(column * grid.stride, grid.height - 1u);
+    normal = vec3<f32>(0.0, 0.0, 1.0);
+  } else {
+    let row = segmentIndex - southEnd;
+    start = vec2<u32>(
+      0u,
+      min((row + 1u) * grid.stride, grid.height - 1u),
+    );
+    end = vec2<u32>(0u, row * grid.stride);
+    normal = vec3<f32>(-1.0, 0.0, 0.0);
+  }
+
+  let corner = skirtCorner(vertexInSegment);
+  let coord = select(start, end, corner.x == 1u);
+  let top = terrainHeight(coord.x, coord.y);
+  let height = top - f32(corner.y) * frame.skirt.x;
+
+  return makeVertex(coord.x, coord.y, height, normal);
+}
+
+@vertex
+fn vsMain(@builtin(vertex_index) vertexIndex: u32) -> VertexOut {
+  let cellRows =
+    (grid.height - 1u + grid.stride - 1u) / grid.stride;
+  let surfaceVertexCount = grid.cellColumns * cellRows * 6u;
+
+  if (vertexIndex < surfaceVertexCount) {
+    return surfaceVertex(vertexIndex);
+  }
+
+  return skirtVertex(vertexIndex - surfaceVertexCount);
 }
 
 @fragment
@@ -147,6 +238,11 @@ export interface TerrainFrameOptions {
   readonly baseColor?: Vec4
   readonly opacity?: number
   readonly imageryOpacity?: number
+  /**
+   * Vertical skirt depth in meters. Set > 0 to hide tile-edge cracks and
+   * mixed-LOD transitions without rebuilding CPU geometry.
+   */
+  readonly skirtDepth?: number
 }
 
 export interface RenderedTerrainFrame {
@@ -159,6 +255,7 @@ export interface TerrainSurfaceRenderer {
   readonly depthTexture: GPUTexture
   readonly format: GPUTextureFormat
   readonly metersPerPixel: number
+  readonly sampleSpacingMeters: number
   render(options: TerrainFrameOptions): RenderedTerrainFrame
   dispose(): void
 }
@@ -228,8 +325,9 @@ function createPipeline(
     },
     primitive: {
       topology: 'triangle-list',
-      cullMode: 'back',
-      frontFace: 'ccw',
+      // Skirts intentionally render both sides so mixed-LOD seams stay hidden
+      // regardless of camera position or edge winding.
+      cullMode: 'none',
     },
     depthStencil: {
       format: depthFormat,
@@ -290,10 +388,10 @@ export function createTerrainSurfaceRenderer(
     usage: GPUTextureUsage.RENDER_ATTACHMENT,
   })
 
-  // Frame = mat4 (64 bytes) + 3 vec4 values (48 bytes) = 112 bytes.
+  // Frame = mat4 (64 bytes) + 4 vec4 values (64 bytes) = 128 bytes.
   const frameBuffer = device.createBuffer({
     label: 'Nitro Mapbox AR terrain frame uniforms',
-    size: 112,
+    size: 128,
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
   })
 
@@ -370,6 +468,10 @@ export function createTerrainSurfaceRenderer(
   })
 
   const metersPerPixel = tileMetersPerPixel(terrain.tile, terrain.width)
+  const sampleSpacingMeters = tileSampleSpacingMeters(
+    terrain.tile,
+    terrain.width,
+  )
   let disposed = false
 
   return {
@@ -377,6 +479,7 @@ export function createTerrainSurfaceRenderer(
     depthTexture,
     format,
     metersPerPixel,
+    sampleSpacingMeters,
 
     render(frameOptions) {
       if (disposed) {
@@ -402,16 +505,27 @@ export function createTerrainSurfaceRenderer(
         frameOptions.imageryOpacity ?? (options.imagery ? 1 : 0),
         'imageryOpacity',
       )
+      const skirtDepth = assertFinite(
+        frameOptions.skirtDepth ?? 0,
+        'skirtDepth',
+      )
+      if (skirtDepth < 0) {
+        throw new RangeError('skirtDepth must be >= 0')
+      }
 
       for (let index = 0; index < baseColor.length; index += 1) {
         assertFinite(baseColor[index], `baseColor[${index}]`)
       }
 
-      const frame = new Float32Array(28)
+      const frame = new Float32Array(32)
       frame.set(mvp, 0)
       frame.set([light[0], light[1], light[2], ambient], 16)
       frame.set(baseColor, 20)
-      frame.set([metersPerPixel, heightScale, opacity, imageryOpacity], 24)
+      frame.set(
+        [sampleSpacingMeters, heightScale, opacity, imageryOpacity],
+        24,
+      )
+      frame.set([skirtDepth, 0, 0, 0], 28)
 
       const grid = new Uint32Array([
         terrain.width,
@@ -446,7 +560,10 @@ export function createTerrainSurfaceRenderer(
 
       pass.setPipeline(pipeline)
       pass.setBindGroup(0, bindGroup)
-      pass.draw(layout.vertexCount)
+      pass.draw(
+        layout.vertexCount +
+          (skirtDepth > 0 ? layout.skirtVertexCount : 0),
+      )
       pass.end()
 
       device.queue.submit([encoder.finish()])
