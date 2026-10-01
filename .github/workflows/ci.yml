@@ -35,6 +35,9 @@ jobs:
       - name: Typecheck native-map package
         run: npm run typecheck:native-map
 
+      - name: Typecheck ReactVision adapter
+        run: npm run typecheck:reactvision
+
       - name: TypeScript unit tests
         run: npm test
 
