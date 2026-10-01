@@ -9,7 +9,9 @@
     "check": "npm run typecheck && npm test && npm run test:cpp",
     "check:gpu-stack": "node scripts/check-gpu-stack.mjs",
     "test": "npx --yes tsx@4.23.15 --test tests/**/*.test.ts",
-    "test:cpp": "c++ -std=c++20 -Wall -Wextra -Werror -Icpp tests/terrain-rgb-codec.cpp -o /tmp/terrain-rgb-codec && /tmp/terrain-rgb-codec"
+    "test:cpp": "c++ -std=c++20 -Wall -Wextra -Werror -Icpp tests/terrain-rgb-codec.cpp -o /tmp/terrain-rgb-codec && /tmp/terrain-rgb-codec",
+    "codegen:native-map": "npm run codegen --workspace @mapbox/react-native-mapbox-ar-native-map",
+    "typecheck:native-map": "npm run typecheck --workspace @mapbox/react-native-mapbox-ar-native-map"
   },
   "repository": {
     "type": "git",
@@ -43,5 +45,8 @@
     "typegpu": "0.12.6",
     "unplugin-typegpu": "0.12.4",
     "typescript": "7.0.2"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
