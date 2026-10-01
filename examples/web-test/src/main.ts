@@ -77,7 +77,10 @@ async function probeRuntime(): Promise<void> {
 
   if (capabilities.webgpu) {
     try {
-      const adapter = await navigator.gpu?.requestAdapter()
+      const browserNavigator = navigator as Navigator & {
+        gpu?: { requestAdapter(): Promise<unknown> }
+      }
+      const adapter = await browserNavigator.gpu?.requestAdapter()
       addDiagnostic('WebGPU adapter', adapter ? 'adapter acquired' : 'not acquired')
     } catch (error) {
       addDiagnostic('WebGPU adapter', error instanceof Error ? error.message : String(error))
