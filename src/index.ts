@@ -50,7 +50,9 @@ export {
 export {
   getTerrainGridLayout,
   tileCenterLatitude,
+  tileGroundSpanMeters,
   tileMetersPerPixel,
+  tileSampleSpacingMeters,
   type TerrainGridLayout,
 } from './terrain/gpu/grid'
 export {
