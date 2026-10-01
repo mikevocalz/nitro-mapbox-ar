@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "Nitro Mapbox AR",
+    "slug": "nitro-mapbox-ar-reference",
+    "scheme": "nitro-mapbox-ar",
+    "version": "0.0.1",
+    "orientation": "default",
+    "newArchEnabled": true,
+    "plugins": ["@reactvision/react-viro"],
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "AR uses the camera to place Mapbox content in the world.",
+        "NSLocationWhenInUseUsageDescription": "Location powers Mapbox search, routing and geospatial AR."
+      }
+    },
+    "android": {
+      "permissions": ["CAMERA", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

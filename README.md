@@ -67,6 +67,15 @@ ReactVision spatial scene where applicable
 
 No GPU → CPU readback, temporary OBJ file, CPU vertex buffer, or Viro OBJ parse is required on the modern terrain path.
 
+## Reference app
+
+The modern replacement for the 2018 demo is in [examples/reference-app](examples/reference-app).
+It exposes Map, Navigate, AR and Agent modes and stays on Expo SDK 57 / React
+Native 0.86 while the ReactVision peer range is validated against newer React
+Native releases.
+
+See [Migration guide](docs/MIGRATION.md).
+
 ## Development docs
 
 - [Revival architecture](docs/ARCHITECTURE.md)

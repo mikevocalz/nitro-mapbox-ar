@@ -14,7 +14,9 @@
     "typecheck:native-map": "npm run typecheck --workspace @mapbox/react-native-mapbox-ar-native-map",
     "typecheck:reactvision": "npm run typecheck --workspace @mapbox/react-native-mapbox-ar-reactvision",
     "check:package-surface": "node scripts/check-package-surface.mjs",
-    "typecheck:agent-mcp": "npm run typecheck --workspace @mapbox/react-native-mapbox-ar-agent-mcp"
+    "typecheck:agent-mcp": "npm run typecheck --workspace @mapbox/react-native-mapbox-ar-agent-mcp",
+    "check:web-surface": "node scripts/check-web-surface.mjs",
+    "check:all": "npm run typecheck && npm test && npm run test:cpp && npm run typecheck:native-map && npm run typecheck:reactvision && npm run typecheck:agent-mcp && npm run check:package-surface && npm run check:web-surface"
   },
   "repository": {
     "type": "git",
@@ -69,6 +71,26 @@
       "browser": "./src/index.web.ts",
       "react-native": "./src/index.ts",
       "default": "./src/index.ts"
+    }
+  },
+  "peerDependenciesMeta": {
+    "@shopify/react-native-skia": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "react-native-nitro-modules": {
+      "optional": true
+    },
+    "react-native-webgpu": {
+      "optional": true
+    },
+    "typegpu": {
+      "optional": true
     }
   }
 }

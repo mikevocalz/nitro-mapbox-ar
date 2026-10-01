@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07111f" />
+    <title>Nitro Mapbox AR — Web Test</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">PR #29 browser harness</p>
+          <h1>Nitro Mapbox AR</h1>
+          <p class="subtitle">
+            Test the browser entry without Nitro, Skia Graphite, Viro, or native Mapbox SDK binaries.
+          </p>
+        </div>
+        <div id="runtime-badge" class="badge">probing runtime…</div>
+      </header>
+
+      <main class="layout">
+        <section class="panel controls">
+          <h2>1. Connect Mapbox</h2>
+          <label>
+            Public access token
+            <input id="token" type="password" autocomplete="off" placeholder="pk.…" />
+          </label>
+          <button id="start-map">Start web map</button>
+          <p class="hint">Use VITE_MAPBOX_ACCESS_TOKEN or paste a public token here. The value stays in sessionStorage.</p>
+
+          <h2>2. Search</h2>
+          <div class="row">
+            <input id="search-query" value="coffee near Times Square" />
+            <button id="run-search">Search</button>
+          </div>
+          <div id="search-output" class="output">Waiting for a search.</div>
+
+          <h2>3. Directions</h2>
+          <button id="run-route">Times Square → Brooklyn Bridge</button>
+          <div id="route-output" class="output">Waiting for a route.</div>
+
+          <h2>4. Browser fallback diagnostics</h2>
+          <div id="diagnostics" class="diagnostics"></div>
+        </section>
+
+        <section class="map-shell">
+          <div id="map"></div>
+          <div id="map-status" class="map-status">Map not started.</div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
