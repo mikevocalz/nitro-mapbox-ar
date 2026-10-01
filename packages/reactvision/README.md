@@ -1,7 +1,7 @@
 # @mapbox/react-native-mapbox-ar-reactvision
 
 Optional spatial adapter between Nitro Mapbox AR data and
-`@reactvision/react-viro` 3.0.1.
+`@reactvision/react-viro` 3.0.2.
 
 ## What this package does
 
@@ -35,7 +35,7 @@ terrain data remains GPU-resident.
 
 ## ReactVision version
 
-ViroReact 3.0.1 currently declares:
+ViroReact 3.0.2 is the current adapter target. The 3.x line is tested around:
 
 - React Native `>=0.86.0 <0.87.0`;
 - Expo `>=57.0.0 <58.0.0`;
