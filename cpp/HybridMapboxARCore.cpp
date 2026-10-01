@@ -1,4 +1,5 @@
 #include "HybridMapboxARCore.hpp"
+#include "TerrainRgbCodec.hpp"
 
 #include <NitroModules/HybridObjectRegistry.hpp>
 
@@ -59,15 +60,11 @@ std::shared_ptr<ArrayBuffer> HybridMapboxARCore::decodeTerrainRgb(
 
   for (size_t pixel = 0; pixel < pixelCount; ++pixel) {
     const auto offset = pixel * 4;
-    const auto r = static_cast<double>(input[offset]);
-    const auto g = static_cast<double>(input[offset + 1]);
-    const auto b = static_cast<double>(input[offset + 2]);
-
-    // Mapbox Terrain-RGB:
-    // height(m) = -10000 + ((R * 256^2 + G * 256 + B) * 0.1)
-    const auto encoded = (r * 65536.0) + (g * 256.0) + b;
-    const auto elevation =
-        static_cast<float>((-10000.0 + encoded * 0.1) * heightModifier);
+    const auto elevation = terrain::decodeTerrainRgb(
+        input[offset],
+        input[offset + 1],
+        input[offset + 2],
+        heightModifier);
 
     std::memcpy(output + pixel * kFloatBytes, &elevation, kFloatBytes);
   }

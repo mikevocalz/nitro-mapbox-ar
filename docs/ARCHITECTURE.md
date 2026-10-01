@@ -15,7 +15,9 @@ The revived architecture replaces that pipeline with GPU-native buffers and text
 ## Rendering stack
 
 ```
-Mapbox Raster Tiles / Terrain-DEM
+Mapbox Raster Tiles API
+  - Terrain-RGB (raw custom terrain)
+  - Satellite imagery
               |
               v
       Tile provider + cache
@@ -40,29 +42,20 @@ Mapbox Raster Tiles / Terrain-DEM
                            |
                            v
                 Skia Graphite compositor
-  - map texture composition
-  - labels / HUD / masks
-  - post effects / overlays
                            |
                            v
                  Native / AR host surface
-  - iOS / Android now
-  - Viro integration
-  - React Vision target later
 ```
 
-The terrain hot path does not require Three.js. Three is an optional high-level
-scene layer for content where its object/material ecosystem is useful. This
-avoids copying TypeGPU-created terrain buffers into a renderer-owned geometry
-allocation or coupling the package to private Three.js backend internals.
+An optional Mapbox Maps SDK v11 adapter is a separate path for apps that need
+Terrain-DEM, native maps, offline regions, snapshots, or Mapbox-managed style
+rendering.
 
 ## Why Skia Graphite is the rendering spine
 
 Graphite is the preferred backend because it uses Dawn/WebGPU internally and can share the same native GPU device with react-native-webgpu.
 
-The important invariant is: **one Dawn build, one GPU device, no texture copies between WebGPU renderers and Skia**.
-
-The runtime adapter obtains the WebGPU device from Skia whenever Graphite is active:
+The invariant is: **one Dawn build, one GPU device, no texture copies between WebGPU renderers and Skia**.
 
 ```ts
 import { Skia } from '@shopify/react-native-skia'
@@ -71,7 +64,7 @@ import { importDevice } from 'react-native-webgpu'
 const device = importDevice(Skia.getNativeDevice())
 ```
 
-Graphite is experimental upstream, so it stays behind a renderer capability layer. It is the preferred backend, not a hard-coded assumption in public APIs.
+Graphite is experimental upstream, so it stays behind a renderer capability layer.
 
 ## Backend policy
 
@@ -87,52 +80,45 @@ Graphite is experimental upstream, so it stays behind a renderer capability laye
 
 - Nitro HybridObject CPU terrain decoder / mesh builder
 - non-Graphite Skia where a 2D fallback is appropriate
-- legacy terrain generation only during migration; remove once parity tests pass
+- legacy terrain generation only during migration
 
-Android Graphite requires API 26+, so the capability check must happen at runtime/build configuration level rather than forcing every consumer onto one backend.
-
-## Nitro Modules responsibility
-
-Nitro is not used to shuttle every vertex through JSI. GPU work should stay on the GPU.
-
-Nitro owns the platform-specific pieces that benefit from native code:
-
-- token/configuration handoff when native Mapbox APIs are enabled
-- disk cache and cache metadata
-- CPU Terrain-RGB / Terrain-DEM fallback decoding
-- CPU mesh fallback
-- platform capability reporting
-- optional native Mapbox SDK adapter
-- future platform hooks that are not available from JavaScript
-
-The public JS API talks to a small service interface so WebGPU and Nitro implementations can be selected without changing app code.
+Android Graphite requires API 26+, so capability selection is explicit.
 
 ## Mapbox strategy
 
-The core package should **not** require the full Mapbox Maps SDK just to render AR terrain.
+The core package does **not** require the full Mapbox Maps SDK merely to build
+custom AR terrain.
 
-The original package already consumed Mapbox raster endpoints directly. The revival keeps that lightweight model but updates it around current Mapbox terrain/satellite products:
+### Core custom-renderer path
 
-- Mapbox Terrain-DEM for elevation data
-- Mapbox Raster Tiles API for raster imagery
-- Mapbox Satellite when imagery is requested
+- `mapbox.terrain-rgb` through Raster Tiles API
+- `mapbox.satellite` through Raster Tiles API
+- `pngraw` for elevation tiles
+- 512px tiles by default to reduce request count
+- TypeGPU elevation decode
 
-A native Mapbox Maps SDK v11 adapter is optional for apps that also need native maps, offline regions, snapshots, or Mapbox-managed tile storage.
+Terrain-DEM is newer/optimized but is documented as SDK-only rather than
+available through the public Raster Tiles API, so it is not falsely modeled as a
+drop-in HTTP replacement.
 
-This avoids making every AR-only consumer pay the binary-size and initialization cost of a complete native map renderer.
+### Optional native Mapbox path
+
+Use Mapbox Maps SDK v11 / `@rnmapbox/maps` only when the consuming app needs
+features that justify the native weight: Terrain-DEM, a native map, offline
+regions/tile storage, snapshots, or full style rendering.
 
 ## Terrain data flow
 
 1. Normalize a geographic bbox.
-2. Select zoom and tile coverage.
-3. Fetch only required DEM tiles.
+2. Select source zoom and tile coverage without Turf/tile-cover.
+3. Fetch only required Terrain-RGB tiles.
 4. Cache compressed tile bytes.
-5. Decode elevation on the shared GPU using TypeGPU/WebGPU when available.
-6. Keep the heightfield GPU-resident.
-7. Generate normals and LOD metadata on GPU.
-8. Bind imagery separately from height data.
-9. Render terrain directly with WebGPU; render optional models/scene content with Three.js WebGPU.
-10. Composite GPU render targets inside Skia Graphite.
+5. Decode image data onto the shared GPU.
+6. Decode elevation with TypeGPU.
+7. Keep the heightfield GPU-resident.
+8. Generate normals and LOD metadata on GPU.
+9. Render terrain directly with WebGPU.
+10. Composite terrain + optional Three scene content in Skia Graphite.
 
 ### What disappears
 
@@ -144,100 +130,48 @@ This avoids making every AR-only consumer pay the binary-size and initialization
 
 ## Memory / performance rules
 
-- Do not allocate a new mesh for every frame.
-- Keep height, normal, index, and texture resources resident while a terrain region is active.
-- Use an LRU tile cache with a configurable byte budget.
-- Decode only visible/needed tiles.
-- Prefer 512px imagery where it reduces request count.
-- Use lower LOD while moving and refine when camera movement settles.
-- Separate terrain geometry LOD from imagery LOD.
-- Reuse index buffers across same-sized grid patches.
-- Keep render loops off the main JS thread when practical.
-- Never serialize large vertex arrays through the old React Native bridge.
-- Never read TypeGPU terrain buffers back to CPU merely to feed another renderer.
+- no new mesh every frame;
+- bounded LRU tile cache;
+- lower LOD while moving, refine when settled;
+- geometry and imagery LOD are independent;
+- reusable grid/index buffers;
+- no large vertex arrays through the old bridge;
+- no GPU readback just to feed another renderer;
+- coalesce identical in-flight tile requests.
 
 ## Three.js role
 
 Three.js is optional and uses `three/webgpu` when present.
 
-It is valuable for imported models, object hierarchies, lighting, animation, and
-higher-level scene content. It is not the owner of terrain compute resources.
+It is valuable for imported models, object hierarchies, lighting, animation,
+and higher-level scene content. It is not the owner of terrain compute
+resources.
 
-Three.js should render using the same shared Graphite WebGPU device and into a
-texture that Skia can wrap without copying. No separate device should be
-requested for zero-copy content.
+## Nitro Modules responsibility
 
-## TypeGPU role
+Nitro owns platform-native work that benefits from C++/native services:
 
-TypeGPU is used where it adds concrete value:
+- configuration/token handoff;
+- bounded disk cache;
+- CPU Terrain-RGB fallback;
+- platform capability reporting;
+- optional native Mapbox integration hooks;
+- future platform hooks unavailable from JS.
 
-- Terrain-RGB / Terrain-DEM decode compute
-- heightfield generation
-- height exaggeration transforms
-- normal generation
-- optional contour/hillshade compute
-- culling/LOD metadata generation
-
-It is not another renderer. It is a typed WebGPU authoring layer over the shared device.
+GPU buffers remain on GPU and do not travel through Nitro per frame.
 
 ## Viro / AR integration
 
-The revived package must not depend on a single AR scene engine.
+Viro owns AR tracking, anchors, placement, and spatial interaction.
 
-Expose portable terrain data and renderer surfaces so Viro can host the terrain now while the rendering core remains reusable.
-
-For Viro integrations:
-
-- AR anchoring and world tracking remain Viro responsibilities.
-- Terrain rendering can be a GPU texture/panel or a Viro-native geometry adapter depending on platform capabilities.
-- No generated OBJ files should be required by the modern path.
+The terrain renderer exposes portable GPU surfaces/data so Viro can host or
+compose the result without generated OBJ files.
 
 ## visionOS / React Vision direction
 
-React Vision provides a React Native visionOS platform and Viro has a visionOS renderer path. The package therefore avoids iOS-only assumptions in its JS surface.
+The public terrain/provider interfaces remain platform-neutral. The C++ Nitro
+fallback and Graphite/WebGPU adapter are isolated so a future React Vision target
+does not require a terrain rewrite.
 
-However, React Native Skia's distributed Graphite binaries should not be treated as guaranteed visionOS support today. The visionOS target is a future compatibility track:
-
-1. keep platform-neutral renderer and terrain interfaces now;
-2. keep Graphite/Dawn isolated behind an adapter;
-3. add a dedicated visionOS build/adapter when upstream Skia/WebGPU binary support is confirmed or a maintained fork is available;
-4. use React Vision for the RN platform target and Viro for spatial tracking/scene integration.
-
-## Public API target
-
-```ts
-const client = createMapboxAR({
-  accessToken,
-  renderer: 'auto',
-  cache: {
-    memoryBytes: 96 * 1024 * 1024,
-    diskBytes: 512 * 1024 * 1024,
-  },
-})
-
-const terrain = await client.terrain.load({
-  bbox,
-  imagery: 'satellite',
-  exaggeration: 1,
-  quality: 'balanced',
-})
-
-terrain.dispose()
-```
-
-`renderer: 'auto'` prefers Graphite/WebGPU, then falls back to Nitro CPU.
-
-## Compatibility target
-
-Initial revival target:
-
-- React Native 0.86 generation for the first React Vision-compatible example line
-- React 19
-- iOS 16+
-- Android API 26+ for Graphite path
-- New Architecture
-- Nitro Modules
-- Expo development builds supported by the example app
-- no Expo Go requirement
-
-The package itself remains usable outside Expo.
+Published Graphite binaries should not be assumed to contain visionOS support
+until explicitly verified/built in the visionOS spike.
