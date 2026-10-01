@@ -33,6 +33,23 @@ export {
   type RendererCapabilities,
 } from './rendering/backend'
 export {
+  estimateSatelliteGpuBytes,
+  estimateTerrainGpuBytes,
+  type TerrainGpuFootprint,
+} from './terrain/cache/budget'
+export {
+  terrainTileNeighborhood,
+} from './terrain/cache/neighborhood'
+export {
+  GpuTileResidencyCache,
+  type GpuResidencyCacheOptions,
+  type GpuResidencyCacheStats,
+  type GpuTileLease,
+  type NeighborhoodPrefetchOptions,
+  type SatelliteAcquireOptions,
+  type TerrainAcquireOptions,
+} from './terrain/cache/residency'
+export {
   loadTerrainTileOnGpu,
   type GpuTerrainTile,
   type GpuTerrainTileResult,
