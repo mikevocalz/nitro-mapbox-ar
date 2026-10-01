@@ -36,6 +36,11 @@ export interface TerrainBatchRendererOptions {
   readonly format?: GPUTextureFormat
   readonly depthFormat?: GPUTextureFormat
   readonly originTile?: TileId
+  /**
+   * Optional externally-owned target. This lets a moving neighborhood replace
+   * tile draw resources without reallocating its large color/depth textures.
+   */
+  readonly target?: TerrainRenderTarget
 }
 
 export interface TerrainBatchItemContext {
@@ -134,12 +139,30 @@ export function createTerrainBatchRenderer(
   const originTile = options.originTile ?? entries[0].terrain.tile
   validateEntries(entries, originTile)
 
-  const target = createTerrainRenderTarget({
-    width: options.targetWidth,
-    height: options.targetHeight,
-    format: options.format,
-    depthFormat: options.depthFormat,
-  })
+  const ownsTarget = options.target === undefined
+  const target =
+    options.target ??
+    createTerrainRenderTarget({
+      width: options.targetWidth,
+      height: options.targetHeight,
+      format: options.format,
+      depthFormat: options.depthFormat,
+    })
+
+  if (
+    target.width !== options.targetWidth ||
+    target.height !== options.targetHeight
+  ) {
+    throw new Error('external terrain target dimensions do not match batch options')
+  }
+
+  if (options.format && options.format !== target.format) {
+    throw new Error('external terrain target color format does not match batch options')
+  }
+
+  if (options.depthFormat && options.depthFormat !== target.depthFormat) {
+    throw new Error('external terrain target depth format does not match batch options')
+  }
 
   const tileRenderers = entries.map((entry) =>
     createTerrainTileRenderer(entry.terrain, {
@@ -250,7 +273,9 @@ export function createTerrainBatchRenderer(
       for (const renderer of tileRenderers) {
         renderer.dispose()
       }
-      target.dispose()
+      if (ownsTarget) {
+        target.dispose()
+      }
     },
   }
 }
