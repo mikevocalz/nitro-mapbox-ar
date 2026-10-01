@@ -104,7 +104,7 @@ export function getMapboxFeature(
 ): MapboxFeatureDescriptor {
   const value = FEATURES.find((feature) => feature.id === id)
   if (!value) {
-    throw new Error(`Unknown Mapbox feature: ${id satisfies never}`)
+    throw new Error(`Unknown Mapbox feature: ${id}`)
   }
   return value
 }
