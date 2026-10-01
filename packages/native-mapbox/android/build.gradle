@@ -1,0 +1,97 @@
+buildscript {
+  repositories {
+    google()
+    mavenCentral()
+  }
+}
+
+def reactNativeArchitectures() {
+  def value = rootProject.getProperties().get("reactNativeArchitectures")
+  return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+}
+
+def extOrDefault(name, fallback) {
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : fallback
+}
+
+apply plugin: "com.android.library"
+apply plugin: "org.jetbrains.kotlin.android"
+apply from: "../nitrogen/generated/android/NitroMapboxARNativeMap+autolinking.gradle"
+
+android {
+  namespace "com.margelo.nitro.mapboxar.nativemap"
+
+  ndkVersion extOrDefault("ndkVersion", "27.1.12297006")
+  compileSdkVersion extOrDefault("compileSdkVersion", 36)
+
+  defaultConfig {
+    minSdkVersion extOrDefault("minSdkVersion", 24)
+    targetSdkVersion extOrDefault("targetSdkVersion", 36)
+
+    externalNativeBuild {
+      cmake {
+        cppFlags "-frtti -fexceptions -Wall -Wextra"
+        arguments "-DANDROID_STL=c++_shared",
+                  "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
+        abiFilters (*reactNativeArchitectures())
+      }
+    }
+  }
+
+  externalNativeBuild {
+    cmake {
+      path "CMakeLists.txt"
+    }
+  }
+
+  buildFeatures {
+    prefab true
+  }
+
+  packagingOptions {
+    excludes = [
+      "META-INF",
+      "META-INF/**",
+      "**/libc++_shared.so",
+      "**/libfbjni.so",
+      "**/libjsi.so",
+      "**/libfolly_json.so",
+      "**/libfolly_runtime.so",
+      "**/libglog.so",
+      "**/libhermes.so",
+      "**/libreactnative.so",
+      "**/libreactnativejni.so"
+    ]
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+}
+
+repositories {
+  google()
+  mavenCentral()
+
+  maven {
+    url "https://api.mapbox.com/downloads/v2/releases/maven"
+    authentication {
+      basic(BasicAuthentication)
+    }
+    credentials {
+      username = "mapbox"
+      password = project.findProperty("MAPBOX_DOWNLOADS_TOKEN") ?: System.getenv("MAPBOX_DOWNLOADS_TOKEN")
+    }
+  }
+}
+
+def mapboxVersion = extOrDefault("NitroMapboxARMapboxVersion", "11.31.1")
+
+dependencies {
+  implementation "com.facebook.react:react-native:+"
+  implementation project(":react-native-nitro-modules")
+
+  // NDK 27 artifact includes Android 15+ 16 KB page-size support.
+  implementation "com.mapbox.maps:android-ndk27:${mapboxVersion}"
+}
