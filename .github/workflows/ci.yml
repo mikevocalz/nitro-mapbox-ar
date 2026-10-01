@@ -43,3 +43,6 @@ jobs:
 
       - name: Native Terrain-RGB codec tests
         run: npm run test:cpp
+
+      - name: Verify npm package surface
+        run: npm run check:package-surface
