@@ -72,5 +72,25 @@
       "react-native": "./src/index.ts",
       "default": "./src/index.ts"
     }
+  },
+  "peerDependenciesMeta": {
+    "@shopify/react-native-skia": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "react-native-nitro-modules": {
+      "optional": true
+    },
+    "react-native-webgpu": {
+      "optional": true
+    },
+    "typegpu": {
+      "optional": true
+    }
   }
 }
