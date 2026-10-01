@@ -23,3 +23,15 @@ export type {
   ViroGeospatialPose,
   ViroQuaternion,
 } from './types'
+
+export {
+  canShareColocationFrame,
+  createSpatialContextSnapshot,
+  getColocationFamily,
+  normalizeReactVisionCapabilities,
+  type ColocationFamily,
+  type ReactVisionPlatform,
+  type ReactVisionRuntimeCapabilities,
+  type SpatialContextSnapshot,
+  type SpatialRay,
+} from './xr'
