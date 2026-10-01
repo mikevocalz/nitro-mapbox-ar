@@ -38,6 +38,9 @@ jobs:
       - name: Typecheck ReactVision adapter
         run: npm run typecheck:reactvision
 
+      - name: Typecheck agent MCP helpers
+        run: npm run typecheck:agent-mcp
+
       - name: TypeScript unit tests
         run: npm test
 
