@@ -41,6 +41,18 @@ export {
   terrainTileNeighborhood,
 } from './terrain/cache/neighborhood'
 export {
+  planTerrainNeighborhoodTransition,
+  terrainTileKey,
+  type TerrainNeighborhoodTransitionPlan,
+} from './terrain/session/plan'
+export {
+  TerrainNeighborhoodSession,
+  type TerrainNeighborhoodPrefetchOptions,
+  type TerrainNeighborhoodSessionOptions,
+  type TerrainNeighborhoodSessionStats,
+  type TerrainNeighborhoodUpdateOptions,
+} from './terrain/session/session'
+export {
   GpuTileResidencyCache,
   type GpuResidencyCacheOptions,
   type GpuResidencyCacheStats,
