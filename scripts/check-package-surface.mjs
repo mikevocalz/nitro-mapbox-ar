@@ -27,6 +27,7 @@ const required = [
   'src/index.ts',
   'src/index.web.ts',
   'src/native/MapboxARCore.web.ts',
+  'skills/nitro-mapbox-ar/SKILL.md',
   'cpp/HybridMapboxARCore.cpp',
   'android/build.gradle',
   'android/CMakeLists.txt',
