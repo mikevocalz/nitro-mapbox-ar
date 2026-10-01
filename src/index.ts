@@ -209,3 +209,13 @@ export type {
   IndoorTransition,
   IndoorVenue,
 } from './indoor/contracts'
+
+export {
+  createFeatureSet,
+  getMapboxFeature,
+  listMapboxFeatures,
+  type EnabledFeatureSet,
+  type MapboxFeatureDescriptor,
+  type MapboxFeatureId,
+  type MapboxFeatureStatus,
+} from './experimental/registry'
