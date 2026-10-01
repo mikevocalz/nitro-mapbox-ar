@@ -1,25 +1,33 @@
-# Mapbox Augmented Reality SDK for React Native
+# Nitro Mapbox AR
 
-_An official React Native component for building cross platform augmented reality applications_
+A revival of Mapbox's original React Native AR terrain experiment, rebuilt around Nitro Modules, Skia Graphite, WebGPU, TypeGPU, and a portable terrain pipeline.
 
-**Note this SDK is in it's beta phase and will be under heavy development as we move towards our 1.0**
+> Status: active modernization. The original 2018 implementation is still present while the new stack lands in small, reviewable PRs.
 
-## What is Mapbox?
+## Direction
 
-Mapbox is the location data platform for mobile and web applications. We provide [building blocks](https://www.mapbox.com/products/) to add location features like maps, search, and navigation into any experience you create. Use our simple and powerful APIs & SDKs and our open source libraries for interactivity and control.
+The new architecture is **Graphite-first**:
 
-## Sign up for Mapbox
+- **Skia Graphite** is the compositor and shared GPU-device owner.
+- **react-native-webgpu** supplies WebGPU/Dawn access.
+- **Three.js WebGPURenderer** renders 3D terrain using `three/webgpu`.
+- **TypeGPU** handles typed compute work such as elevation decode and normal generation.
+- **Nitro Modules** replaces the legacy React Native bridge and provides native/cache/CPU fallback services.
+- **Mapbox Terrain-DEM / Raster Tiles APIs** remain the lightweight data source.
+- The full native **Mapbox Maps SDK v11** is optional rather than a mandatory core dependency.
+- **Viro** remains the AR/spatial host integration target.
 
-Not a Mapbox user yet? [Sign up for an account here](https://www.mapbox.com/signup/). Once you’re signed in, all you need to start building is a Mapbox access token. Use this same short code with all of our interactive mapping libraries, Python and JavaScript SDKs, and directly against our REST APIs. You can create and manage your access tokens on your [Mapbox Account page](https://www.mapbox.com/account/).
+The renderer boundary is intentionally platform-neutral so a future React Vision / visionOS target can be tested without rewriting terrain logic.
 
+See:
 
-## Getting Started
+- [Revival architecture](docs/ARCHITECTURE.md)
+- [PR-by-PR revival plan](docs/REVIVAL_PLAN.md)
 
-We provide geospatial components that will work [react-viro](https://viromedia.com/viroreact/). We suggest that when
-setting up a project that you follow Viro's [quick start](https://docs.viromedia.com/docs/viro-platform-overview).
+## Legacy project
 
-More detailed instructions are on the way! Checkout our [example project in the meantime](/RNMapboxARDemo/README.md)
+The repository began as the Mapbox Augmented Reality SDK for React Native beta in 2018. The existing `javascript/`, `ios/`, `android/`, and `RNMapboxARDemo/` trees are the historical implementation and will be migrated incrementally rather than replaced in one unreviewable commit.
 
-## Developer Group
+## License
 
-Have a question or need some help? Join our [Gitter developer group](https://gitter.im/react-native-mapbox-gl/Lobby)!
+MIT
