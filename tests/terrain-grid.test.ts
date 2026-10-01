@@ -4,7 +4,9 @@ import test from 'node:test'
 import {
   getTerrainGridLayout,
   tileCenterLatitude,
+  tileGroundSpanMeters,
   tileMetersPerPixel,
+  tileSampleSpacingMeters,
 } from '../src/terrain/gpu/grid'
 
 test('full-resolution grid emits two triangles per source cell', () => {
@@ -14,6 +16,8 @@ test('full-resolution grid emits two triangles per source cell', () => {
   assert.equal(layout.cellRows, 511)
   assert.equal(layout.cellCount, 511 * 511)
   assert.equal(layout.vertexCount, 511 * 511 * 6)
+  assert.equal(layout.skirtSegmentCount, 511 * 2 + 511 * 2)
+  assert.equal(layout.skirtVertexCount, layout.skirtSegmentCount * 6)
 })
 
 test('LOD changes only cell count and keeps the final partial edge', () => {
@@ -49,4 +53,26 @@ test('512 decoded pixels have half the ground resolution of 256', () => {
 
   assert.ok(at256 > 0)
   assert.ok(Math.abs(at256 / 2 - at512) < 1e-10)
+})
+
+
+test('sample spacing spans the exact geographic tile width', () => {
+  const tile = { z: 10, x: 301, y: 385 }
+  const span = tileGroundSpanMeters(tile)
+  const spacing = tileSampleSpacingMeters(tile, 512)
+
+  assert.ok(span > 0)
+  assert.ok(Math.abs(spacing * 511 - span) < 1e-9)
+})
+
+test('raster resolution and geometry sample spacing are intentionally distinct', () => {
+  const tile = { z: 10, x: 301, y: 385 }
+
+  const rasterResolution = tileMetersPerPixel(tile, 512)
+  const geometrySpacing = tileSampleSpacingMeters(tile, 512)
+
+  assert.ok(geometrySpacing > rasterResolution)
+  assert.ok(
+    Math.abs(rasterResolution * 512 - geometrySpacing * 511) < 1e-9,
+  )
 })
