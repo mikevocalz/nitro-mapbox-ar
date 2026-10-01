@@ -25,20 +25,21 @@ test('driving-traffic directions request asks for traffic annotations', async ()
   assert.match(requested, /closure/)
 })
 
-test('map matching validates per-point radius arrays', async () => {
+test('map matching validates per-point radius arrays', () => {
   const client = new MapboxNavigationClient({
     accessToken: 'pk.test',
     fetchImpl: (async () => new Response('{}', { status: 200 })) as typeof fetch,
   })
 
-  await assert.rejects(
-    client.mapMatch(
-      [
-        { longitude: 0, latitude: 0 },
-        { longitude: 1, latitude: 1 },
-      ],
-      { radiuses: [10] },
-    ),
+  assert.throws(
+    () =>
+      client.mapMatch(
+        [
+          { longitude: 0, latitude: 0 },
+          { longitude: 1, latitude: 1 },
+        ],
+        { radiuses: [10] },
+      ),
     /radiuses must match/,
   )
 })
