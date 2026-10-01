@@ -20,6 +20,9 @@ export {
   getGraphiteWebGPUContext,
   isGraphiteWebGPUAvailable,
   makeSkiaImageFromWebGPUTexture,
+  makeWebGPUTextureFromEncodedBytes,
+  type AdoptedWebGPUTexture,
+  type DecodedGraphiteTexture,
   type GraphiteWebGPUContext,
   type NativeWebGPUTexture,
   type SharedGraphiteDevice,
@@ -29,6 +32,11 @@ export {
   type RendererBackend,
   type RendererCapabilities,
 } from './rendering/backend'
+export {
+  loadTerrainTileOnGpu,
+  type GpuTerrainTile,
+  type GpuTerrainTileResult,
+} from './terrain/gpu/tile'
 export {
   decodeTerrainRgbOnGpu,
   type GpuHeightField,
