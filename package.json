@@ -13,7 +13,8 @@
     "codegen:native-map": "npm run codegen --workspace @mapbox/react-native-mapbox-ar-native-map",
     "typecheck:native-map": "npm run typecheck --workspace @mapbox/react-native-mapbox-ar-native-map",
     "typecheck:reactvision": "npm run typecheck --workspace @mapbox/react-native-mapbox-ar-reactvision",
-    "check:package-surface": "node scripts/check-package-surface.mjs"
+    "check:package-surface": "node scripts/check-package-surface.mjs",
+    "typecheck:agent-mcp": "npm run typecheck --workspace @mapbox/react-native-mapbox-ar-agent-mcp"
   },
   "repository": {
     "type": "git",
@@ -59,7 +60,8 @@
     "scripts/check-package-surface.mjs",
     "docs",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "skills"
   ],
   "browser": "src/index.web.ts",
   "exports": {
