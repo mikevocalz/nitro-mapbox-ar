@@ -130,3 +130,20 @@ export {
   type SpatialTileSessionOptions,
   type SpatialTileSessionSnapshot,
 } from './session/spatialTileSession'
+
+export {
+  MapboxSearchClient,
+  type ForwardSearchOptions,
+  type GeocodeOptions,
+  type LngLat,
+  type MapboxSearchClientOptions,
+  type RetrieveOptions,
+  type SearchFeature,
+  type SearchFeatureCollection,
+  type SearchSuggestion,
+  type SuggestOptions,
+} from './search/client'
+export {
+  getSpatialSearchAnchor,
+  type SpatialSearchAnchor,
+} from './search/anchor'
