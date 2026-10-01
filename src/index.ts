@@ -44,6 +44,10 @@ export {
 } from './terrain/gpu/terrainRgb'
 export { getTerrainGpuRoot } from './terrain/gpu/root'
 export {
+  loadSatelliteTileOnGpu,
+  type GpuSatelliteTile,
+} from './terrain/gpu/imagery'
+export {
   getTerrainGridLayout,
   tileCenterLatitude,
   tileMetersPerPixel,
