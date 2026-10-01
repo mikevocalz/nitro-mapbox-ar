@@ -33,6 +33,23 @@ export {
   type RendererCapabilities,
 } from './rendering/backend'
 export {
+  estimateSatelliteGpuBytes,
+  estimateTerrainGpuBytes,
+  type TerrainGpuFootprint,
+} from './terrain/cache/budget'
+export {
+  terrainTileNeighborhood,
+} from './terrain/cache/neighborhood'
+export {
+  GpuTileResidencyCache,
+  type GpuResidencyCacheOptions,
+  type GpuResidencyCacheStats,
+  type GpuTileLease,
+  type NeighborhoodPrefetchOptions,
+  type SatelliteAcquireOptions,
+  type TerrainAcquireOptions,
+} from './terrain/cache/residency'
+export {
   loadTerrainTileOnGpu,
   type GpuTerrainTile,
   type GpuTerrainTileResult,
@@ -56,6 +73,36 @@ export {
   type TerrainGridLayout,
 } from './terrain/gpu/grid'
 export {
+  createTerrainTileRenderer,
+  type TerrainTileFrameOptions,
+  type TerrainTileRenderer,
+  type TerrainTileRendererOptions,
+} from './terrain/gpu/draw'
+export {
+  createTerrainRenderTarget,
+  type TerrainRenderTarget,
+  type TerrainRenderTargetOptions,
+} from './terrain/gpu/target'
+export {
+  getLocalTileOffset,
+  makeTranslationMatrix,
+  multiplyMatrix4,
+  wrappedTileDeltaX,
+  type LocalTileOffset,
+  type Matrix4Like,
+} from './terrain/gpu/multitile'
+export {
+  createTerrainBatchRenderer,
+  type RenderedTerrainBatchFrame,
+  type RenderedTerrainBatchItem,
+  type TerrainBatchEntry,
+  type TerrainBatchFrameOptions,
+  type TerrainBatchItemContext,
+  type TerrainBatchRenderer,
+  type TerrainBatchRendererOptions,
+  type TerrainBatchValue,
+} from './terrain/gpu/batch'
+export {
   createTerrainSurfaceRenderer,
   type Matrix4,
   type RenderedTerrainFrame,
@@ -75,3 +122,114 @@ export type {
   TerrainLoadOptions,
   TerrainQuality,
 } from './types'
+
+
+export {
+  planTerrainNeighborhoodTransition,
+  terrainTileKey,
+  type TerrainNeighborhoodTransitionPlan,
+} from './terrain/session/plan'
+export {
+  TerrainNeighborhoodSession,
+  type TerrainNeighborhoodPrefetchOptions,
+  type TerrainNeighborhoodSessionOptions,
+  type TerrainNeighborhoodSessionStats,
+  type TerrainNeighborhoodUpdateOptions,
+} from './terrain/session/session'
+
+export {
+  SpatialTileSession,
+  type SpatialTileSessionCache,
+  type SpatialTileSessionEntry,
+  type SpatialTileSessionOptions,
+  type SpatialTileSessionSnapshot,
+} from './session/spatialTileSession'
+
+export {
+  MapboxSearchClient,
+  type ForwardSearchOptions,
+  type GeocodeOptions,
+  type LngLat,
+  type MapboxSearchClientOptions,
+  type RetrieveOptions,
+  type SearchFeature,
+  type SearchFeatureCollection,
+  type SearchSuggestion,
+  type SuggestOptions,
+} from './search/client'
+export {
+  getSpatialSearchAnchor,
+  type SpatialSearchAnchor,
+} from './search/anchor'
+
+export {
+  MapboxNavigationClient,
+  type DirectionsAnnotation,
+  type DirectionsOptions,
+  type DirectionsResponse,
+  type MapboxNavigationClientOptions,
+  type MapMatchingOptions,
+  type MapMatchingResponse,
+  type NavigationCoordinate,
+  type NavigationProfile,
+  type NavigationRoute,
+  type NavigationRouteLeg,
+  type RouteLegAnnotation,
+} from './navigation/client'
+export {
+  summarizeRouteTraffic,
+  type RouteTrafficSummary,
+} from './navigation/traffic'
+export type {
+  ElectronicHorizonEdge,
+  ElectronicHorizonSnapshot,
+  NativeNavigationCapabilities,
+  NativeNavigationProvider,
+  NavigationProgressSnapshot,
+} from './navigation/contracts'
+
+export {
+  NavigationSession,
+  type NavigationSessionOptions,
+  type PlannedRoute,
+} from './navigation/session'
+
+export { SpatialAgentRuntime, type SpatialAgentRuntimeOptions } from './agent/runtime'
+export type {
+  MapboxAgentToolkitBridge,
+  SpatialAgentAction,
+  SpatialAgentAuditEvent,
+  SpatialAgentContext,
+  SpatialAgentEffects,
+  SpatialAgentPermissionPolicy,
+} from './agent/types'
+
+export {
+  MapboxAdvancedNavigationClient,
+  type AdvancedNavigationClientOptions,
+  type EvRouteOptions,
+  type IsochroneOptions,
+  type MatrixOptions,
+  type OptimizationV1Options,
+  type OptimizationV2Response,
+  type OptimizationV2Submission,
+} from './navigation/advanced'
+export type {
+  IndoorAnchor,
+  IndoorLevel,
+  IndoorNavigationHandoff,
+  IndoorProvider,
+  IndoorRoute,
+  IndoorTransition,
+  IndoorVenue,
+} from './indoor/contracts'
+
+export {
+  createFeatureSet,
+  getMapboxFeature,
+  listMapboxFeatures,
+  type EnabledFeatureSet,
+  type MapboxFeatureDescriptor,
+  type MapboxFeatureId,
+  type MapboxFeatureStatus,
+} from './experimental/registry'
