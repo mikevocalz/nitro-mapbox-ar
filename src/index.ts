@@ -122,3 +122,11 @@ export type {
   TerrainLoadOptions,
   TerrainQuality,
 } from './types'
+
+export {
+  SpatialTileSession,
+  type SpatialTileSessionCache,
+  type SpatialTileSessionEntry,
+  type SpatialTileSessionOptions,
+  type SpatialTileSessionSnapshot,
+} from './session/spatialTileSession'
