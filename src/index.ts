@@ -123,6 +123,20 @@ export type {
   TerrainQuality,
 } from './types'
 
+
+export {
+  planTerrainNeighborhoodTransition,
+  terrainTileKey,
+  type TerrainNeighborhoodTransitionPlan,
+} from './terrain/session/plan'
+export {
+  TerrainNeighborhoodSession,
+  type TerrainNeighborhoodPrefetchOptions,
+  type TerrainNeighborhoodSessionOptions,
+  type TerrainNeighborhoodSessionStats,
+  type TerrainNeighborhoodUpdateOptions,
+} from './terrain/session/session'
+
 export {
   SpatialTileSession,
   type SpatialTileSessionCache,
