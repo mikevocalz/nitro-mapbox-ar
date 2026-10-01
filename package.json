@@ -60,7 +60,8 @@
     "scripts/check-package-surface.mjs",
     "docs",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "skills"
   ],
   "browser": "src/index.web.ts",
   "exports": {
