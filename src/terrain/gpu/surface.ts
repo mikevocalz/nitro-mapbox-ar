@@ -1,6 +1,7 @@
 import { makeSkiaImageFromWebGPUTexture } from '../../rendering/graphite'
 import { getGraphiteWebGPUContext } from '../../rendering/graphite'
 import type { GpuTerrainTile } from './tile'
+import type { GpuSatelliteTile } from './imagery'
 import {
   getTerrainGridLayout,
   tileMetersPerPixel,
@@ -25,11 +26,14 @@ struct Grid {
 struct VertexOut {
   @builtin(position) position: vec4<f32>,
   @location(0) normal: vec3<f32>,
+  @location(1) uv: vec2<f32>,
 }
 
 @group(0) @binding(0) var<storage, read> heights: array<f32>;
 @group(0) @binding(1) var<uniform> frame: Frame;
 @group(0) @binding(2) var<uniform> grid: Grid;
+@group(0) @binding(3) var imageryTexture: texture_2d<f32>;
+@group(0) @binding(4) var imagerySampler: sampler;
 
 fn terrainHeight(x: u32, y: u32) -> f32 {
   return heights[y * grid.width + x] * frame.params.y;
@@ -89,6 +93,10 @@ fn vsMain(@builtin(vertex_index) vertexIndex: u32) -> VertexOut {
   var out: VertexOut;
   out.position = frame.mvp * vec4<f32>(local, 1.0);
   out.normal = normal;
+  out.uv = vec2<f32>(
+    f32(x) / f32(grid.width - 1u),
+    f32(y) / f32(grid.height - 1u),
+  );
   return out;
 }
 
@@ -99,8 +107,16 @@ fn fsMain(input: VertexOut) -> @location(0) vec4<f32> {
   let ambient = clamp(frame.light.w, 0.0, 1.0);
   let shade = ambient + (1.0 - ambient) * lambert;
 
+  let imagery = textureSample(imageryTexture, imagerySampler, input.uv);
+  let imageryMix = clamp(frame.params.w, 0.0, 1.0);
+  let albedo = mix(
+    frame.baseColor.rgb,
+    imagery.rgb * frame.baseColor.rgb,
+    imageryMix,
+  );
+
   return vec4<f32>(
-    frame.baseColor.rgb * shade,
+    albedo * shade,
     frame.baseColor.a * clamp(frame.params.z, 0.0, 1.0),
   );
 }
@@ -115,6 +131,11 @@ export interface TerrainSurfaceRendererOptions {
   readonly targetHeight: number
   readonly format?: GPUTextureFormat
   readonly depthFormat?: GPUTextureFormat
+  /**
+   * Optional satellite imagery decoded on the shared Graphite device.
+   * The renderer borrows this texture; the caller owns its lifetime.
+   */
+  readonly imagery?: Pick<GpuSatelliteTile, 'texture'>
 }
 
 export interface TerrainFrameOptions {
@@ -125,6 +146,7 @@ export interface TerrainFrameOptions {
   readonly ambient?: number
   readonly baseColor?: Vec4
   readonly opacity?: number
+  readonly imageryOpacity?: number
 }
 
 export interface RenderedTerrainFrame {
@@ -282,6 +304,38 @@ export function createTerrainSurfaceRenderer(
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
   })
 
+  const fallbackImageryTexture = options.imagery
+    ? undefined
+    : device.createTexture({
+        label: 'Nitro Mapbox AR fallback imagery',
+        size: { width: 1, height: 1, depthOrArrayLayers: 1 },
+        format: 'rgba8unorm',
+        usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
+      })
+
+  if (fallbackImageryTexture) {
+    device.queue.writeTexture(
+      { texture: fallbackImageryTexture },
+      new Uint8Array([255, 255, 255, 255]),
+      {},
+      { width: 1, height: 1, depthOrArrayLayers: 1 },
+    )
+  }
+
+  const imageryTexture = options.imagery?.texture ?? fallbackImageryTexture
+  if (!imageryTexture) {
+    throw new Error('terrain imagery texture is unavailable')
+  }
+
+  const imagerySampler = device.createSampler({
+    label: 'Nitro Mapbox AR terrain imagery sampler',
+    addressModeU: 'clamp-to-edge',
+    addressModeV: 'clamp-to-edge',
+    magFilter: 'linear',
+    minFilter: 'linear',
+    mipmapFilter: 'linear',
+  })
+
   const bindGroup = device.createBindGroup({
     label: 'Nitro Mapbox AR terrain bind group',
     layout: pipeline.getBindGroupLayout(0),
@@ -303,6 +357,14 @@ export function createTerrainSurfaceRenderer(
         resource: {
           buffer: gridBuffer,
         },
+      },
+      {
+        binding: 3,
+        resource: imageryTexture.createView(),
+      },
+      {
+        binding: 4,
+        resource: imagerySampler,
       },
     ],
   })
@@ -332,8 +394,14 @@ export function createTerrainSurfaceRenderer(
         frameOptions.lightDirection ?? [0.35, 0.85, 0.4],
       )
       const ambient = assertFinite(frameOptions.ambient ?? 0.28, 'ambient')
-      const baseColor = frameOptions.baseColor ?? [0.26, 0.58, 0.31, 1]
+      const baseColor =
+        frameOptions.baseColor ??
+        (options.imagery ? [1, 1, 1, 1] : [0.26, 0.58, 0.31, 1])
       const opacity = assertFinite(frameOptions.opacity ?? 1, 'opacity')
+      const imageryOpacity = assertFinite(
+        frameOptions.imageryOpacity ?? (options.imagery ? 1 : 0),
+        'imageryOpacity',
+      )
 
       for (let index = 0; index < baseColor.length; index += 1) {
         assertFinite(baseColor[index], `baseColor[${index}]`)
@@ -343,7 +411,7 @@ export function createTerrainSurfaceRenderer(
       frame.set(mvp, 0)
       frame.set([light[0], light[1], light[2], ambient], 16)
       frame.set(baseColor, 20)
-      frame.set([metersPerPixel, heightScale, opacity, 0], 24)
+      frame.set([metersPerPixel, heightScale, opacity, imageryOpacity], 24)
 
       const grid = new Uint32Array([
         terrain.width,
@@ -397,6 +465,7 @@ export function createTerrainSurfaceRenderer(
       disposed = true
       frameBuffer.destroy()
       gridBuffer.destroy()
+      fallbackImageryTexture?.destroy()
       depthTexture.destroy()
       texture.destroy()
     },
