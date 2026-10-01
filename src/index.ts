@@ -56,6 +56,36 @@ export {
   type TerrainGridLayout,
 } from './terrain/gpu/grid'
 export {
+  createTerrainTileRenderer,
+  type TerrainTileFrameOptions,
+  type TerrainTileRenderer,
+  type TerrainTileRendererOptions,
+} from './terrain/gpu/draw'
+export {
+  createTerrainRenderTarget,
+  type TerrainRenderTarget,
+  type TerrainRenderTargetOptions,
+} from './terrain/gpu/target'
+export {
+  getLocalTileOffset,
+  makeTranslationMatrix,
+  multiplyMatrix4,
+  wrappedTileDeltaX,
+  type LocalTileOffset,
+  type Matrix4Like,
+} from './terrain/gpu/multitile'
+export {
+  createTerrainBatchRenderer,
+  type RenderedTerrainBatchFrame,
+  type RenderedTerrainBatchItem,
+  type TerrainBatchEntry,
+  type TerrainBatchFrameOptions,
+  type TerrainBatchItemContext,
+  type TerrainBatchRenderer,
+  type TerrainBatchRendererOptions,
+  type TerrainBatchValue,
+} from './terrain/gpu/batch'
+export {
   createTerrainSurfaceRenderer,
   type Matrix4,
   type RenderedTerrainFrame,
