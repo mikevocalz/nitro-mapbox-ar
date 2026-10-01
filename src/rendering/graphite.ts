@@ -1,7 +1,8 @@
 import { Skia } from '@shopify/react-native-skia'
-import { importDevice } from 'react-native-webgpu'
+import { adoptTexture, importDevice } from 'react-native-webgpu'
 
 export type SharedGraphiteDevice = ReturnType<typeof importDevice>
+export type AdoptedWebGPUTexture = ReturnType<typeof adoptTexture>
 
 export interface NativeWebGPUTexture {
   readonly nativePointer: bigint
@@ -10,6 +11,13 @@ export interface NativeWebGPUTexture {
 export interface GraphiteWebGPUContext {
   readonly nativeDevice: bigint
   readonly device: SharedGraphiteDevice
+}
+
+export interface DecodedGraphiteTexture {
+  readonly texture: AdoptedWebGPUTexture
+  readonly width: number
+  readonly height: number
+  dispose(): void
 }
 
 let sharedContext: GraphiteWebGPUContext | undefined
@@ -35,12 +43,6 @@ function getNativeGraphiteDevice(): bigint {
   return pointer
 }
 
-/**
- * Returns one process-lifetime WebGPU wrapper around Skia Graphite's own
- * wgpu::Device. The imported device takes its own native reference but the
- * underlying device is owned by Skia, so callers must not replace it with a
- * separately requested navigator.gpu device for zero-copy resources.
- */
 export function getGraphiteWebGPUContext(): GraphiteWebGPUContext {
   if (sharedContext) {
     return sharedContext
@@ -66,15 +68,54 @@ export function isGraphiteWebGPUAvailable(): boolean {
   }
 }
 
-/**
- * Wraps a WebGPU texture created on the shared Graphite device as an SkImage.
- * This is a zero-copy operation. Keep the GPUTexture alive for at least as long
- * as the returned SkImage references it.
- */
 export function makeSkiaImageFromWebGPUTexture(texture: NativeWebGPUTexture) {
   if (texture.nativePointer === 0n) {
     throw new Error('Cannot wrap a WebGPU texture with an invalid native pointer')
   }
 
   return Skia.Image.MakeImageFromNativeTexture(texture.nativePointer)
+}
+
+/**
+ * Decode an encoded raster (PNG/WebP/JPEG) with Skia, then expose the decoded
+ * SkImage as a WebGPU texture on the same Graphite/Dawn device.
+ *
+ * The encoded bytes stay encoded across the JS/native boundary. Pixel
+ * decompression happens in Skia and the resulting native image is uploaded to
+ * Graphite without creating a JS-side RGBA array.
+ */
+export function makeWebGPUTextureFromEncodedBytes(
+  bytes: ArrayBuffer | Uint8Array,
+): DecodedGraphiteTexture {
+  const sourceBytes =
+    bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes)
+  const data = Skia.Data.fromBytes(sourceBytes)
+  const image = Skia.Image.MakeImageFromEncoded(data)
+
+  if (!image) {
+    throw new Error('Skia could not decode the encoded tile image')
+  }
+
+  try {
+    const width = image.width()
+    const height = image.height()
+    const nativeTexture = Skia.Image.MakeNativeTextureFromImage(image)
+    const texture = adoptTexture(nativeTexture)
+    let disposed = false
+
+    return {
+      texture,
+      width,
+      height,
+      dispose() {
+        if (disposed) {
+          return
+        }
+        disposed = true
+        texture.destroy()
+      },
+    }
+  } finally {
+    image.dispose()
+  }
 }
