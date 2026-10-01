@@ -4,12 +4,14 @@ export type RendererBackend =
   | 'graphite-webgpu'
   | 'webgpu'
   | 'nitro-cpu'
+  | 'js-cpu'
 
 export interface RendererCapabilities {
   graphite: boolean
   webgpu: boolean
   sharedDawnDevice: boolean
   nitro: boolean
+  jsCpu?: boolean
 }
 
 function assertBackendAvailable(
@@ -58,6 +60,14 @@ export function selectRendererBackend(
       )
       return 'nitro-cpu'
 
+    case 'cpu':
+      assertBackendAvailable(
+        capabilities.nitro || capabilities.jsCpu === true,
+        preference,
+        'No CPU fallback is available',
+      )
+      return capabilities.nitro ? 'nitro-cpu' : 'js-cpu'
+
     case 'auto':
       if (graphiteWebGPU) {
         return 'graphite-webgpu'
@@ -67,6 +77,9 @@ export function selectRendererBackend(
       }
       if (capabilities.nitro) {
         return 'nitro-cpu'
+      }
+      if (capabilities.jsCpu) {
+        return 'js-cpu'
       }
       throw new Error('No supported Nitro Mapbox AR renderer backend is available')
   }
