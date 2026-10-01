@@ -61,3 +61,11 @@ Do not feed a city-scale route to one giant `ViroPolyline`.
 
 `projectRouteChunks()` defaults to 128 points per chunk with a one-point
 overlap, keeping each native polyline bounded while preserving continuity.
+
+
+## XR capability normalization
+
+The adapter also exports XR capability helpers for phone, Quest, visionOS and
+web. Co-location is modeled as same-family only, gaze is normalized into a
+plain spatial ray, and Graphite on visionOS remains opt-in until the host has
+validated a compatible build.
