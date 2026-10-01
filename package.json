@@ -22,7 +22,8 @@
     "react": ">=19.0.0",
     "react-native": ">=0.86.0",
     "react-native-nitro-modules": "^0.37.1",
-    "react-native-webgpu": "^0.10.0"
+    "react-native-webgpu": "^0.10.0",
+    "typegpu": "^0.12.6"
   },
   "author": "Nick Italiano",
   "license": "MIT",
@@ -38,6 +39,8 @@
     "@shopify/react-native-skia": "2.13.1",
     "react-native-nitro-modules": "0.37.1",
     "react-native-webgpu": "0.10.4",
+    "typegpu": "0.12.6",
+    "unplugin-typegpu": "0.12.4",
     "typescript": "7.0.2"
   }
 }

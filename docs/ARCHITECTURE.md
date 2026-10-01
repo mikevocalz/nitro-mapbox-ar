@@ -24,34 +24,45 @@ Mapbox Raster Tiles / Terrain-DEM
  TypeGPU / WebGPU compute pipeline
   - Terrain-RGB decode
   - heightfield generation
-  - normals / index buffers
+  - normals / LOD metadata
               |
-              v
-     Three.js WebGPURenderer
-       (three/webgpu)
-              |
-       zero-copy texture
-              |
-              v
-     Skia Graphite compositor
+              +--------------------------+
+              |                          |
+              v                          v
+ direct WebGPU terrain pass       Three.js WebGPU scene
+                                  (models/objects, optional)
+              |                          |
+              +------------+-------------+
+                           v
+                 shared WebGPU texture
+                           |
+                    zero-copy wrap
+                           |
+                           v
+                Skia Graphite compositor
   - map texture composition
   - labels / HUD / masks
   - post effects / overlays
-              |
-              v
-     Native / AR host surface
+                           |
+                           v
+                 Native / AR host surface
   - iOS / Android now
   - Viro integration
   - React Vision target later
 ```
 
+The terrain hot path does not require Three.js. Three is an optional high-level
+scene layer for content where its object/material ecosystem is useful. This
+avoids copying TypeGPU-created terrain buffers into a renderer-owned geometry
+allocation or coupling the package to private Three.js backend internals.
+
 ## Why Skia Graphite is the rendering spine
 
 Graphite is the preferred backend because it uses Dawn/WebGPU internally and can share the same native GPU device with react-native-webgpu.
 
-The important invariant is: **one Dawn build, one GPU device, no texture copies between the 3D renderer and Skia**.
+The important invariant is: **one Dawn build, one GPU device, no texture copies between WebGPU renderers and Skia**.
 
-The runtime adapter must obtain the WebGPU device from Skia whenever Graphite is active:
+The runtime adapter obtains the WebGPU device from Skia whenever Graphite is active:
 
 ```ts
 import { Skia } from '@shopify/react-native-skia'
@@ -59,8 +70,6 @@ import { importDevice } from 'react-native-webgpu'
 
 const device = importDevice(Skia.getNativeDevice())
 ```
-
-Three.js should render into a WebGPU texture owned by that shared device. The texture is wrapped as an SkImage for composition instead of copied through CPU memory.
 
 Graphite is experimental upstream, so it stays behind a renderer capability layer. It is the preferred backend, not a hard-coded assumption in public APIs.
 
@@ -70,8 +79,9 @@ Graphite is experimental upstream, so it stays behind a renderer capability laye
 
 - Skia Graphite
 - react-native-webgpu
-- three/webgpu
-- TypeGPU for typed WGSL and compute work
+- TypeGPU for typed WGSL and terrain compute
+- direct WebGPU terrain rendering
+- Three.js WebGPURenderer as an optional scene layer
 
 ### Fallback
 
@@ -95,7 +105,7 @@ Nitro owns the platform-specific pieces that benefit from native code:
 - optional native Mapbox SDK adapter
 - future platform hooks that are not available from JavaScript
 
-The public JS API should talk to a small service interface so WebGPU and Nitro implementations can be selected without changing app code.
+The public JS API talks to a small service interface so WebGPU and Nitro implementations can be selected without changing app code.
 
 ## Mapbox strategy
 
@@ -117,12 +127,12 @@ This avoids making every AR-only consumer pay the binary-size and initialization
 2. Select zoom and tile coverage.
 3. Fetch only required DEM tiles.
 4. Cache compressed tile bytes.
-5. Decode elevation on GPU using TypeGPU/WebGPU when available.
-6. Generate a heightfield vertex buffer directly on GPU.
-7. Generate normals and indices on GPU or once on CPU for reusable grid topology.
-8. Bind satellite/style texture separately from height data.
-9. Render with `three/webgpu`.
-10. Composite the resulting GPU texture inside Skia Graphite.
+5. Decode elevation on the shared GPU using TypeGPU/WebGPU when available.
+6. Keep the heightfield GPU-resident.
+7. Generate normals and LOD metadata on GPU.
+8. Bind imagery separately from height data.
+9. Render terrain directly with WebGPU; render optional models/scene content with Three.js WebGPU.
+10. Composite GPU render targets inside Skia Graphite.
 
 ### What disappears
 
@@ -144,20 +154,25 @@ This avoids making every AR-only consumer pay the binary-size and initialization
 - Reuse index buffers across same-sized grid patches.
 - Keep render loops off the main JS thread when practical.
 - Never serialize large vertex arrays through the old React Native bridge.
+- Never read TypeGPU terrain buffers back to CPU merely to feed another renderer.
 
 ## Three.js role
 
-Three.js is used only as the 3D scene layer and must use `three/webgpu`.
+Three.js is optional and uses `three/webgpu` when present.
 
-It should not own the screen swapchain when Graphite is active. It renders into a persistent WebGPU texture, then Skia presents/composites that texture.
+It is valuable for imported models, object hierarchies, lighting, animation, and
+higher-level scene content. It is not the owner of terrain compute resources.
 
-This keeps one compositing surface and lets Skia own 2D overlays, labels, masks, transitions, and post-processing.
+Three.js should render using the same shared Graphite WebGPU device and into a
+texture that Skia can wrap without copying. No separate device should be
+requested for zero-copy content.
 
 ## TypeGPU role
 
 TypeGPU is used where it adds concrete value:
 
-- Terrain-RGB decode compute shader
+- Terrain-RGB / Terrain-DEM decode compute
+- heightfield generation
 - height exaggeration transforms
 - normal generation
 - optional contour/hillshade compute
@@ -179,7 +194,7 @@ For Viro integrations:
 
 ## visionOS / React Vision direction
 
-React Vision currently provides a React Native visionOS platform and Viro has a visionOS renderer preview. The package should therefore avoid iOS-only assumptions in its JS surface.
+React Vision provides a React Native visionOS platform and Viro has a visionOS renderer path. The package therefore avoids iOS-only assumptions in its JS surface.
 
 However, React Native Skia's distributed Graphite binaries should not be treated as guaranteed visionOS support today. The visionOS target is a future compatibility track:
 
@@ -207,17 +222,16 @@ const terrain = await client.terrain.load({
   quality: 'balanced',
 })
 
-// renderer-independent model
 terrain.dispose()
 ```
 
-`renderer: 'auto'` should prefer Graphite/WebGPU, then fall back to Nitro CPU.
+`renderer: 'auto'` prefers Graphite/WebGPU, then falls back to Nitro CPU.
 
 ## Compatibility target
 
 Initial revival target:
 
-- React Native 0.86 generation
+- React Native 0.86 generation for the first React Vision-compatible example line
 - React 19
 - iOS 16+
 - Android API 26+ for Graphite path

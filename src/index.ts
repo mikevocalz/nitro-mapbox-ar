@@ -14,6 +14,12 @@ export {
   type RendererBackend,
   type RendererCapabilities,
 } from './rendering/backend'
+export {
+  decodeTerrainRgbOnGpu,
+  type GpuHeightField,
+  type TerrainRgbDecodeOptions,
+} from './terrain/gpu/terrainRgb'
+export { getTerrainGpuRoot } from './terrain/gpu/root'
 export type {
   BBox,
   CacheOptions,
