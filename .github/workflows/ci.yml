@@ -38,8 +38,14 @@ jobs:
       - name: Typecheck ReactVision adapter
         run: npm run typecheck:reactvision
 
+      - name: Typecheck agent MCP helpers
+        run: npm run typecheck:agent-mcp
+
       - name: TypeScript unit tests
         run: npm test
 
       - name: Native Terrain-RGB codec tests
         run: npm run test:cpp
+
+      - name: Verify npm package surface
+        run: npm run check:package-surface
