@@ -6,9 +6,10 @@
   "source": "src/index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "check": "npm run typecheck",
+    "check": "npm run typecheck && npm test && npm run test:cpp",
     "check:gpu-stack": "node scripts/check-gpu-stack.mjs",
-    "test": "echo \"Tests land with the implementation PRs\""
+    "test": "npx --yes tsx@4.23.15 --test tests/**/*.test.ts",
+    "test:cpp": "c++ -std=c++20 -Wall -Wextra -Werror -Icpp tests/terrain-rgb-codec.cpp -o /tmp/terrain-rgb-codec && /tmp/terrain-rgb-codec"
   },
   "repository": {
     "type": "git",
