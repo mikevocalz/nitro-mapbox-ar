@@ -2,6 +2,21 @@ export { normalizeMapboxARConfig } from './core/config'
 export { bboxCrossesAntimeridian, validateBBox } from './geo/bbox'
 export { getMapboxARCore, type MapboxARCore } from './native/MapboxARCore'
 export {
+  MapboxRasterClient,
+  terrainRgbSourceZoom,
+  type MapboxRasterClientOptions,
+  type MapboxTileBytes,
+  type RasterTileSize,
+  type SatelliteFormat,
+  type TerrainTileResult,
+} from './mapbox/raster'
+export {
+  latToTileY,
+  lonToTileX,
+  tilesForBBox,
+  type TileId,
+} from './mapbox/tiles'
+export {
   getGraphiteWebGPUContext,
   isGraphiteWebGPUAvailable,
   makeSkiaImageFromWebGPUTexture,
