@@ -189,3 +189,23 @@ export type {
   SpatialAgentEffects,
   SpatialAgentPermissionPolicy,
 } from './agent/types'
+
+export {
+  MapboxAdvancedNavigationClient,
+  type AdvancedNavigationClientOptions,
+  type EvRouteOptions,
+  type IsochroneOptions,
+  type MatrixOptions,
+  type OptimizationV1Options,
+  type OptimizationV2Response,
+  type OptimizationV2Submission,
+} from './navigation/advanced'
+export type {
+  IndoorAnchor,
+  IndoorLevel,
+  IndoorNavigationHandoff,
+  IndoorProvider,
+  IndoorRoute,
+  IndoorTransition,
+  IndoorVenue,
+} from './indoor/contracts'
