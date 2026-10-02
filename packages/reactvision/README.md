@@ -17,7 +17,31 @@ system without reviving the old OBJ pipeline.
 - creates WGS84, Terrain, or Rooftop anchors;
 - checks VPS availability;
 - projects route coordinates into AR world space;
-- chunks long routes for multiple `ViroPolyline` nodes.
+- chunks long routes for multiple `ViroPolyline` nodes;
+- renders projected Mapbox routes directly with the `MapboxViroRoute` component.
+
+## MapboxViroRoute
+
+`MapboxViroRoute` is the ready-to-render route layer on top of the projection
+helpers. Give it a current geospatial pose and Mapbox/Directions coordinates;
+it projects them with ReactVision's `gpsToArWorld`, splits long routes into
+overlapping bounded chunks, and renders one `ViroPolyline` per chunk.
+
+```tsx
+import { MapboxViroRoute } from '@mapbox/react-native-mapbox-ar-reactvision'
+
+<MapboxViroRoute
+  pose={cameraPose}
+  route={routeCoordinates}
+  color="#00E5FF"
+  thickness={0.06}
+  verticalOffset={0.04}
+/>
+```
+
+Pass `materials` or `materialName` to use an existing Viro material instead
+of the component's automatically managed constant-color material. Use
+`polylineProps` for shared Viro interaction/rendering props.
 
 ## What it deliberately does not do
 
