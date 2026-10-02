@@ -1,4 +1,8 @@
 export {
+  MapboxViroRoute,
+  type MapboxViroRouteProps,
+} from './MapboxViroRoute'
+export {
   createReactVisionSpatialBridge,
   type ReactVisionSpatialBridge,
 } from './bridge'

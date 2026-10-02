@@ -2,7 +2,7 @@
 
 A revival of Mapbox's original React Native AR terrain experiment, rebuilt around Nitro Modules, Skia Graphite, WebGPU, TypeGPU, modern Mapbox SDKs, and ReactVision.
 
-> Status: active modernization. The historical 2018 implementation remains in the repository for reference, but the modern npm package is intentionally isolated from that legacy runtime.
+> Status: active modernization. The obsolete 2018 runtime has been removed from the active tree; its implementation remains preserved in Git history.
 
 ## Architecture
 
@@ -29,7 +29,7 @@ The modern core no longer requires the 2018 GIS helper stack:
 
 Web Mercator tile coverage and bbox handling are implemented in the modern TypeScript core without those runtime dependencies.
 
-The npm package also uses a strict `files` allowlist. Historical Objective-C/Java terrain generators, OBJ exporters, the old demo app, and the old `javascript/` entrypoint are kept in Git history/repository source but are not part of the modern published payload.
+The npm package uses a strict `files` allowlist, and CI rejects any reintroduction of the old Objective-C/Java terrain generators, OBJ exporters, demo app, or `javascript/` runtime into the published payload.
 
 ## Optional packages
 
@@ -43,7 +43,7 @@ A Nitro HybridView over the current Mapbox Maps SDK v11. It is optional so apps 
 
 `@mapbox/react-native-mapbox-ar-reactvision`
 
-Connects Mapbox coordinates/routes to ReactVision/Viro geospatial tracking and anchors without routing large terrain geometry through Viro.
+Connects Mapbox coordinates/routes to ReactVision/Viro geospatial tracking and anchors without routing large terrain geometry through Viro. It also exports `MapboxViroRoute`, which projects Mapbox route coordinates and renders bounded `ViroPolyline` chunks.
 
 ## Current rendering path
 
@@ -86,7 +86,7 @@ See [Migration guide](docs/MIGRATION.md).
 
 ## Legacy source
 
-The repository began as the Mapbox Augmented Reality SDK for React Native beta in 2018. The historical `javascript/`, `ios/RNMapboxAR/`, `android/rctmapboxar/`, and `RNMapboxARDemo/` trees remain available while migration history is preserved, but they are no longer intended to ship in the revived package.
+The repository began as the Mapbox Augmented Reality SDK for React Native beta in 2018. The obsolete React Native 0.50 / react-viro 2.x runtime and demo projects have been removed from the active tree. Their useful algorithms remain preserved in Git history and are mapped to modern replacements in [Legacy 2018 implementation](docs/LEGACY_2018.md).
 
 ## License
 

@@ -1,5 +1,7 @@
 # Migration from the 2018 SDK
 
+The removed 2018 implementation is still available through Git history; see [LEGACY_2018.md](LEGACY_2018.md) for the important historical commits and their modern replacements.
+
 ## Package/runtime
 
 Old:

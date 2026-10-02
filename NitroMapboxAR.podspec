@@ -15,8 +15,8 @@ Pod::Spec.new do |s|
     :tag => "#{s.version}"
   }
 
-  # Only the revived Nitro core is compiled. The historical Obj-C bridge remains
-  # in ios/RNMapboxAR until its migration PR removes it.
+  # Only the revived Nitro core is compiled. The historical Obj-C bridge was
+  # removed from the active tree and remains available through Git history.
   s.source_files = [
     "cpp/**/*.{h,hpp,c,cc,cpp}",
     "ios/Nitro/**/*.{h,hpp,m,mm,c,cc,cpp}"
