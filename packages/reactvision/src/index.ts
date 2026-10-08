@@ -28,6 +28,13 @@ export {
   type GeoProjector,
   type RouteProjectionOptions,
 } from './route'
+export {
+  cumulativeRouteLengthsM,
+  projectOntoRoute,
+  routeBearingAt,
+  type RouteProjection,
+  type RouteProjectionWindow,
+} from './routeMatch'
 export type {
   EnuFrame,
   EnuOffset,
