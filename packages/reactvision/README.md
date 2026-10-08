@@ -179,9 +179,43 @@ Do not feed a city-scale route to one giant `ViroPolyline`.
 overlap, keeping each native polyline bounded while preserving continuity.
 
 
-## XR capability normalization
+## Spatial host capabilities
 
-The adapter also exports XR capability helpers for phone, Quest, visionOS and
-web. Co-location is modeled as same-family only, gaze is normalized into a
-plain spatial ray, and Graphite on visionOS remains opt-in until the host has
-validated a compatible build.
+`getSpatialHostCapabilities(probe)` reads what the running host can do and
+returns `SpatialHostCapabilities`: `isImmersive`, `supportsGeospatialAnchors`,
+`supportsVps`, `supportsColocation`, `supportsGaze`, `isGraphiteAvailable`,
+`hasDeviceLocation`, `supportsPassthrough`, `supportsReplicatedState`. No field
+names a platform. `createViroSpatialHostProbe` fills the probe from Viro; the
+app supplies the two answers Viro has no query for, device location and
+Graphite:
+
+```ts
+import { isGraphiteWebGPUAvailable } from '@mikevocalz/nitro-mapbox-ar'
+import {
+  createViroSpatialHostProbe,
+  getSpatialHostCapabilities,
+} from '@mikevocalz/nitro-mapbox-ar-reactvision'
+
+const host = await getSpatialHostCapabilities(
+  createViroSpatialHostProbe({
+    navigator: arSceneNavigator,
+    hasDeviceLocation: hasGpsAndHeading,
+    isGraphiteAvailable: isGraphiteWebGPUAvailable,
+  }),
+)
+if (!host.supportsGeospatialAnchors) {
+  anchorRouteToTable()
+}
+```
+
+When `hasDeviceLocation` is `false` the geospatial query is never sent and
+both geospatial flags are `false`. A probe query that rejects makes
+`getSpatialHostCapabilities` reject with the query's name in the message.
+
+The Viro 3.0.3 symbol behind each probe field is listed in the JSDoc of
+`createViroSpatialHostProbe` (`src/createViroSpatialHostProbe.ts`).
+
+Co-location peers keep their platform as a string (`ColocationPeer.platform`).
+`canShareColocationFrame(a, b)` aligns phones with phones, Quest with Quest and
+visionOS with visionOS; web peers never align, and an unknown platform aligns
+only with peers reporting the same string.

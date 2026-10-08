@@ -70,17 +70,18 @@ export type {
   ViroQuaternion,
 } from './types'
 
+export { canShareColocationFrame } from './canShareColocationFrame'
+export type { ColocationPeer, ColocationPlatform } from './ColocationPeer'
+export { createSpatialContextSnapshot } from './createSpatialContextSnapshot'
 export {
-  canShareColocationFrame,
-  createSpatialContextSnapshot,
-  getColocationFamily,
-  normalizeReactVisionCapabilities,
-  type ColocationFamily,
-  type ReactVisionPlatform,
-  type ReactVisionRuntimeCapabilities,
-  type SpatialContextSnapshot,
-  type SpatialRay,
-} from './xr'
+  createViroSpatialHostProbe,
+  type ViroSpatialHostProbeOptions,
+} from './createViroSpatialHostProbe'
+export { getSpatialHostCapabilities } from './getSpatialHostCapabilities'
+export type { SpatialContextSnapshot } from './SpatialContextSnapshot'
+export type { SpatialHostCapabilities } from './SpatialHostCapabilities'
+export type { SpatialHostProbe } from './SpatialHostProbe'
+export type { SpatialRay } from './SpatialRay'
 export {
   extrudeBuildings,
   type BuildingMesh,
