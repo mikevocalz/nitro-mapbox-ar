@@ -13,9 +13,17 @@ export {
 export {
   latToTileY,
   lonToTileX,
+  tileBounds,
   tilesForBBox,
+  type TileBounds,
   type TileId,
 } from './mapbox/tiles'
+export {
+  MAPBOX_STREETS_V8,
+  MapboxVectorClient,
+  type MapboxVectorClientOptions,
+  type VectorTileResult,
+} from './mapbox/vector'
 export {
   getGraphiteWebGPUContext,
   isGraphiteWebGPUAvailable,
@@ -177,6 +185,16 @@ export {
   type RouteGeometryCoordinate,
   type RouteLegAnnotation,
   routeGeometryToCoordinates,
+  mapboxRouteLegs,
+  routeSteps,
+  type GeographicCoordinate,
+  type ManeuverModifier,
+  type ManeuverType,
+  type MapboxRouteStep,
+  type MapboxStepManeuver,
+  type NavigationManeuver,
+  type RouteLeg,
+  type RouteStep,
 } from './navigation/client'
 export {
   summarizeRouteTraffic,

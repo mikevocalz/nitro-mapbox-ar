@@ -48,11 +48,94 @@ export interface RouteLegAnnotation {
   readonly [key: string]: unknown
 }
 
+/**
+ * What a manoeuvre asks the traveller to do, using the Mapbox Directions API
+ * vocabulary. New values can appear; treat unknown ones like `turn`.
+ */
+export type ManeuverType =
+  | 'depart'
+  | 'arrive'
+  | 'turn'
+  | 'continue'
+  | 'new name'
+  | 'merge'
+  | 'on ramp'
+  | 'off ramp'
+  | 'fork'
+  | 'end of road'
+  | 'use lane'
+  | 'roundabout'
+  | 'rotary'
+  | 'roundabout turn'
+  | 'exit roundabout'
+  | 'exit rotary'
+  | 'notification'
+  | (string & {})
+
+/**
+ * The direction of a manoeuvre, relative to the direction of travel before it.
+ */
+export type ManeuverModifier =
+  | 'uturn'
+  | 'sharp right'
+  | 'right'
+  | 'slight right'
+  | 'straight'
+  | 'slight left'
+  | 'left'
+  | 'sharp left'
+
+/**
+ * The manoeuvre at the start of a {@linkcode MapboxRouteStep}, as the Mapbox
+ * Directions API sends it. {@linkcode mapboxRouteLegs} converts it to the
+ * provider-neutral `NavigationManeuver`.
+ *
+ * @see {@linkcode MapboxRouteStep.maneuver}
+ */
+export interface MapboxStepManeuver {
+  /** `[longitude, latitude]` of the manoeuvre. */
+  readonly location: readonly [longitude: number, latitude: number]
+  /** Clockwise degrees from true north before the manoeuvre, 0..359. */
+  readonly bearing_before: number
+  /** Clockwise degrees from true north after the manoeuvre, 0..359. */
+  readonly bearing_after: number
+  /** Human-readable instruction, in the request's `language`. */
+  readonly instruction: string
+  readonly type: ManeuverType
+  /** Absent for `depart`/`arrive` on some profiles. */
+  readonly modifier?: ManeuverModifier
+  /** Roundabout exit number, when `type` is a roundabout or rotary. */
+  readonly exit?: number
+  readonly [key: string]: unknown
+}
+
+/**
+ * One step of a {@linkcode NavigationRouteLeg} as the Mapbox Directions API
+ * sends it, present when the request set `steps: true` (see
+ * {@linkcode DirectionsOptions.steps}). {@linkcode mapboxRouteLegs} converts
+ * it to the provider-neutral `RouteStep`.
+ */
+export interface MapboxRouteStep {
+  /** Metres from this step's manoeuvre to the next one. */
+  readonly distance: number
+  /** Seconds from this step's manoeuvre to the next one. */
+  readonly duration: number
+  /** Street name the step travels along; may be empty. */
+  readonly name: string
+  /** Travel mode, for example `walking` or `driving`. */
+  readonly mode: string
+  readonly maneuver: MapboxStepManeuver
+  /** The step's GeoJSON geometry when `geometries=geojson`. */
+  readonly geometry?: unknown
+  readonly [key: string]: unknown
+}
+
 export interface NavigationRouteLeg {
   readonly distance: number
   readonly duration: number
   readonly annotation?: RouteLegAnnotation
-  readonly steps?: readonly unknown[]
+  /** Turn-by-turn steps; present when the request set `steps: true`. */
+  readonly steps?: readonly MapboxRouteStep[]
   readonly [key: string]: unknown
 }
 
@@ -287,3 +370,13 @@ export function routeGeometryToCoordinates(
     return { latitude: latitude!, longitude: longitude!, altitude }
   })
 }
+
+
+export {
+  mapboxRouteLegs,
+  routeSteps,
+  type GeographicCoordinate,
+  type NavigationManeuver,
+  type RouteLeg,
+  type RouteStep,
+} from './route'

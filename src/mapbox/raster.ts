@@ -1,3 +1,4 @@
+import { assertMapboxToken, tilePath } from './request'
 import type { TileId } from './tiles'
 
 export type RasterTileSize = 256 | 512
@@ -28,39 +29,6 @@ export type TerrainTileResult =
 
 const MAPBOX_V4 = 'https://api.mapbox.com/v4'
 
-function assertToken(token: string): string {
-  const value = token.trim()
-  if (value.length === 0) {
-    throw new Error('A Mapbox access token is required')
-  }
-  return value
-}
-
-function assertTile(tile: TileId): void {
-  if (!Number.isSafeInteger(tile.z) || tile.z < 0 || tile.z > 30) {
-    throw new RangeError('tile.z must be an integer between 0 and 30')
-  }
-
-  const extent = 2 ** tile.z
-  if (
-    !Number.isSafeInteger(tile.x) ||
-    !Number.isSafeInteger(tile.y) ||
-    tile.x < 0 ||
-    tile.y < 0 ||
-    tile.x >= extent ||
-    tile.y >= extent
-  ) {
-    throw new RangeError(
-      `tile x/y must be within [0, ${extent - 1}] for zoom ${tile.z}`,
-    )
-  }
-}
-
-function tilePath(tile: TileId): string {
-  assertTile(tile)
-  return `${tile.z}/${tile.x}/${tile.y}`
-}
-
 function scaleSuffix(tileSize: RasterTileSize): string {
   return tileSize === 512 ? '@2x' : ''
 }
@@ -84,7 +52,7 @@ export class MapboxRasterClient {
   readonly #inflight = new Map<string, Promise<MapboxTileBytes>>()
 
   constructor(options: MapboxRasterClientOptions) {
-    this.#accessToken = assertToken(options.accessToken)
+    this.#accessToken = assertMapboxToken(options.accessToken)
     this.#fetch = options.fetchImpl ?? globalThis.fetch
 
     if (!this.#fetch) {
@@ -178,6 +146,30 @@ export class MapboxRasterClient {
         contentType: response.headers.get('content-type'),
       },
     }
+  }
+
+  /**
+   * The URL of a Mapbox Satellite tile, access token included, for image
+   * loaders that fetch by URI (a Viro material's `diffuseTexture`, an
+   * `<Image>`). {@linkcode MapboxRasterClient.fetchSatellite} requests the
+   * same URL.
+   *
+   * @throws {RangeError} When the tile is outside its zoom's grid.
+   */
+  satelliteTileUrl(
+    tile: TileId,
+    options: {
+      /** @default 512 */
+      tileSize?: RasterTileSize
+      /** @default 'webp' */
+      format?: SatelliteFormat
+    } = {},
+  ): string {
+    return this.#satelliteUrl(
+      tile,
+      options.tileSize ?? 512,
+      options.format ?? 'webp',
+    )
   }
 
   fetchSatellite(

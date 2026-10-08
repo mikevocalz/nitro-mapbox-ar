@@ -225,3 +225,51 @@ export function solveEnuPlacement(input: EnuPlacementInput): EnuPlacement {
     rotation: [0, yawDeg, 0],
   }
 }
+
+/**
+ * Inverse of {@linkcode projectToEnu}: the WGS84 position of an ENU offset
+ * from `origin` (ENU to ECEF to geodetic, Bowring's method with two
+ * refinements). Round-trips with `projectToEnu` to well under a millimetre at
+ * city scale.
+ *
+ * Use it to turn a point in a street scene (where the wearer stands) back
+ * into a coordinate for a Directions request.
+ *
+ * @throws {RangeError} When the origin is invalid or the offset is not finite.
+ */
+export function unprojectFromEnu(
+  origin: EnuOrigin,
+  offset: Pick<EnuOffset, 'eastM' | 'northM' | 'upM'>,
+): GeoCoordinate & { readonly altitude: number } {
+  validateOrigin(origin)
+  if (![offset.eastM, offset.northM, offset.upM].every(Number.isFinite)) {
+    throw new RangeError('offset east/north/up must be finite')
+  }
+  const [x0, y0, z0] = toEcef(origin.latitude, origin.longitude, origin.altitude)
+  const lat0 = toRadians(origin.latitude)
+  const lon0 = toRadians(origin.longitude)
+  const sinLat = Math.sin(lat0)
+  const cosLat = Math.cos(lat0)
+  const sinLon = Math.sin(lon0)
+  const cosLon = Math.cos(lon0)
+  const { eastM: e, northM: n, upM: u } = offset
+  const x = x0 - sinLon * e - sinLat * cosLon * n + cosLat * cosLon * u
+  const y = y0 + cosLon * e - sinLat * sinLon * n + cosLat * sinLon * u
+  const z = z0 + cosLat * n + sinLat * u
+
+  const p = Math.hypot(x, y)
+  const longitude = Math.atan2(y, x)
+  let latitude = Math.atan2(z, p * (1 - ECCENTRICITY_SQUARED))
+  let altitude = 0
+  for (let i = 0; i < 3; i += 1) {
+    const sin = Math.sin(latitude)
+    const radius = SEMI_MAJOR_AXIS_M / Math.sqrt(1 - ECCENTRICITY_SQUARED * sin * sin)
+    altitude = p / Math.cos(latitude) - radius
+    latitude = Math.atan2(z, p * (1 - (ECCENTRICITY_SQUARED * radius) / (radius + altitude)))
+  }
+  return {
+    latitude: (latitude * 180) / Math.PI,
+    longitude: (longitude * 180) / Math.PI,
+    altitude,
+  }
+}

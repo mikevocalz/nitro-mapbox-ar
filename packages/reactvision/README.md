@@ -80,6 +80,51 @@ Pass `materials` or `materialName` to use an existing Viro material instead
 of the component's automatically managed constant-color material. Use
 `polylineProps` for shared Viro interaction/rendering props.
 
+## Buildings and ground imagery
+
+`extrudeBuildings(bytes, tile, origin, options)` reads the `building` layer of a
+Mapbox Streets v8 vector tile and returns one mesh in the Viro axes of `origin`:
+roofs, walls and (for raised parts) undersides, wound for back-face culling.
+Heights come from `height` and `min_height`; parts with no height use
+`defaultHeightM` (12 m) and are counted in `estimatedHeightCount` so the UI can
+say so. Footprints are clipped to the tile, and the walls the clip creates are
+dropped, so neighbouring tiles meet without overlap.
+
+```tsx
+import { MapboxVectorClient, MapboxRasterClient } from '@mapbox/react-native-mapbox-ar/mapbox'
+import {
+  MapboxViroBuildings,
+  MapboxViroGround,
+  extrudeBuildings,
+  tilesAroundEnuPoint,
+} from '@mapbox/react-native-mapbox-ar-reactvision'
+
+const vector = new MapboxVectorClient({ accessToken })
+const raster = new MapboxRasterClient({ accessToken })
+
+const tiles = tilesAroundEnuPoint(origin, { eastM: 0, northM: 0 }, 400, 16)
+const result = await vector.fetchVectorTile(tiles[0])
+const mesh = result.kind === 'tile' ? extrudeBuildings(result.bytes, tiles[0], origin) : null
+
+<ViroAmbientLight color="#ffffff" intensity={300} />
+<ViroDirectionalLight color="#ffffff" direction={[-0.4, -1, -0.3]} />
+<MapboxViroGround
+  origin={origin}
+  tiles={tilesAroundEnuPoint(origin, { eastM: 0, northM: 0 }, 400, 17)}
+  tileUrl={(tile) => raster.satelliteTileUrl(tile, { format: 'jpg90' })}
+/>
+{mesh ? <MapboxViroBuildings mesh={mesh} /> : null}
+```
+
+`MapboxViroBuildings` draws one `ViroGeometry` per tile with a Lambert
+material, so the scene needs lights. `MapboxViroGround` lays one `ViroQuad`
+per raster tile with north up; Viro's image loader fetches and caches the URL.
+
+Measured on a MacBook (Node, not Hermes) with the six z16 tiles within 400 m
+of the Apollo Theater: 1,841 building parts, 74,073 vertices, 41,010
+triangles, 33 ms to extrude all six. Every part in those tiles carried a
+height. Headset timings are not measured yet.
+
 ## What it deliberately does not do
 
 It does **not** upload Mapbox terrain meshes through `ViroGeometry`.
