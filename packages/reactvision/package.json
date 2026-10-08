@@ -13,9 +13,9 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "peerDependencies": {
-    "@reactvision/react-viro": "^3.0.2",
+    "@reactvision/react-viro": ">=3.0.2-0 <4.0.0",
     "react": ">=19.0.0",
-    "react-native": ">=0.86.0 <0.87.0"
+    "react-native": ">=0.86.0 <0.89.0"
   },
   "devDependencies": {
     "@reactvision/react-viro": "3.0.2",

@@ -224,3 +224,66 @@ export class MapboxNavigationClient {
     return value
   }
 }
+
+/**
+ * A WGS84 position on a {@linkcode NavigationRoute}'s geometry. Structurally
+ * matches `GeoCoordinate` in `@mapbox/react-native-mapbox-ar-reactvision`, so
+ * the result of {@linkcode routeGeometryToCoordinates} can go straight to its
+ * route projection helpers.
+ */
+export interface RouteGeometryCoordinate extends NavigationCoordinate {
+  /** Altitude in metres when the geometry carries a third position value. */
+  readonly altitude?: number
+}
+
+/**
+ * Reads a route's GeoJSON `LineString` geometry, which is `[lng, lat]`
+ * ordered, into `{ latitude, longitude }` coordinates.
+ *
+ * {@linkcode MapboxNavigationClient.directions} and
+ * {@linkcode MapboxNavigationClient.mapMatch} always request
+ * `geometries=geojson`, so their routes are accepted as-is.
+ *
+ * @throws {TypeError} When the geometry is missing, an encoded polyline, or
+ * not a `LineString` of numeric positions.
+ * @throws {RangeError} When a position is outside WGS84 bounds.
+ */
+export function routeGeometryToCoordinates(
+  route: NavigationRoute,
+): RouteGeometryCoordinate[] {
+  const geometry = route.geometry
+  if (typeof geometry === 'string') {
+    throw new TypeError(
+      'Route geometry is an encoded polyline; request geometries=geojson',
+    )
+  }
+  if (
+    typeof geometry !== 'object' ||
+    geometry === null ||
+    (geometry as { type?: unknown }).type !== 'LineString' ||
+    !Array.isArray((geometry as { coordinates?: unknown }).coordinates)
+  ) {
+    throw new TypeError('Route geometry must be a GeoJSON LineString')
+  }
+
+  const positions = (geometry as { coordinates: unknown[] }).coordinates
+  return positions.map((position) => {
+    if (
+      !Array.isArray(position) ||
+      position.length < 2 ||
+      !position.every((value) => typeof value === 'number')
+    ) {
+      throw new TypeError('LineString positions must be [lng, lat] number arrays')
+    }
+    const [longitude, latitude, altitude] = position as number[]
+    // Validates finiteness and WGS84 bounds.
+    coordinate({ longitude: longitude!, latitude: latitude! })
+    if (altitude === undefined) {
+      return { latitude: latitude!, longitude: longitude! }
+    }
+    if (!Number.isFinite(altitude)) {
+      throw new RangeError('LineString altitude must be finite')
+    }
+    return { latitude: latitude!, longitude: longitude!, altitude }
+  })
+}

@@ -174,7 +174,9 @@ export {
   type NavigationProfile,
   type NavigationRoute,
   type NavigationRouteLeg,
+  type RouteGeometryCoordinate,
   type RouteLegAnnotation,
+  routeGeometryToCoordinates,
 } from './navigation/client'
 export {
   summarizeRouteTraffic,
