@@ -50,13 +50,18 @@ export function MapboxViroBuildings({
     [reactId],
   )
   const ownsMaterial = materials === undefined
+  // The geometry mounts only once its owned material exists, so it never
+  // references an unregistered material name.
+  const [ownedMaterialReady, setOwnedMaterialReady] = React.useState(false)
 
   React.useEffect(() => {
     if (!ownsMaterial) return
     ViroMaterials.createMaterials({
       [generatedMaterialName]: { diffuseColor: color, lightingModel: 'Lambert' },
     })
+    setOwnedMaterialReady(true)
     return () => {
+      setOwnedMaterialReady(false)
       ViroMaterials.deleteMaterials([generatedMaterialName])
     }
   }, [color, generatedMaterialName, ownsMaterial])
@@ -81,7 +86,7 @@ export function MapboxViroBuildings({
     return { vertices, normals, texcoords, triangleIndices }
   }, [mesh])
 
-  if (mesh.indices.length === 0) return null
+  if (mesh.indices.length === 0 || (ownsMaterial && !ownedMaterialReady)) return null
 
   return (
     <ViroGeometry

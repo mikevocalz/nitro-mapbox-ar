@@ -69,7 +69,7 @@ test('readVectorTileLayer reads one layer and its typed properties', () => {
         {
           id: 7,
           type: 3,
-          properties: { height: 21.5, min_height: 3, extrude: 'true', type: 'apartments', flag: true, delta: -4 },
+          properties: { height: 21.5, min_height: 3, extrude: 'true', type: 'apartments', flag: true, delta: -4, depth: -2048 },
           rings: [exteriorRect(10, 10, 20, 30)],
         },
       ],
@@ -89,6 +89,7 @@ test('readVectorTileLayer reads one layer and its typed properties', () => {
     type: 'apartments',
     flag: true,
     delta: -4,
+    depth: -2048,
   })
   assert.deepEqual(feature!.geometry, [[10, 10, 20, 10, 20, 30, 10, 30]])
   assert.equal(readVectorTileLayer(bytes, 'poi_label'), undefined)

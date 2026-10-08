@@ -61,6 +61,10 @@ function encodeValue(value: TestValue): number[] {
   } else if (Number.isInteger(value) && value >= 0) {
     field(out, 5, 0)
     varint(out, value)
+  } else if (Number.isInteger(value) && value <= -1000) {
+    // int_value: two's complement 64-bit, ten varint bytes.
+    field(out, 4, 0)
+    varint(out, 2 ** 64 + value)
   } else if (Number.isInteger(value)) {
     field(out, 6, 0)
     varint(out, zz(value))

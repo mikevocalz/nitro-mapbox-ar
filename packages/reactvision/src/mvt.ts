@@ -143,7 +143,11 @@ function readValue(reader: Reader): VectorTileValue | undefined {
     } else if (field === 3 && wireType === 1) {
       value = reader.view().getFloat64(reader.pos, true)
       reader.pos += 8
-    } else if ((field === 4 || field === 5) && wireType === 0) value = reader.varint()
+    } else if (field === 4 && wireType === 0) {
+      // int64: negative values arrive as 10-byte two's complement varints.
+      const raw = reader.varint()
+      value = raw >= 2 ** 63 ? raw - 2 ** 64 : raw
+    } else if (field === 5 && wireType === 0) value = reader.varint()
     else if (field === 6 && wireType === 0) value = zigzag(reader.varint())
     else if (field === 7 && wireType === 0) value = reader.varint() !== 0
     else reader.skip(wireType)
