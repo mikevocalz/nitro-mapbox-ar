@@ -4,6 +4,25 @@ export {
   type MapboxViroRouteProps,
 } from './MapboxViroRoute'
 export {
+  MapboxViroChevrons,
+  type MapboxViroChevronsProps,
+} from './MapboxViroChevrons'
+export {
+  layoutRouteChevrons,
+  type RouteChevron,
+  type RouteChevronLayoutOptions,
+} from './chevrons'
+export {
+  cameraYawDeg,
+  slewPlacement,
+  solveCompassPlacement,
+  type CompassPlacement,
+  type CompassPlacementConfidence,
+  type CompassPlacementInput,
+  type PlacementSlewInput,
+  type PlacementSlewStep,
+} from './compassPlacement'
+export {
   createReactVisionSpatialBridge,
   type ReactVisionSpatialBridge,
 } from './bridge'
@@ -29,6 +48,13 @@ export {
   type GeoProjector,
   type RouteProjectionOptions,
 } from './route'
+export {
+  cumulativeRouteLengthsM,
+  projectOntoRoute,
+  routeBearingAt,
+  type RouteProjection,
+  type RouteProjectionWindow,
+} from './routeMatch'
 export type {
   EnuFrame,
   EnuOffset,
