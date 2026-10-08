@@ -17,6 +17,51 @@ export interface GeoCoordinate {
   readonly altitude?: number
 }
 
+/**
+ * The named WGS84 point an {@linkcode EnuOffset} is measured from. Matches the
+ * frame shape of `EnuOffset` in `@viro-external/xr-contract`.
+ *
+ * @see {@linkcode EnuOrigin.frame}
+ */
+export type EnuFrame =
+  | { readonly kind: 'place'; readonly placeId: string }
+  | { readonly kind: 'route-start'; readonly routeId: string }
+
+/**
+ * A fixed WGS84 origin for local East-North-Up projection. Content projected
+ * from it stays put while the camera moves; only the origin's placement in the
+ * AR world needs updating.
+ *
+ * @see `projectToEnu` in `enu.ts`
+ */
+export interface EnuOrigin {
+  /** Which place or route this origin belongs to. */
+  readonly frame: EnuFrame
+  /** Latitude in degrees. */
+  readonly latitude: number
+  /** Longitude in degrees. */
+  readonly longitude: number
+  /** Metres above the WGS84 ellipsoid (what ARCore Geospatial reports). */
+  readonly altitude: number
+}
+
+/**
+ * Local East-North-Up offset in metres from an {@linkcode EnuOrigin}.
+ * Structurally identical to `EnuOffset` in `@viro-external/xr-contract`.
+ *
+ * @see `projectToEnu` in `enu.ts`
+ */
+export interface EnuOffset {
+  /** The origin frame the offset is measured in. */
+  readonly frame: EnuFrame
+  /** Metres east of the origin. */
+  readonly eastM: number
+  /** Metres north of the origin. */
+  readonly northM: number
+  /** Metres above the origin's tangent plane. */
+  readonly upM: number
+}
+
 export interface GeospatialAnchor {
   readonly anchorId: string
   readonly position: [number, number, number]
