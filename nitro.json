@@ -1,0 +1,35 @@
+{
+  "$schema": "https://nitro.margelo.com/nitro.schema.json",
+  "cxxNamespace": ["mapboxar"],
+  "ios": {
+    "iosModuleName": "NitroMapboxAR"
+  },
+  "android": {
+    "androidNamespace": ["mapboxar"],
+    "androidCxxLibName": "NitroMapboxAR"
+  },
+  "autolinking": {
+    "MapboxAR": {
+      "ios": {
+        "language": "c++",
+        "implementationClassName": "HybridMapboxAR"
+      },
+      "android": {
+        "language": "c++",
+        "implementationClassName": "HybridMapboxAR"
+      }
+    }
+  },
+  "ignorePaths": [
+    "**/node_modules",
+    "**/lib",
+    "build",
+    "examples",
+    "packages",
+    "prompts",
+    "skills",
+    "tests",
+    "tooling"
+  ],
+  "gitAttributesGeneratedFlag": false
+}

@@ -18,7 +18,7 @@ for (const value of forbidden) {
 }
 
 for (const required of [
-  './native/MapboxARCore.web',
+  './native/MapboxAR.web',
   './search/client',
   './navigation/client',
   './agent/runtime',

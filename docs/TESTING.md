@@ -30,7 +30,7 @@ Before removing the legacy decoder, the device suite must verify:
 - a real `.pngraw` fixture;
 - fully-ocean 404 behavior;
 - exact or epsilon-bounded parity between the TypeGPU result and
-  `MapboxARCore.decodeTerrainRgb()`.
+  `MapboxAR.decodeTerrainRgb()`.
 
 No color-space transform, interpolation, premultiplication, or filtering is
 allowed on the Terrain-RGB source texture.
