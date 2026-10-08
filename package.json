@@ -28,24 +28,26 @@
     "url": "https://github.com/mikevocalz/nitro-mapbox-ar.git"
   },
   "engines": {
-    "node": ">=22.11.0"
+    "node": ">=22.13.0"
   },
   "peerDependencies": {
     "@shopify/react-native-skia": ">=2.12.0-0",
     "react": ">=19.0.0",
     "react-native": ">=0.86.0",
     "react-native-nitro-modules": "^0.37.1",
-    "react-native-webgpu": "^0.10.0",
-    "typegpu": "^0.12.6"
+    "react-native-webgpu": ">=0.13.0",
+    "typegpu": "^0.12.7",
+    "react-native-worklets": ">=0.7.2",
+    "react-native-reanimated": ">=4.2.1"
   },
   "author": "Mike W. Allen (https://github.com/mikevocalz)",
   "license": "MIT",
   "devDependencies": {
-    "@shopify/react-native-skia": "2.13.1",
+    "@shopify/react-native-skia": "2.14.0",
     "react-native-nitro-modules": "0.37.1",
-    "react-native-webgpu": "0.10.4",
-    "typegpu": "0.12.6",
-    "unplugin-typegpu": "0.12.4",
+    "react-native-webgpu": "0.13.0",
+    "typegpu": "0.12.7",
+    "unplugin-typegpu": "0.12.5",
     "typescript": "7.0.2"
   },
   "workspaces": [
@@ -103,6 +105,12 @@
       "optional": true
     },
     "typegpu": {
+      "optional": true
+    },
+    "react-native-worklets": {
+      "optional": true
+    },
+    "react-native-reanimated": {
       "optional": true
     }
   },

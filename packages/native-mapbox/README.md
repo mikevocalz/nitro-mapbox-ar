@@ -8,8 +8,8 @@ or Viro/ReactVision XR do not need to ship the native Mapbox Maps SDK.
 
 ## Current native SDK baseline
 
-- Android Maps SDK: **11.31.1**
-- iOS Maps SDK binary: **11.31.1**
+- Android Maps SDK: **11.32.0**
+- iOS Maps SDK binary: **11.32.0**
 - Nitro Modules / Nitrogen: **0.37.1**
 - Android uses the `android-ndk27` Mapbox artifact for 16 KB page-size support.
 
