@@ -21,7 +21,9 @@ export {
 } from './geo'
 export {
   chunkWorldRoute,
+  pointAlongRoute,
   projectRouteToWorld,
+  routeLengthM,
   type GeoProjector,
   type RouteProjectionOptions,
 } from './route'

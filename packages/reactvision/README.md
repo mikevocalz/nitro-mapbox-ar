@@ -103,9 +103,18 @@ to 3.0.3 declares:
 - Expo `>=57.0.0 <58.0.0`;
 - optional visionOS support through `@reactvision/react-native-visionos`.
 
-That means a reference/demo app should stay on Expo 57 / RN 0.86 until
-ReactVision widens its tested peer range. The core Nitro Mapbox AR package is
-not forced to the same upper bound.
+This adapter imports no React Native API, only five Viro exports
+(`ViroGeospatialPose`, `ViroQuaternion`, `ViroMaterials`, `ViroNode`,
+`ViroPolyline`). Its own peer range is therefore wider than ReactVision's:
+`react-native >=0.86.0 <0.89.0` and `@reactvision/react-viro >=3.0.2-0 <4.0.0`,
+which admits Viro forks published as 3.0.x prereleases on RN 0.88 / Expo 58.
+The reference/demo app stays on the versions ReactVision itself declares.
+
+## Route playhead
+
+`routeLengthM(points)` and `pointAlongRoute(points, distanceM)` work on the
+metre-space points from `projectRouteToEnu`, so a scrubber can move a marker
+along a projected route without re-projecting anything.
 
 ## Anchors vs projected route points
 
