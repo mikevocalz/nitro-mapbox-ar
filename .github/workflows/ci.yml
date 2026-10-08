@@ -29,6 +29,9 @@ jobs:
       - name: Generate Nitro native-map bindings
         run: npm run codegen:native-map
 
+      - name: Committed Nitrogen output matches the specs
+        run: git diff --exit-code -- packages/native-mapbox/nitrogen
+
       - name: Typecheck core
         run: npm run typecheck
 
