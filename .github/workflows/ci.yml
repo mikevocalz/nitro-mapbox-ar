@@ -47,6 +47,18 @@ jobs:
       - name: Typecheck agent MCP helpers
         run: npm run typecheck:agent-mcp
 
+      - name: Typecheck Specs adapter
+        run: npm run typecheck:specs
+
+      - name: Build the core entry (bob)
+        run: npm run build
+
+      - name: Core entry imports no React Native, Nitro, Skia or WebGPU
+        run: npm run check:core-imports
+
+      - name: Lens Studio example compiles against dist/core
+        run: npm run typecheck:specs-lens
+
       - name: TypeScript unit tests
         run: npm test
 

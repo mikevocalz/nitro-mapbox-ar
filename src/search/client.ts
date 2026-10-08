@@ -1,3 +1,6 @@
+import type { FetchLike, FetchLikeResponse } from '../navigation/client'
+import { defaultFetch, requestInit } from '../core/transport'
+
 export interface LngLat {
   readonly longitude: number
   readonly latitude: number
@@ -31,9 +34,18 @@ export interface SearchFeatureCollection {
   readonly response_id?: string
 }
 
+/**
+ * Constructor options for {@linkcode MapboxSearchClient}.
+ */
 export interface MapboxSearchClientOptions {
+  /** Mapbox access token. Empty or blank throws. */
   readonly accessToken: string
-  readonly fetchImpl?: typeof fetch
+  /**
+   * HTTP transport. Required on hosts without `globalThis.fetch`, such as
+   * Lens Studio.
+   * @default globalThis.fetch
+   */
+  readonly fetchImpl?: FetchLike
 }
 
 export interface SuggestOptions {
@@ -117,14 +129,19 @@ function addLimit(params: URLSearchParams, limit: number | undefined): void {
   params.set('limit', String(limit))
 }
 
+/**
+ * Search Box and Geocoding over HTTP.
+ *
+ * @throws {Error} From the constructor when the token is blank, or when no
+ * `fetchImpl` is given and the host has no `globalThis.fetch`.
+ */
 export class MapboxSearchClient {
   readonly #accessToken: string
-  readonly #fetch: typeof fetch
+  readonly #fetch: FetchLike
 
   constructor(options: MapboxSearchClientOptions) {
     this.#accessToken = token(options.accessToken)
-    this.#fetch = options.fetchImpl ?? globalThis.fetch
-    if (!this.#fetch) throw new Error('No fetch implementation is available')
+    this.#fetch = defaultFetch(options.fetchImpl)
   }
 
   async suggest(query: string, options: SuggestOptions): Promise<readonly SearchSuggestion[]> {
@@ -143,9 +160,10 @@ export class MapboxSearchClient {
     addList(params, 'types', options.types)
     addList(params, 'poi_category', options.poiCategories)
 
-    const response = await this.#fetch(`${SEARCH_BOX}/suggest?${params}`, {
-      signal: options.signal,
-    })
+    const response = await this.#fetch(
+      `${SEARCH_BOX}/suggest?${params}`,
+      ...requestInit(options.signal),
+    )
     const data = await this.#json(response, 'Search Box suggest')
     const suggestions = (data as { suggestions?: SearchSuggestion[] }).suggestions
     return suggestions ?? []
@@ -216,11 +234,11 @@ export class MapboxSearchClient {
     label: string,
     signal?: AbortSignal,
   ): Promise<SearchFeatureCollection> {
-    const response = await this.#fetch(url, { signal })
+    const response = await this.#fetch(url, ...requestInit(signal))
     return (await this.#json(response, label)) as SearchFeatureCollection
   }
 
-  async #json(response: Response, label: string): Promise<unknown> {
+  async #json(response: FetchLikeResponse, label: string): Promise<unknown> {
     if (!response.ok) {
       throw new Error(`${label} failed with HTTP ${response.status}`)
     }

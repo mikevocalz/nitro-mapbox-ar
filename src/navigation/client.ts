@@ -165,9 +165,77 @@ export interface MapMatchingResponse {
   readonly [key: string]: unknown
 }
 
+/**
+ * The response members {@linkcode MapboxNavigationClient} and
+ * `MapboxSearchClient` read from a {@linkcode FetchLike} call. A
+ * WHATWG `Response` satisfies it.
+ */
+export interface FetchLikeResponse {
+  /** `true` for HTTP 2xx. */
+  readonly ok: boolean
+  /** HTTP status code. */
+  readonly status: number
+  /** Parses the body as JSON. */
+  json(): Promise<unknown>
+}
+
+/**
+ * The request options the clients pass to a {@linkcode FetchLike}.
+ *
+ * @see {@linkcode FetchLike}
+ */
+export interface FetchLikeInit {
+  /**
+   * Cancels the request when aborted. Present only when the caller passed a
+   * signal, so hosts without `AbortSignal` never receive one.
+   */
+  readonly signal?: AbortSignal
+}
+
+/**
+ * The HTTP transport {@linkcode MapboxNavigationClient} and
+ * `MapboxSearchClient` need. Pass it as `fetchImpl` when the host
+ * has no global `fetch`, or when its `fetch` comes from a module, as in Lens
+ * Studio. `globalThis.fetch` satisfies it.
+ *
+ * The URL carries the Mapbox access token in its `access_token` query
+ * parameter. Do not log it.
+ *
+ * @param url Absolute HTTPS URL.
+ * @param init Request options; omitted when the caller passed no signal.
+ */
+export type FetchLike = (
+  url: string,
+  init?: FetchLikeInit,
+) => Promise<FetchLikeResponse>
+
+/**
+ * Constructor options for {@linkcode MapboxNavigationClient}.
+ */
 export interface MapboxNavigationClientOptions {
+  /** Mapbox access token. Empty or blank throws. */
   readonly accessToken: string
-  readonly fetchImpl?: typeof fetch
+  /**
+   * HTTP transport. Required on hosts without `globalThis.fetch`, such as
+   * Lens Studio.
+   * @default globalThis.fetch
+   */
+  readonly fetchImpl?: FetchLike
+}
+
+/**
+ * A Directions API response together with the URL that produced it, from
+ * {@linkcode MapboxNavigationClient.directionsWithRequestUrl}.
+ */
+export interface DirectionsResult {
+  /** The parsed Directions API response; `code` is always `Ok`. */
+  readonly response: DirectionsResponse
+  /**
+   * The request URL, including the `access_token` query parameter. It carries
+   * the access token: never log it or send it anywhere the token should not
+   * go.
+   */
+  readonly requestUrl: string
 }
 
 const DIRECTIONS = 'https://api.mapbox.com/directions/v5/mapbox'
@@ -202,6 +270,15 @@ function coordinatePath(values: readonly NavigationCoordinate[]): string {
   return values.map(coordinate).join(';')
 }
 
+function resolveFetch(fetchImpl: FetchLike | undefined): FetchLike {
+  if (fetchImpl) return fetchImpl
+  const global = (globalThis as { fetch?: FetchLike }).fetch
+  if (!global) {
+    throw new Error('No fetch implementation is available; pass fetchImpl')
+  }
+  return global
+}
+
 function profile(value: NavigationProfile | undefined): NavigationProfile {
   return value ?? 'driving-traffic'
 }
@@ -220,20 +297,65 @@ function defaultAnnotations(value: NavigationProfile): readonly DirectionsAnnota
   return ['distance', 'duration', 'speed']
 }
 
+/**
+ * Directions and Map Matching over HTTP.
+ *
+ * @throws {Error} From the constructor when the token is blank, or when no
+ * `fetchImpl` is given and the host has no `globalThis.fetch`.
+ */
 export class MapboxNavigationClient {
   readonly #token: string
-  readonly #fetch: typeof fetch
+  readonly #fetch: FetchLike
 
   constructor(options: MapboxNavigationClientOptions) {
     this.#token = accessToken(options.accessToken)
-    this.#fetch = options.fetchImpl ?? globalThis.fetch
-    if (!this.#fetch) throw new Error('No fetch implementation is available')
+    this.#fetch = resolveFetch(options.fetchImpl)
   }
 
+  /**
+   * Requests routes from the Directions API.
+   *
+   * @throws {RangeError} For fewer than 2 or more than 25 coordinates, or a
+   * coordinate outside WGS84 bounds.
+   * @throws {Error} On a non-2xx status or a response `code` other than `Ok`.
+   */
   directions(
     coordinates: readonly NavigationCoordinate[],
     options: DirectionsOptions = {},
   ): Promise<DirectionsResponse> {
+    return this.directionsWithRequestUrl(coordinates, options).then(
+      (result) => result.response,
+    )
+  }
+
+  /**
+   * Same request as {@linkcode MapboxNavigationClient.directions}, and also
+   * returns the request URL, for consumers that hand both the response and
+   * the URL that produced it to another router.
+   *
+   * The returned {@linkcode DirectionsResult.requestUrl} contains the access
+   * token. Never log it.
+   *
+   * @throws {RangeError} Under the same conditions as
+   * {@linkcode MapboxNavigationClient.directions}.
+   * @throws {Error} On a non-2xx status or a response `code` other than `Ok`.
+   */
+  directionsWithRequestUrl(
+    coordinates: readonly NavigationCoordinate[],
+    options: DirectionsOptions = {},
+  ): Promise<DirectionsResult> {
+    const requestUrl = this.#directionsUrl(coordinates, options)
+    return this.#json<DirectionsResponse>(
+      requestUrl,
+      'Directions API',
+      options.signal,
+    ).then((response) => ({ response, requestUrl }))
+  }
+
+  #directionsUrl(
+    coordinates: readonly NavigationCoordinate[],
+    options: DirectionsOptions,
+  ): string {
     const selectedProfile = profile(options.profile)
     const params = new URLSearchParams({
       access_token: this.#token,
@@ -250,11 +372,7 @@ export class MapboxNavigationClient {
       params.set('continue_straight', String(options.continueStraight))
     }
 
-    return this.#json<DirectionsResponse>(
-      `${DIRECTIONS}/${selectedProfile}/${coordinatePath(coordinates)}?${params}`,
-      'Directions API',
-      options.signal,
-    )
+    return `${DIRECTIONS}/${selectedProfile}/${coordinatePath(coordinates)}?${params}`
   }
 
   mapMatch(
@@ -295,7 +413,7 @@ export class MapboxNavigationClient {
   }
 
   async #json<T>(url: string, label: string, signal?: AbortSignal): Promise<T> {
-    const response = await this.#fetch(url, { signal })
+    const response = await (signal ? this.#fetch(url, { signal }) : this.#fetch(url))
     if (!response.ok) {
       throw new Error(`${label} failed with HTTP ${response.status}`)
     }

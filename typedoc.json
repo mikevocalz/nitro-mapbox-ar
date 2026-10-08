@@ -2,8 +2,20 @@
   "$schema": "https://typedoc.org/schema.json",
   "name": "nitro-mapbox-ar",
   "entryPointStrategy": "packages",
-  "entryPoints": [".", "packages/native-mapbox", "packages/reactvision", "packages/agent-mcp"],
+  "entryPoints": [
+    ".",
+    "packages/native-mapbox",
+    "packages/reactvision",
+    "packages/agent-mcp",
+    "packages/specs"
+  ],
   "out": "build/api",
   "treatWarningsAsErrors": true,
-  "excludePrivate": true
+  "excludePrivate": true,
+  "externalSymbolLinkMappings": {
+    "@mikevocalz/nitro-mapbox-ar": {
+      "NavigationRoute": "https://github.com/mikevocalz/nitro-mapbox-ar/blob/master/src/navigation/client.ts",
+      "NavigationProgressSnapshot": "https://github.com/mikevocalz/nitro-mapbox-ar/blob/master/src/navigation/contracts.ts"
+    }
+  }
 }

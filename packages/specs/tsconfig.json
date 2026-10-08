@@ -6,13 +6,11 @@
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
-    "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true,
     "paths": {
       "@mikevocalz/nitro-mapbox-ar/core": [
-        "./src/core/index.ts"
+        "../../src/core/index.ts"
       ]
     }
   },

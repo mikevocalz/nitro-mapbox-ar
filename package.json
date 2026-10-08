@@ -16,12 +16,17 @@
     "check:package-surface": "node scripts/check-package-surface.mjs",
     "typecheck:agent-mcp": "npm run typecheck --workspace @mikevocalz/nitro-mapbox-ar-agent-mcp",
     "check:web-surface": "node scripts/check-web-surface.mjs",
-    "check:all": "npm run typecheck && npm test && npm run test:cpp && npm run typecheck:native-map && npm run typecheck:reactvision && npm run typecheck:agent-mcp && npm run check:package-surface && npm run check:web-surface && npm run lint && npm run check:nitrogen && npm run check:pack && npm run docs",
+    "check:all": "npm run typecheck && npm test && npm run test:cpp && npm run typecheck:native-map && npm run typecheck:reactvision && npm run typecheck:agent-mcp && npm run typecheck:specs && npm run build && npm run check:core-imports && npm run typecheck:specs-lens && npm run check:package-surface && npm run check:web-surface && npm run lint && npm run check:nitrogen && npm run check:pack && npm run docs",
     "lint": "tooling/lint/node_modules/.bin/eslint .",
     "docs": "tooling/docs/node_modules/.bin/typedoc",
     "tooling:install": "npm ci --prefix tooling/lint --no-audit --no-fund && npm ci --prefix tooling/docs --no-audit --no-fund",
     "check:nitrogen": "node scripts/check-nitrogen.mjs",
-    "check:pack": "node scripts/check-pack.mjs"
+    "check:pack": "node scripts/check-pack.mjs",
+    "build": "bob build",
+    "check:core-imports": "node scripts/check-core-imports.mjs",
+    "typecheck:specs": "npm run typecheck --workspace @mikevocalz/nitro-mapbox-ar-specs",
+    "typecheck:specs-lens": "tsc -p examples/specs-lens/tsconfig.json",
+    "prepack": "bob build"
   },
   "repository": {
     "type": "git",
@@ -35,20 +40,21 @@
     "react": ">=19.0.0",
     "react-native": ">=0.86.0",
     "react-native-nitro-modules": "^0.37.1",
+    "react-native-reanimated": ">=4.2.1",
     "react-native-webgpu": ">=0.13.0",
-    "typegpu": "^0.12.7",
     "react-native-worklets": ">=0.7.2",
-    "react-native-reanimated": ">=4.2.1"
+    "typegpu": "^0.12.7"
   },
   "author": "Mike W. Allen (https://github.com/mikevocalz)",
   "license": "MIT",
   "devDependencies": {
     "@shopify/react-native-skia": "2.14.0",
+    "react-native-builder-bob": "0.43.1",
     "react-native-nitro-modules": "0.37.1",
     "react-native-webgpu": "0.13.0",
     "typegpu": "0.12.7",
-    "unplugin-typegpu": "0.12.5",
-    "typescript": "7.0.2"
+    "typescript": "7.0.2",
+    "unplugin-typegpu": "0.12.5"
   },
   "workspaces": [
     "packages/*"
@@ -58,6 +64,8 @@
   "sideEffects": false,
   "files": [
     "src",
+    "dist/module",
+    "dist/typescript",
     "cpp",
     "android/src",
     "android/build.gradle",
@@ -70,7 +78,9 @@
     "docs",
     "README.md",
     "LICENSE",
-    "skills"
+    "skills",
+    "nitro.json",
+    "nitrogen/generated"
   ],
   "browser": "src/index.web.ts",
   "exports": {
@@ -86,6 +96,11 @@
     "./mapbox": {
       "types": "./src/mapbox/index.ts",
       "default": "./src/mapbox/index.ts"
+    },
+    "./core": {
+      "types": "./dist/typescript/core/index.d.ts",
+      "import": "./dist/module/core/index.js",
+      "default": "./dist/module/core/index.js"
     }
   },
   "peerDependenciesMeta": {
@@ -118,5 +133,23 @@
   "bugs": {
     "url": "https://github.com/mikevocalz/nitro-mapbox-ar/issues"
   },
-  "funding": "https://github.com/sponsors/mikevocalz"
+  "funding": "https://github.com/sponsors/mikevocalz",
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "dist",
+    "targets": [
+      [
+        "module",
+        {
+          "esm": true
+        }
+      ],
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  }
 }
