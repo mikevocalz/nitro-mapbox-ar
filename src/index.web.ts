@@ -67,11 +67,16 @@ export {
   type RouteGeometryCoordinate,
   type RouteLegAnnotation,
   routeGeometryToCoordinates,
+  mapboxRouteLegs,
   routeSteps,
+  type GeographicCoordinate,
   type ManeuverModifier,
   type ManeuverType,
+  type MapboxRouteStep,
+  type MapboxStepManeuver,
+  type NavigationManeuver,
+  type RouteLeg,
   type RouteStep,
-  type StepManeuver,
 } from './navigation/client'
 export {
   summarizeRouteTraffic,

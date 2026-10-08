@@ -49,8 +49,8 @@ export interface RouteLegAnnotation {
 }
 
 /**
- * What a {@linkcode StepManeuver} asks the traveller to do, from the Mapbox
- * Directions API. New values can appear; treat unknown ones like `turn`.
+ * What a manoeuvre asks the traveller to do, using the Mapbox Directions API
+ * vocabulary. New values can appear; treat unknown ones like `turn`.
  */
 export type ManeuverType =
   | 'depart'
@@ -73,8 +73,7 @@ export type ManeuverType =
   | (string & {})
 
 /**
- * The direction of a {@linkcode StepManeuver}, relative to the direction of
- * travel before it.
+ * The direction of a manoeuvre, relative to the direction of travel before it.
  */
 export type ManeuverModifier =
   | 'uturn'
@@ -87,11 +86,13 @@ export type ManeuverModifier =
   | 'sharp left'
 
 /**
- * The manoeuvre at the start of a {@linkcode RouteStep}.
+ * The manoeuvre at the start of a {@linkcode MapboxRouteStep}, as the Mapbox
+ * Directions API sends it. {@linkcode mapboxRouteLegs} converts it to the
+ * provider-neutral `NavigationManeuver`.
  *
- * @see {@linkcode RouteStep.maneuver}
+ * @see {@linkcode MapboxRouteStep.maneuver}
  */
-export interface StepManeuver {
+export interface MapboxStepManeuver {
   /** `[longitude, latitude]` of the manoeuvre. */
   readonly location: readonly [longitude: number, latitude: number]
   /** Clockwise degrees from true north before the manoeuvre, 0..359. */
@@ -109,10 +110,12 @@ export interface StepManeuver {
 }
 
 /**
- * One step of a {@linkcode NavigationRouteLeg}, present when the request set
- * `steps: true` (see {@linkcode DirectionsOptions.steps}).
+ * One step of a {@linkcode NavigationRouteLeg} as the Mapbox Directions API
+ * sends it, present when the request set `steps: true` (see
+ * {@linkcode DirectionsOptions.steps}). {@linkcode mapboxRouteLegs} converts
+ * it to the provider-neutral `RouteStep`.
  */
-export interface RouteStep {
+export interface MapboxRouteStep {
   /** Metres from this step's manoeuvre to the next one. */
   readonly distance: number
   /** Seconds from this step's manoeuvre to the next one. */
@@ -121,7 +124,7 @@ export interface RouteStep {
   readonly name: string
   /** Travel mode, for example `walking` or `driving`. */
   readonly mode: string
-  readonly maneuver: StepManeuver
+  readonly maneuver: MapboxStepManeuver
   /** The step's GeoJSON geometry when `geometries=geojson`. */
   readonly geometry?: unknown
   readonly [key: string]: unknown
@@ -132,7 +135,7 @@ export interface NavigationRouteLeg {
   readonly duration: number
   readonly annotation?: RouteLegAnnotation
   /** Turn-by-turn steps; present when the request set `steps: true`. */
-  readonly steps?: readonly RouteStep[]
+  readonly steps?: readonly MapboxRouteStep[]
   readonly [key: string]: unknown
 }
 
@@ -368,34 +371,12 @@ export function routeGeometryToCoordinates(
   })
 }
 
-/**
- * Every {@linkcode RouteStep} of a route, leg after leg, in travel order.
- * A multi-leg route keeps each leg's `arrive` step, so waypoints show up as
- * arrivals.
- *
- * @throws {TypeError} When the route was requested without `steps: true`
- * (a leg has no `steps`), or a step's manoeuvre location is not two numbers.
- * @throws {RangeError} When a manoeuvre location is outside WGS84 bounds.
- */
-export function routeSteps(route: NavigationRoute): RouteStep[] {
-  const steps: RouteStep[] = []
-  for (const leg of route.legs) {
-    if (!Array.isArray(leg.steps)) {
-      throw new TypeError('Route legs have no steps; request steps: true')
-    }
-    for (const step of leg.steps) {
-      const location = step.maneuver?.location
-      if (
-        !Array.isArray(location) ||
-        location.length < 2 ||
-        typeof location[0] !== 'number' ||
-        typeof location[1] !== 'number'
-      ) {
-        throw new TypeError('Step maneuver location must be [lng, lat] numbers')
-      }
-      coordinate({ longitude: location[0], latitude: location[1] })
-      steps.push(step)
-    }
-  }
-  return steps
-}
+
+export {
+  mapboxRouteLegs,
+  routeSteps,
+  type GeographicCoordinate,
+  type NavigationManeuver,
+  type RouteLeg,
+  type RouteStep,
+} from './route'

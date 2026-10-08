@@ -4,7 +4,7 @@ import test from 'node:test'
 import { MapboxRasterClient } from '../src/mapbox/raster'
 import { tileBounds, latToTileY, lonToTileX } from '../src/mapbox/tiles'
 import { MAPBOX_STREETS_V8, MapboxVectorClient } from '../src/mapbox/vector'
-import { routeSteps, type NavigationRoute } from '../src/navigation/client'
+import { mapboxRouteLegs, routeSteps, type NavigationRoute } from '../src/navigation/client'
 
 test('vector tile requests hit the v4 .vector.pbf endpoint with an encoded token', async () => {
   let requested = ''
@@ -79,36 +79,80 @@ test('tileBounds inverts the tile index functions at the corners', () => {
   assert.throws(() => tileBounds({ z: 3, x: 8, y: 0 }), RangeError)
 })
 
-const step = (instruction: string, location: [number, number], type = 'turn') => ({
+const step = (
+  instruction: string,
+  location: [number, number],
+  type = 'turn',
+  geometry?: unknown,
+) => ({
   distance: 100,
   duration: 70,
   name: 'W 125th St',
   mode: 'walking',
-  maneuver: { location, bearing_before: 90, bearing_after: 0, instruction, type, modifier: 'left' as const },
+  maneuver: {
+    location,
+    bearing_before: -90,
+    bearing_after: 450,
+    instruction,
+    type,
+    modifier: 'left' as const,
+  },
+  ...(geometry ? { geometry } : {}),
 })
 
-test('routeSteps flattens legs in travel order', () => {
+test('mapboxRouteLegs converts Directions steps to the neutral contract', () => {
   const route: NavigationRoute = {
     distance: 400,
     duration: 280,
     legs: [
-      { distance: 200, duration: 140, steps: [step('Head east', [-73.95, 40.81], 'depart'), step('Arrive', [-73.945, 40.808], 'arrive')] },
+      {
+        distance: 200,
+        duration: 140,
+        steps: [
+          step('Head east', [-73.95, 40.81], 'depart', {
+            type: 'LineString',
+            coordinates: [[-73.95, 40.81], [-73.945, 40.808]],
+          }),
+          step('Arrive', [-73.945, 40.808], 'arrive'),
+        ],
+      },
       { distance: 200, duration: 140, steps: [step('Head north', [-73.945, 40.808], 'depart'), step('Arrive', [-73.94, 40.814], 'arrive')] },
     ],
   }
+  const legs = mapboxRouteLegs(route)
+  assert.equal(legs.length, 2)
+  const [first] = legs[0]!.steps
+  assert.deepEqual(first, {
+    maneuver: {
+      kind: 'depart',
+      modifier: 'left',
+      location: { latitude: 40.81, longitude: -73.95 },
+      bearingBeforeDeg: 270,
+      bearingAfterDeg: 90,
+      instruction: 'Head east',
+    },
+    distanceM: 100,
+    durationS: 70,
+    streetName: 'W 125th St',
+    geometry: [
+      { latitude: 40.81, longitude: -73.95 },
+      { latitude: 40.808, longitude: -73.945 },
+    ],
+  })
+  assert.equal(legs[0]!.steps[1]!.geometry, undefined)
   assert.deepEqual(
-    routeSteps(route).map((s) => s.maneuver.instruction),
+    routeSteps(legs).map((s) => s.maneuver.instruction),
     ['Head east', 'Arrive', 'Head north', 'Arrive'],
   )
 })
 
-test('routeSteps rejects routes without steps and bad manoeuvre locations', () => {
+test('mapboxRouteLegs rejects routes without steps and bad manoeuvre locations', () => {
   assert.throws(
-    () => routeSteps({ distance: 1, duration: 1, legs: [{ distance: 1, duration: 1 }] }),
+    () => mapboxRouteLegs({ distance: 1, duration: 1, legs: [{ distance: 1, duration: 1 }] }),
     /request steps: true/,
   )
   assert.throws(
-    () => routeSteps({ distance: 1, duration: 1, legs: [{ distance: 1, duration: 1, steps: [step('x', [-200, 0])] }] }),
+    () => mapboxRouteLegs({ distance: 1, duration: 1, legs: [{ distance: 1, duration: 1, steps: [step('x', [-200, 0])] }] }),
     RangeError,
   )
 })
