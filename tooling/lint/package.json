@@ -1,0 +1,11 @@
+{
+  "name": "nitro-mapbox-ar-lint",
+  "private": true,
+  "description": "ESLint for the repo. Kept out of the workspaces because typescript-eslint needs the TypeScript 6 compiler API, which TypeScript 7 does not ship.",
+  "type": "module",
+  "devDependencies": {
+    "eslint": "10.12.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.1"
+  }
+}

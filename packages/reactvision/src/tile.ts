@@ -1,6 +1,6 @@
 /**
  * An XYZ Web Mercator tile. Structurally identical to `TileId` in
- * `@mapbox/react-native-mapbox-ar`, so tiles from `tilesForBBox` can be
+ * `@mikevocalz/nitro-mapbox-ar`, so tiles from `tilesForBBox` can be
  * passed straight in.
  *
  * @see {@linkcode tilePointToLngLat}

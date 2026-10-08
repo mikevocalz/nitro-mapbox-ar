@@ -1,4 +1,4 @@
-# @mapbox/react-native-mapbox-ar-reactvision
+# @mikevocalz/nitro-mapbox-ar-reactvision
 
 Optional spatial adapter between Nitro Mapbox AR data and
 `@reactvision/react-viro` 3.0.2.
@@ -48,7 +48,7 @@ import {
   MapboxViroRoute,
   projectToEnu,
   solveEnuPlacement,
-} from '@mapbox/react-native-mapbox-ar-reactvision'
+} from '@mikevocalz/nitro-mapbox-ar-reactvision'
 
 const origin = {
   frame: { kind: 'route-start', routeId },
@@ -91,13 +91,13 @@ say so. Footprints are clipped to the tile, and the walls the clip creates are
 dropped, so neighbouring tiles meet without overlap.
 
 ```tsx
-import { MapboxVectorClient, MapboxRasterClient } from '@mapbox/react-native-mapbox-ar/mapbox'
+import { MapboxVectorClient, MapboxRasterClient } from '@mikevocalz/nitro-mapbox-ar/mapbox'
 import {
   MapboxViroBuildings,
   MapboxViroGround,
   extrudeBuildings,
   tilesAroundEnuPoint,
-} from '@mapbox/react-native-mapbox-ar-reactvision'
+} from '@mikevocalz/nitro-mapbox-ar-reactvision'
 
 const vector = new MapboxVectorClient({ accessToken })
 const raster = new MapboxRasterClient({ accessToken })

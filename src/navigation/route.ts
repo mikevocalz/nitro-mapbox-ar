@@ -8,7 +8,7 @@ import type {
 /**
  * A WGS84 position in degrees, with altitude in metres when known.
  * Structurally identical to `GeoCoordinate` in
- * `@mapbox/react-native-mapbox-ar-reactvision`, so it can go straight to the
+ * `@mikevocalz/nitro-mapbox-ar-reactvision`, so it can go straight to the
  * ENU projection helpers there.
  *
  * @see {@linkcode NavigationManeuver.location}

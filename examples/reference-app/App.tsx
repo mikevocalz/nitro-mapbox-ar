@@ -17,8 +17,8 @@ import {
   getBrowserRendererCapabilities,
   listMapboxFeatures,
   selectRendererBackend,
-} from '@mapbox/react-native-mapbox-ar'
-import { MapboxMapView } from '@mapbox/react-native-mapbox-ar-native-map'
+} from '@mikevocalz/nitro-mapbox-ar'
+import { MapboxMapView } from '@mikevocalz/nitro-mapbox-ar-maps'
 import {
   ViroAmbientLight,
   ViroARScene,

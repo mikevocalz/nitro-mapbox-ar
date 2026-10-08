@@ -10,9 +10,9 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@mapbox/react-native-mapbox-ar": "file:../..",
-    "@mapbox/react-native-mapbox-ar-native-map": "file:../../packages/native-mapbox",
-    "@mapbox/react-native-mapbox-ar-reactvision": "file:../../packages/reactvision",
+    "@mikevocalz/nitro-mapbox-ar": "file:../..",
+    "@mikevocalz/nitro-mapbox-ar-maps": "file:../../packages/native-mapbox",
+    "@mikevocalz/nitro-mapbox-ar-reactvision": "file:../../packages/reactvision",
     "@reactvision/react-viro": "3.0.2",
     "@shopify/react-native-skia": "2.13.1",
     "expo": "~57.0.0",

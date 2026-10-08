@@ -1,5 +1,6 @@
 export {
   MapboxViroRoute,
+  type ForwardedPolylineProps,
   type MapboxViroRouteProps,
 } from './MapboxViroRoute'
 export {

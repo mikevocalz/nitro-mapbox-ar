@@ -9,7 +9,7 @@ import {
   getMapboxARCore,
   listMapboxFeatures,
   selectRendererBackend,
-} from '@mapbox/react-native-mapbox-ar'
+} from '@mikevocalz/nitro-mapbox-ar'
 
 const $ = <T extends HTMLElement>(id: string) => {
   const element = document.getElementById(id)

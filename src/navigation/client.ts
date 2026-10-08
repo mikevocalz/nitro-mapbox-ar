@@ -310,7 +310,7 @@ export class MapboxNavigationClient {
 
 /**
  * A WGS84 position on a {@linkcode NavigationRoute}'s geometry. Structurally
- * matches `GeoCoordinate` in `@mapbox/react-native-mapbox-ar-reactvision`, so
+ * matches `GeoCoordinate` in `@mikevocalz/nitro-mapbox-ar-reactvision`, so
  * the result of {@linkcode routeGeometryToCoordinates} can go straight to its
  * route projection helpers.
  */

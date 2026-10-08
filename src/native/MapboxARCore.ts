@@ -13,6 +13,8 @@ let instance: NativeMapboxARCore | undefined
 export type { MapboxARCore } from './MapboxARCore.types'
 
 export function getMapboxARCore(): MapboxARCore {
-  instance ??= NitroModules.createHybridObject<NativeMapboxARCore>('MapboxARCore')
+  if (instance === undefined) {
+    instance = NitroModules.createHybridObject<NativeMapboxARCore>('MapboxARCore')
+  }
   return instance
 }

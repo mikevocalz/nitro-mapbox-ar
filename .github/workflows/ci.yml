@@ -12,13 +12,13 @@ permissions:
 
 jobs:
   core:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm
@@ -26,11 +26,14 @@ jobs:
       - name: Install JavaScript dependencies
         run: npm install --ignore-scripts --no-audit --no-fund
 
-      - name: Generate Nitro native-map bindings
-        run: npm run codegen:native-map
+      - name: Install lint and docs toolchains (TypeScript 6 API)
+        run: npm run tooling:install
 
-      - name: Committed Nitrogen output matches the specs
-        run: git diff --exit-code -- packages/native-mapbox/nitrogen
+      - name: Committed Nitrogen output matches the specs, every package
+        run: npm run check:nitrogen
+
+      - name: Lint
+        run: npm run lint
 
       - name: Typecheck core
         run: npm run typecheck
@@ -56,15 +59,21 @@ jobs:
       - name: Verify browser package surface
         run: npm run check:web-surface
 
+      - name: Verify every workspace tarball
+        run: npm run check:pack
+
+      - name: Build API reference (TypeDoc, warnings fail)
+        run: npm run docs
+
 
   web-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22.13.0'
 

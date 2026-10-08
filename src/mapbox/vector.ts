@@ -36,7 +36,7 @@ const TILESET_ID = /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/
 /**
  * Fetches Mapbox Vector Tiles (`.vector.pbf`) from the v4 tile API. Decoding
  * is left to the caller, for example `extrudeBuildings` in
- * `@mapbox/react-native-mapbox-ar-reactvision`.
+ * `@mikevocalz/nitro-mapbox-ar-reactvision`.
  */
 export class MapboxVectorClient {
   readonly #accessToken: string

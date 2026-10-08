@@ -3,11 +3,8 @@ import type { TerrainGridLayout } from './grid'
 import type { GpuSatelliteTile } from './imagery'
 import {
   createTerrainTileRenderer,
-  type Matrix4,
   type TerrainTileFrameOptions,
   type TerrainTileRenderer,
-  type Vec3,
-  type Vec4,
 } from './draw'
 import {
   createTerrainRenderTarget,

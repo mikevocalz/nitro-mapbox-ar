@@ -1,5 +1,5 @@
 {
-  "name": "@mapbox/react-native-mapbox-ar",
+  "name": "@mikevocalz/nitro-mapbox-ar",
   "version": "0.0.1",
   "description": "Graphite-first spatial Mapbox terrain and AR primitives for React Native",
   "main": "src/index.ts",
@@ -10,13 +10,18 @@
     "check:gpu-stack": "node scripts/check-gpu-stack.mjs",
     "test": "npx --yes tsx@4.23.15 --test tests/**/*.test.ts",
     "test:cpp": "c++ -std=c++20 -Wall -Wextra -Werror -Icpp tests/terrain-rgb-codec.cpp -o /tmp/terrain-rgb-codec && /tmp/terrain-rgb-codec",
-    "codegen:native-map": "npm run codegen --workspace @mapbox/react-native-mapbox-ar-native-map",
-    "typecheck:native-map": "npm run typecheck --workspace @mapbox/react-native-mapbox-ar-native-map",
-    "typecheck:reactvision": "npm run typecheck --workspace @mapbox/react-native-mapbox-ar-reactvision",
+    "codegen:native-map": "npm run codegen --workspace @mikevocalz/nitro-mapbox-ar-maps",
+    "typecheck:native-map": "npm run typecheck --workspace @mikevocalz/nitro-mapbox-ar-maps",
+    "typecheck:reactvision": "npm run typecheck --workspace @mikevocalz/nitro-mapbox-ar-reactvision",
     "check:package-surface": "node scripts/check-package-surface.mjs",
-    "typecheck:agent-mcp": "npm run typecheck --workspace @mapbox/react-native-mapbox-ar-agent-mcp",
+    "typecheck:agent-mcp": "npm run typecheck --workspace @mikevocalz/nitro-mapbox-ar-agent-mcp",
     "check:web-surface": "node scripts/check-web-surface.mjs",
-    "check:all": "npm run typecheck && npm test && npm run test:cpp && npm run typecheck:native-map && npm run typecheck:reactvision && npm run typecheck:agent-mcp && npm run check:package-surface && npm run check:web-surface"
+    "check:all": "npm run typecheck && npm test && npm run test:cpp && npm run typecheck:native-map && npm run typecheck:reactvision && npm run typecheck:agent-mcp && npm run check:package-surface && npm run check:web-surface && npm run lint && npm run check:nitrogen && npm run check:pack && npm run docs",
+    "lint": "tooling/lint/node_modules/.bin/eslint .",
+    "docs": "tooling/docs/node_modules/.bin/typedoc",
+    "tooling:install": "npm ci --prefix tooling/lint --no-audit --no-fund && npm ci --prefix tooling/docs --no-audit --no-fund",
+    "check:nitrogen": "node scripts/check-nitrogen.mjs",
+    "check:pack": "node scripts/check-pack.mjs"
   },
   "repository": {
     "type": "git",
@@ -33,7 +38,7 @@
     "react-native-webgpu": "^0.10.0",
     "typegpu": "^0.12.6"
   },
-  "author": "Nick Italiano",
+  "author": "Mike W. Allen (https://github.com/mikevocalz)",
   "license": "MIT",
   "devDependencies": {
     "@shopify/react-native-skia": "2.13.1",
@@ -100,5 +105,10 @@
     "typegpu": {
       "optional": true
     }
-  }
+  },
+  "homepage": "https://github.com/mikevocalz/nitro-mapbox-ar#readme",
+  "bugs": {
+    "url": "https://github.com/mikevocalz/nitro-mapbox-ar/issues"
+  },
+  "funding": "https://github.com/sponsors/mikevocalz"
 }

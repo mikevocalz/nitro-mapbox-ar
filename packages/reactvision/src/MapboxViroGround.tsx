@@ -15,7 +15,7 @@ export interface MapboxViroGroundProps {
   readonly tiles: readonly XyzTile[]
   /**
    * The image URL of a tile, for example `MapboxRasterClient.satelliteTileUrl`
-   * from `@mapbox/react-native-mapbox-ar/mapbox`. Viro's native image loader
+   * from `@mikevocalz/nitro-mapbox-ar/mapbox`. Viro's native image loader
    * fetches and caches it.
    */
   readonly tileUrl: (tile: XyzTile) => string

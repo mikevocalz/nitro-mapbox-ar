@@ -1,4 +1,4 @@
-# @mapbox/react-native-mapbox-ar-native-map
+# @mikevocalz/nitro-mapbox-ar-maps
 
 Optional native Mapbox Maps UI for the revived Nitro Mapbox AR stack.
 
