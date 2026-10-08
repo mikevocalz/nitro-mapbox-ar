@@ -2,8 +2,7 @@
 // the owned SerialWorkQueue, the Terrain-RGB pixel decoder and validation,
 // and the process-wide token store. Builds without Nitro or JSI.
 //
-//   c++ -std=c++20 -Wall -Wextra -Werror -Icpp tests/terrain-rgb-async.cpp \
-//     cpp/SerialWorkQueue.cpp cpp/AccessTokenStore.cpp -o /tmp/terrain-rgb-async
+//   c++ -std=c++20 -Wall -Wextra -Werror -pthread -Icpp tests/terrain-rgb-async.cpp cpp/SerialWorkQueue.cpp cpp/AccessTokenStore.cpp -o /tmp/terrain-rgb-async
 #include "AccessTokenStore.hpp"
 #include "SerialWorkQueue.hpp"
 #include "TerrainRgbCodec.hpp"
