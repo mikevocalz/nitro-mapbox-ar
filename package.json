@@ -71,6 +71,10 @@
       "browser": "./src/index.web.ts",
       "react-native": "./src/index.ts",
       "default": "./src/index.ts"
+    },
+    "./navigation": {
+      "types": "./src/navigation/client.ts",
+      "default": "./src/navigation/client.ts"
     }
   },
   "peerDependenciesMeta": {
