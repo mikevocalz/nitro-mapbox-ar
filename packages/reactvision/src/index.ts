@@ -12,6 +12,7 @@ export {
   projectToDeviceFrame,
   projectToEnu,
   solveEnuPlacement,
+  unprojectFromEnu,
   type EnuPlacement,
   type EnuPlacementInput,
 } from './enu'
@@ -53,3 +54,33 @@ export {
   type SpatialContextSnapshot,
   type SpatialRay,
 } from './xr'
+export {
+  extrudeBuildings,
+  type BuildingMesh,
+  type ExtrudeBuildingsOptions,
+} from './buildings'
+export {
+  groundTileQuad,
+  tilesAroundEnuPoint,
+  type GroundTileQuad,
+} from './ground'
+export {
+  MapboxViroBuildings,
+  type MapboxViroBuildingsProps,
+} from './MapboxViroBuildings'
+export {
+  MapboxViroGround,
+  type MapboxViroGroundProps,
+} from './MapboxViroGround'
+export {
+  readVectorTileLayer,
+  type VectorTileFeature,
+  type VectorTileGeometryType,
+  type VectorTileLayer,
+  type VectorTileValue,
+} from './mvt'
+export {
+  tileKey,
+  tilePointToLngLat,
+  type XyzTile,
+} from './tile'

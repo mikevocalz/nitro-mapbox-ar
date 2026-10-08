@@ -75,6 +75,10 @@
     "./navigation": {
       "types": "./src/navigation/client.ts",
       "default": "./src/navigation/client.ts"
+    },
+    "./mapbox": {
+      "types": "./src/mapbox/index.ts",
+      "default": "./src/mapbox/index.ts"
     }
   },
   "peerDependenciesMeta": {

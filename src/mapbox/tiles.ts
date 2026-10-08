@@ -87,3 +87,44 @@ export function tilesForBBox(bbox: BBox, zoom: number): TileId[] {
     return true
   })
 }
+
+/** WGS84 bounds of an XYZ tile, in degrees. */
+export interface TileBounds {
+  readonly west: number
+  readonly south: number
+  readonly east: number
+  readonly north: number
+}
+
+const tileLongitude = (x: number, n: number): number => (x / n) * 360 - 180
+
+const tileLatitude = (y: number, n: number): number =>
+  (Math.atan(Math.sinh(Math.PI * (1 - (2 * y) / n))) * 180) / Math.PI
+
+/**
+ * The WGS84 bounds of a Web Mercator XYZ tile: the inverse of
+ * {@linkcode lonToTileX} and {@linkcode latToTileY} at the tile's corners.
+ *
+ * @throws {RangeError} When the zoom is outside 0..30 or x/y fall outside the
+ * zoom's tile grid.
+ */
+export function tileBounds(tile: TileId): TileBounds {
+  assertZoom(tile.z)
+  const n = 2 ** tile.z
+  if (
+    !Number.isSafeInteger(tile.x) ||
+    !Number.isSafeInteger(tile.y) ||
+    tile.x < 0 ||
+    tile.y < 0 ||
+    tile.x >= n ||
+    tile.y >= n
+  ) {
+    throw new RangeError(`tile x/y must be within [0, ${n - 1}] for zoom ${tile.z}`)
+  }
+  return {
+    west: tileLongitude(tile.x, n),
+    east: tileLongitude(tile.x + 1, n),
+    north: tileLatitude(tile.y, n),
+    south: tileLatitude(tile.y + 1, n),
+  }
+}

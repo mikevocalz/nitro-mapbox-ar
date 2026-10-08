@@ -48,11 +48,91 @@ export interface RouteLegAnnotation {
   readonly [key: string]: unknown
 }
 
+/**
+ * What a {@linkcode StepManeuver} asks the traveller to do, from the Mapbox
+ * Directions API. New values can appear; treat unknown ones like `turn`.
+ */
+export type ManeuverType =
+  | 'depart'
+  | 'arrive'
+  | 'turn'
+  | 'continue'
+  | 'new name'
+  | 'merge'
+  | 'on ramp'
+  | 'off ramp'
+  | 'fork'
+  | 'end of road'
+  | 'use lane'
+  | 'roundabout'
+  | 'rotary'
+  | 'roundabout turn'
+  | 'exit roundabout'
+  | 'exit rotary'
+  | 'notification'
+  | (string & {})
+
+/**
+ * The direction of a {@linkcode StepManeuver}, relative to the direction of
+ * travel before it.
+ */
+export type ManeuverModifier =
+  | 'uturn'
+  | 'sharp right'
+  | 'right'
+  | 'slight right'
+  | 'straight'
+  | 'slight left'
+  | 'left'
+  | 'sharp left'
+
+/**
+ * The manoeuvre at the start of a {@linkcode RouteStep}.
+ *
+ * @see {@linkcode RouteStep.maneuver}
+ */
+export interface StepManeuver {
+  /** `[longitude, latitude]` of the manoeuvre. */
+  readonly location: readonly [longitude: number, latitude: number]
+  /** Clockwise degrees from true north before the manoeuvre, 0..359. */
+  readonly bearing_before: number
+  /** Clockwise degrees from true north after the manoeuvre, 0..359. */
+  readonly bearing_after: number
+  /** Human-readable instruction, in the request's `language`. */
+  readonly instruction: string
+  readonly type: ManeuverType
+  /** Absent for `depart`/`arrive` on some profiles. */
+  readonly modifier?: ManeuverModifier
+  /** Roundabout exit number, when `type` is a roundabout or rotary. */
+  readonly exit?: number
+  readonly [key: string]: unknown
+}
+
+/**
+ * One step of a {@linkcode NavigationRouteLeg}, present when the request set
+ * `steps: true` (see {@linkcode DirectionsOptions.steps}).
+ */
+export interface RouteStep {
+  /** Metres from this step's manoeuvre to the next one. */
+  readonly distance: number
+  /** Seconds from this step's manoeuvre to the next one. */
+  readonly duration: number
+  /** Street name the step travels along; may be empty. */
+  readonly name: string
+  /** Travel mode, for example `walking` or `driving`. */
+  readonly mode: string
+  readonly maneuver: StepManeuver
+  /** The step's GeoJSON geometry when `geometries=geojson`. */
+  readonly geometry?: unknown
+  readonly [key: string]: unknown
+}
+
 export interface NavigationRouteLeg {
   readonly distance: number
   readonly duration: number
   readonly annotation?: RouteLegAnnotation
-  readonly steps?: readonly unknown[]
+  /** Turn-by-turn steps; present when the request set `steps: true`. */
+  readonly steps?: readonly RouteStep[]
   readonly [key: string]: unknown
 }
 
@@ -286,4 +366,36 @@ export function routeGeometryToCoordinates(
     }
     return { latitude: latitude!, longitude: longitude!, altitude }
   })
+}
+
+/**
+ * Every {@linkcode RouteStep} of a route, leg after leg, in travel order.
+ * A multi-leg route keeps each leg's `arrive` step, so waypoints show up as
+ * arrivals.
+ *
+ * @throws {TypeError} When the route was requested without `steps: true`
+ * (a leg has no `steps`), or a step's manoeuvre location is not two numbers.
+ * @throws {RangeError} When a manoeuvre location is outside WGS84 bounds.
+ */
+export function routeSteps(route: NavigationRoute): RouteStep[] {
+  const steps: RouteStep[] = []
+  for (const leg of route.legs) {
+    if (!Array.isArray(leg.steps)) {
+      throw new TypeError('Route legs have no steps; request steps: true')
+    }
+    for (const step of leg.steps) {
+      const location = step.maneuver?.location
+      if (
+        !Array.isArray(location) ||
+        location.length < 2 ||
+        typeof location[0] !== 'number' ||
+        typeof location[1] !== 'number'
+      ) {
+        throw new TypeError('Step maneuver location must be [lng, lat] numbers')
+      }
+      coordinate({ longitude: location[0], latitude: location[1] })
+      steps.push(step)
+    }
+  }
+  return steps
 }
