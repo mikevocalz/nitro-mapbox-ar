@@ -29,5 +29,10 @@
   "bugs": {
     "url": "https://github.com/mikevocalz/nitro-mapbox-ar/issues"
   },
-  "funding": "https://github.com/sponsors/mikevocalz"
+  "funding": "https://github.com/sponsors/mikevocalz",
+  "peerDependenciesMeta": {
+    "@mikevocalz/nitro-mapbox-ar": {
+      "optional": true
+    }
+  }
 }
