@@ -15,7 +15,6 @@
     "isolatedModules": true,
     "noEmit": true,
     "strict": true,
-    "baseUrl": ".",
     "paths": {
       "@mikevocalz/nitro-mapbox-ar": [
         "../../src/index.web.ts"

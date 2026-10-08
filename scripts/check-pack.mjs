@@ -19,9 +19,9 @@ const failures = []
 for (const dir of dirs) {
   const cwd = join(root, dir)
   const manifest = JSON.parse(readFileSync(join(cwd, 'package.json'), 'utf8'))
-  const [report] = JSON.parse(
-    execFileSync('npm', ['pack', '--dry-run', '--json', '--ignore-scripts'], { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }),
-  )
+  const out = execFileSync('npm', ['pack', '--dry-run', '--json', '--ignore-scripts'], { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
+  // Nitrogen can log to stdout ahead of npm's JSON on CI, so parse from the first line that opens the array.
+  const [report] = JSON.parse(out.slice(out.search(/^\[/m)))
   const paths = new Set(report.files.map((entry) => entry.path))
   const fail = (message) => failures.push(`${manifest.name}: ${message}`)
 
