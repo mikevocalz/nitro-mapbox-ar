@@ -7,6 +7,15 @@ export {
   type ReactVisionSpatialBridge,
 } from './bridge'
 export {
+  enuToViroPosition,
+  projectRouteToEnu,
+  projectToDeviceFrame,
+  projectToEnu,
+  solveEnuPlacement,
+  type EnuPlacement,
+  type EnuPlacementInput,
+} from './enu'
+export {
   validateCoordinate,
   validateSurfaceOffset,
 } from './geo'
@@ -17,6 +26,9 @@ export {
   type RouteProjectionOptions,
 } from './route'
 export type {
+  EnuFrame,
+  EnuOffset,
+  EnuOrigin,
   GeoCoordinate,
   GeoWorldPosition,
   GeospatialAnchor,
