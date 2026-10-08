@@ -1,6 +1,6 @@
 # API design: nitro-mapbox-ar modernization, Phase 2
 
-Status: **draft for review.** Phase 3 (Nitro core via Nitrogen) does not start until this document is approved. Written 2026-10-08 on `feat/modernization-v1`, against master `addbca6` (PR #35, provider-neutral `RouteLeg` / `RouteStep` / `NavigationManeuver`), not the pack's `b29503b`.
+Status: **approved 2026-10-08** with the decisions recorded in section 11. Written 2026-10-08 on `feat/modernization-v1`, against master `addbca6` (PR #35, provider-neutral `RouteLeg` / `RouteStep` / `NavigationManeuver`), not the pack's `b29503b`.
 
 | Package | Root | Native |
 | --- | --- | --- |
@@ -687,4 +687,18 @@ Not installed locally (inventory in Phase 4/5, `MAPS_SDK_INVENTORY.md`):
 10. **Annotation lifetime.** `PointAnnotationManager` survives style reloads (the SDK keeps annotation layers across style changes as far as 11.3.0 shows). Confirm against 11.32.0 in Phase 4, or scope managers to a `MapStyle`?
 11. **`MapboxMaps` root.** Not in Phase 2's list; added so apps can check `isMapViewAvailable` before mounting. Keep it, or report unavailability only through the view's loading-error listener?
 
-Phase 3 starts after these are answered and this document is approved.
+### Decisions (2026-10-08)
+
+| # | Disposition | Decision |
+| --- | --- | --- |
+| 1 | BUILD | Accept the deviation: one process-wide token on `MapboxAR.accessToken`, no per-view prop. Phase 3 picks the mechanism after reading the installed Nitro and Mapbox sources, and records it in `docs/NITRO.md`. Swift/Kotlin never call into a C++ HybridObject unless that path is verified first. |
+| 2 | BUILD | Keep the 1 MiB hard limit on `decodeTerrainRgb`. The `RangeError` names `decodeTerrainRgbAsync` as the alternative. |
+| 3 | BUILD | Every map method is a Promise, including `getCamera()`. The break goes in `docs/MIGRATION.md`. |
+| 4 | BUILD | Add a `MapboxNavigationClient` method that returns the response JSON and the request URL. The URL carries the token, so it is never logged and the JSDoc says so. |
+| 5 | BUILD | Add `supportsPassthrough` and `supportsReplicatedState`. Drop `webRenderer`; renderer selection covers it. |
+| 6 | BUILD | The native-facing `kind` is `string`; JS keeps the `ManeuverType` union and maps unknown values to `'unknown'`. A new SDK maneuver must not crash the bridge. |
+| 7 | BUILD | Widen `ColocationPlatform` to `string`, so a new headset can join without a release. |
+| 8 | DEFER | Keep the `NativeNavigationCapabilities` field names. Harlem Might reads them today; rename at 1.0 with a migration note. |
+| 9 | BUILD | Accept `AnyMap` for layer paint/layout until Phase 4 generates typed properties. |
+| 10 | BUILD | Phase 4 checks annotation lifetime against the installed 11.32.0 SDK and records the result in `docs/MAPS_SDK_INVENTORY.md`. Managers stay unscoped unless the SDK says otherwise. |
+| 11 | BUILD | Keep the `MapboxMaps` root with `isMapViewAvailable`. |
