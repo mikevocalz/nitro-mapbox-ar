@@ -16,7 +16,7 @@
     "check:package-surface": "node scripts/check-package-surface.mjs",
     "typecheck:agent-mcp": "npm run typecheck --workspace @mikevocalz/nitro-mapbox-ar-agent-mcp",
     "check:web-surface": "node scripts/check-web-surface.mjs",
-    "check:all": "npm run typecheck && npm test && npm run test:cpp && npm run typecheck:native-map && npm run typecheck:reactvision && npm run typecheck:agent-mcp && npm run typecheck:specs && npm run build && npm run check:core-imports && npm run typecheck:specs-lens && npm run check:package-surface && npm run check:web-surface && npm run lint && npm run check:nitrogen && npm run check:pack && npm run docs",
+    "check:all": "npm run typecheck && npm test && npm run test:cpp && npm run typecheck:native-map && npm run typecheck:reactvision && npm run typecheck:agent-mcp && npm run typecheck:navigation && npm run typecheck:specs && npm run build && npm run check:core-imports && npm run typecheck:specs-lens && npm run check:package-surface && npm run check:web-surface && npm run lint && npm run check:nitrogen && npm run check:pack && npm run docs",
     "lint": "tooling/lint/node_modules/.bin/eslint .",
     "docs": "tooling/docs/node_modules/.bin/typedoc",
     "tooling:install": "npm ci --prefix tooling/lint --no-audit --no-fund && npm ci --prefix tooling/docs --no-audit --no-fund",
@@ -26,7 +26,8 @@
     "check:core-imports": "node scripts/check-core-imports.mjs",
     "typecheck:specs": "npm run typecheck --workspace @mikevocalz/nitro-mapbox-ar-specs",
     "typecheck:specs-lens": "tsc -p examples/specs-lens/tsconfig.json",
-    "prepack": "bob build"
+    "prepack": "bob build",
+    "typecheck:navigation": "npm run typecheck --workspace @mikevocalz/nitro-mapbox-ar-navigation"
   },
   "repository": {
     "type": "git",

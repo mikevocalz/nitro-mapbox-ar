@@ -1,0 +1,104 @@
+buildscript {
+  repositories {
+    google()
+    mavenCentral()
+  }
+}
+
+def reactNativeArchitectures() {
+  def value = rootProject.getProperties().get("reactNativeArchitectures")
+  return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+}
+
+def extOrDefault(name, fallback) {
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : fallback
+}
+
+apply plugin: "com.android.library"
+apply plugin: "org.jetbrains.kotlin.android"
+apply from: "../nitrogen/generated/android/NitroMapboxARNavigation+autolinking.gradle"
+
+android {
+  namespace "com.margelo.nitro.mapboxar.navigation"
+
+  ndkVersion extOrDefault("ndkVersion", "27.1.12297006")
+  compileSdkVersion extOrDefault("compileSdkVersion", 36)
+
+  defaultConfig {
+    minSdkVersion extOrDefault("minSdkVersion", 24)
+    targetSdkVersion extOrDefault("targetSdkVersion", 36)
+
+    externalNativeBuild {
+      cmake {
+        cppFlags "-frtti -fexceptions -Wall -Wextra"
+        arguments "-DANDROID_STL=c++_shared",
+                  "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
+        abiFilters (*reactNativeArchitectures())
+      }
+    }
+  }
+
+  externalNativeBuild {
+    cmake {
+      path "CMakeLists.txt"
+    }
+  }
+
+  buildFeatures {
+    prefab true
+  }
+
+  packagingOptions {
+    excludes = [
+      "META-INF",
+      "META-INF/**",
+      "**/libc++_shared.so",
+      "**/libfbjni.so",
+      "**/libjsi.so",
+      "**/libfolly_json.so",
+      "**/libfolly_runtime.so",
+      "**/libglog.so",
+      "**/libhermes.so",
+      "**/libreactnative.so",
+      "**/libreactnativejni.so"
+    ]
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+}
+
+repositories {
+  google()
+  mavenCentral()
+
+  // Navigation SDK artifacts need a Mapbox secret token with the
+  // DOWNLOADS:READ scope, read from the MAPBOX_DOWNLOADS_TOKEN Gradle property
+  // or environment variable. Never commit it.
+  maven {
+    url "https://api.mapbox.com/downloads/v2/releases/maven"
+    authentication {
+      basic(BasicAuthentication)
+    }
+    credentials {
+      username = "mapbox"
+      password = project.findProperty("MAPBOX_DOWNLOADS_TOKEN") ?: System.getenv("MAPBOX_DOWNLOADS_TOKEN")
+    }
+  }
+}
+
+def navigationVersion = extOrDefault("NitroMapboxARNavigationVersion", "3.32.0")
+
+dependencies {
+  implementation "com.facebook.react:react-native:+"
+  implementation project(":react-native-nitro-modules")
+  // MapboxARAccessToken (decision 1 in docs/API_DESIGN.md section 11).
+  implementation project(":mikevocalz_nitro-mapbox-ar")
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2"
+
+  // NDK 27 artifact includes Android 15+ 16 KB page-size support. Pulls
+  // Maps 11.32.0 transitively (navigation 3.32.0 gradle/dependencies.gradle).
+  implementation "com.mapbox.navigationcore:navigation-ndk27:${navigationVersion}"
+}

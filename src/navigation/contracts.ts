@@ -39,7 +39,18 @@ export interface NativeNavigationProvider {
   readonly capabilities: NativeNavigationCapabilities
   startTripSession(): Promise<void>
   stopTripSession(): Promise<void>
-  setRoute(route: NavigationRoute | null): Promise<void>
+  /**
+   * Sets or clears the route to guide along. `source` is present when the
+   * route came from `NavigationSession.planRoute`: `requestUrl` is the
+   * Directions request URL and `routeIndex` the route's index in the
+   * response. A native Navigation SDK rebuilds its own route objects from the
+   * request, so it needs the URL. The URL carries the access token: never log
+   * it. Providers that do not need `source` can ignore it.
+   */
+  setRoute(
+    route: NavigationRoute | null,
+    source?: { readonly requestUrl: string; readonly routeIndex: number },
+  ): Promise<void>
   getProgress(): Promise<NavigationProgressSnapshot | null>
   getElectronicHorizon(): Promise<ElectronicHorizonSnapshot | null>
 }

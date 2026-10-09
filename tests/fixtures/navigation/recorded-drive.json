@@ -1,0 +1,499 @@
+{
+ "description": "Recorded drive along a two-leg route in Midtown Manhattan: north on a meridian, then east on a parallel, 40 m between fixes, fixes 2-3 m off the centreline on alternating sides. Expected progress is closed-form: distance along a meridian is R*dLat, along a parallel R*cos(lat)*dLon, with R = 6371000 m. A native TripSession recording on a device is compared against the same expected values.",
+ "tolerance": {
+  "fractionTraveled": 0.002,
+  "distanceRemainingM": 2,
+  "durationRemainingS": 0.5
+ },
+ "route": {
+  "distance": 866.0,
+  "duration": 86.6,
+  "weight_name": "auto",
+  "geometry": {
+   "type": "LineString",
+   "coordinates": [
+    [
+     -73.986,
+     40.748
+    ],
+    [
+     -73.986,
+     40.752
+    ],
+    [
+     -73.98349999999999,
+     40.752
+    ],
+    [
+     -73.981,
+     40.752
+    ]
+   ]
+  },
+  "legs": [
+   {
+    "distance": 444.8,
+    "duration": 44.5,
+    "steps": [
+     {
+      "distance": 444.8,
+      "duration": 44.5,
+      "name": "Fifth Avenue",
+      "mode": "driving",
+      "maneuver": {
+       "type": "depart",
+       "location": [
+        -73.986,
+        40.748
+       ],
+       "bearing_before": 0,
+       "bearing_after": 0,
+       "instruction": "Drive north on Fifth Avenue."
+      }
+     },
+     {
+      "distance": 0,
+      "duration": 0,
+      "name": "Fifth Avenue",
+      "mode": "driving",
+      "maneuver": {
+       "type": "arrive",
+       "location": [
+        -73.986,
+        40.752
+       ],
+       "bearing_before": 0,
+       "bearing_after": 0,
+       "instruction": "You have arrived at your first stop."
+      }
+     }
+    ]
+   },
+   {
+    "distance": 421.2,
+    "duration": 42.1,
+    "steps": [
+     {
+      "distance": 210.6,
+      "duration": 21.1,
+      "name": "East 42nd Street",
+      "mode": "driving",
+      "maneuver": {
+       "type": "depart",
+       "location": [
+        -73.986,
+        40.752
+       ],
+       "bearing_before": 0,
+       "bearing_after": 90,
+       "modifier": "right",
+       "instruction": "Turn right onto East 42nd Street."
+      }
+     },
+     {
+      "distance": 210.6,
+      "duration": 21.1,
+      "name": "East 42nd Street",
+      "mode": "driving",
+      "maneuver": {
+       "type": "continue",
+       "location": [
+        -73.98349999999999,
+        40.752
+       ],
+       "bearing_before": 90,
+       "bearing_after": 90,
+       "instruction": "Continue on East 42nd Street."
+      }
+     },
+     {
+      "distance": 0,
+      "duration": 0,
+      "name": "",
+      "mode": "driving",
+      "maneuver": {
+       "type": "arrive",
+       "location": [
+        -73.981,
+        40.752
+       ],
+       "bearing_before": 90,
+       "bearing_after": 0,
+       "instruction": "You have arrived."
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "samples": [
+  {
+   "tSeconds": 0.0,
+   "location": {
+    "longitude": -73.9859644,
+    "latitude": 40.748
+   },
+   "bearing": 0,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.0,
+    "distanceRemaining": 866.0,
+    "durationRemaining": 86.6,
+    "currentLegIndex": 0,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 4.0,
+   "location": {
+    "longitude": -73.9860237,
+    "latitude": 40.7483597
+   },
+   "bearing": 0,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.046192,
+    "distanceRemaining": 826.0,
+    "durationRemaining": 82.6,
+    "currentLegIndex": 0,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 8.0,
+   "location": {
+    "longitude": -73.9859644,
+    "latitude": 40.7487195
+   },
+   "bearing": 0,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.092384,
+    "distanceRemaining": 786.0,
+    "durationRemaining": 78.6,
+    "currentLegIndex": 0,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 12.0,
+   "location": {
+    "longitude": -73.9860237,
+    "latitude": 40.7490792
+   },
+   "bearing": 0,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.138575,
+    "distanceRemaining": 745.99,
+    "durationRemaining": 74.6,
+    "currentLegIndex": 0,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 16.0,
+   "location": {
+    "longitude": -73.9859644,
+    "latitude": 40.7494389
+   },
+   "bearing": 0,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.184767,
+    "distanceRemaining": 705.99,
+    "durationRemaining": 70.6,
+    "currentLegIndex": 0,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 20.0,
+   "location": {
+    "longitude": -73.9860237,
+    "latitude": 40.7497986
+   },
+   "bearing": 0,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.230959,
+    "distanceRemaining": 665.99,
+    "durationRemaining": 66.6,
+    "currentLegIndex": 0,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 24.0,
+   "location": {
+    "longitude": -73.9859644,
+    "latitude": 40.7501584
+   },
+   "bearing": 0,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.277151,
+    "distanceRemaining": 625.99,
+    "durationRemaining": 62.6,
+    "currentLegIndex": 0,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 28.0,
+   "location": {
+    "longitude": -73.9860237,
+    "latitude": 40.7505181
+   },
+   "bearing": 0,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.323343,
+    "distanceRemaining": 585.99,
+    "durationRemaining": 58.6,
+    "currentLegIndex": 0,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 32.0,
+   "location": {
+    "longitude": -73.9859644,
+    "latitude": 40.7508778
+   },
+   "bearing": 0,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.369535,
+    "distanceRemaining": 545.98,
+    "durationRemaining": 54.6,
+    "currentLegIndex": 0,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 36.0,
+   "location": {
+    "longitude": -73.9860237,
+    "latitude": 40.7512376
+   },
+   "bearing": 0,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.415726,
+    "distanceRemaining": 505.98,
+    "durationRemaining": 50.6,
+    "currentLegIndex": 0,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 40.0,
+   "location": {
+    "longitude": -73.9859644,
+    "latitude": 40.7515973
+   },
+   "bearing": 0,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.461918,
+    "distanceRemaining": 465.98,
+    "durationRemaining": 46.6,
+    "currentLegIndex": 0,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 44.0,
+   "location": {
+    "longitude": -73.9860237,
+    "latitude": 40.751957
+   },
+   "bearing": 0,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.50811,
+    "distanceRemaining": 425.98,
+    "durationRemaining": 42.6,
+    "currentLegIndex": 0,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 48.0,
+   "location": {
+    "longitude": -73.9855819,
+    "latitude": 40.752027
+   },
+   "bearing": 90,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.554302,
+    "distanceRemaining": 385.97,
+    "durationRemaining": 38.6,
+    "currentLegIndex": 1,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 52.0,
+   "location": {
+    "longitude": -73.985107,
+    "latitude": 40.751982
+   },
+   "bearing": 90,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.600494,
+    "distanceRemaining": 345.97,
+    "durationRemaining": 34.6,
+    "currentLegIndex": 1,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 56.0,
+   "location": {
+    "longitude": -73.9846322,
+    "latitude": 40.752027
+   },
+   "bearing": 90,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.646686,
+    "distanceRemaining": 305.97,
+    "durationRemaining": 30.6,
+    "currentLegIndex": 1,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 60.0,
+   "location": {
+    "longitude": -73.9841573,
+    "latitude": 40.751982
+   },
+   "bearing": 90,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.692877,
+    "distanceRemaining": 265.97,
+    "durationRemaining": 26.6,
+    "currentLegIndex": 1,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 64.0,
+   "location": {
+    "longitude": -73.9836824,
+    "latitude": 40.752027
+   },
+   "bearing": 90,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.739069,
+    "distanceRemaining": 225.97,
+    "durationRemaining": 22.6,
+    "currentLegIndex": 1,
+    "currentStepIndex": 0
+   }
+  },
+  {
+   "tSeconds": 68.0,
+   "location": {
+    "longitude": -73.9832076,
+    "latitude": 40.751982
+   },
+   "bearing": 90,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.785261,
+    "distanceRemaining": 185.96,
+    "durationRemaining": 18.6,
+    "currentLegIndex": 1,
+    "currentStepIndex": 1
+   }
+  },
+  {
+   "tSeconds": 72.0,
+   "location": {
+    "longitude": -73.9827327,
+    "latitude": 40.752027
+   },
+   "bearing": 90,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.831453,
+    "distanceRemaining": 145.96,
+    "durationRemaining": 14.6,
+    "currentLegIndex": 1,
+    "currentStepIndex": 1
+   }
+  },
+  {
+   "tSeconds": 76.0,
+   "location": {
+    "longitude": -73.9822578,
+    "latitude": 40.751982
+   },
+   "bearing": 90,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.877645,
+    "distanceRemaining": 105.96,
+    "durationRemaining": 10.6,
+    "currentLegIndex": 1,
+    "currentStepIndex": 1
+   }
+  },
+  {
+   "tSeconds": 80.0,
+   "location": {
+    "longitude": -73.981783,
+    "latitude": 40.752027
+   },
+   "bearing": 90,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.923837,
+    "distanceRemaining": 65.96,
+    "durationRemaining": 6.6,
+    "currentLegIndex": 1,
+    "currentStepIndex": 1
+   }
+  },
+  {
+   "tSeconds": 84.0,
+   "location": {
+    "longitude": -73.9813081,
+    "latitude": 40.751982
+   },
+   "bearing": 90,
+   "speedMetersPerSecond": 10.0,
+   "expected": {
+    "fractionTraveled": 0.970028,
+    "distanceRemaining": 25.96,
+    "durationRemaining": 2.6,
+    "currentLegIndex": 1,
+    "currentStepIndex": 1
+   }
+  },
+  {
+   "tSeconds": 88.0,
+   "location": {
+    "longitude": -73.981,
+    "latitude": 40.752
+   },
+   "bearing": 90,
+   "speedMetersPerSecond": 0,
+   "expected": {
+    "fractionTraveled": 1,
+    "distanceRemaining": 0,
+    "durationRemaining": 0,
+    "currentLegIndex": 1,
+    "currentStepIndex": 2
+   }
+  }
+ ]
+}

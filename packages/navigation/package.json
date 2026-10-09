@@ -1,0 +1,53 @@
+{
+  "name": "@mikevocalz/nitro-mapbox-ar-navigation",
+  "version": "0.0.1",
+  "description": "Optional Nitro trip sessions backed by the Mapbox Navigation SDK v3",
+  "main": "src/index.ts",
+  "react-native": "src/index.ts",
+  "source": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "src",
+    "android/src",
+    "android/build.gradle",
+    "android/CMakeLists.txt",
+    "ios",
+    "nitrogen/generated",
+    "nitro.json",
+    "react-native.config.js",
+    "NitroMapboxARNavigation.podspec",
+    "README.md"
+  ],
+  "scripts": {
+    "codegen": "nitrogen",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prepack": "npm run codegen"
+  },
+  "peerDependencies": {
+    "@mikevocalz/nitro-mapbox-ar": ">=0.0.1",
+    "react-native": ">=0.86.0",
+    "react-native-nitro-modules": "^0.37.1"
+  },
+  "devDependencies": {
+    "nitrogen": "0.37.1",
+    "react-native-nitro-modules": "0.37.1",
+    "typescript": "7.0.2"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mikevocalz/nitro-mapbox-ar.git",
+    "directory": "packages/navigation"
+  },
+  "author": "Mike W. Allen (https://github.com/mikevocalz)",
+  "homepage": "https://github.com/mikevocalz/nitro-mapbox-ar#readme",
+  "bugs": {
+    "url": "https://github.com/mikevocalz/nitro-mapbox-ar/issues"
+  },
+  "funding": "https://github.com/sponsors/mikevocalz",
+  "peerDependenciesMeta": {
+    "@mikevocalz/nitro-mapbox-ar": {
+      "optional": true
+    }
+  }
+}
