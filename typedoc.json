@@ -15,7 +15,19 @@
   "externalSymbolLinkMappings": {
     "@mikevocalz/nitro-mapbox-ar": {
       "NavigationRoute": "https://github.com/mikevocalz/nitro-mapbox-ar/blob/master/src/navigation/client.ts",
-      "NavigationProgressSnapshot": "https://github.com/mikevocalz/nitro-mapbox-ar/blob/master/src/navigation/contracts.ts"
+      "NavigationProgressSnapshot": "https://github.com/mikevocalz/nitro-mapbox-ar/blob/master/src/navigation/contracts.ts",
+      "NativeNavigationProvider": "https://github.com/mikevocalz/nitro-mapbox-ar/blob/master/src/navigation/contracts.ts",
+      "RouteLeg": "https://github.com/mikevocalz/nitro-mapbox-ar/blob/master/src/navigation/route.ts"
+    },
+    "react-native-nitro-modules": {
+      "HybridObject": "https://nitro.margelo.com/docs/hybrid-objects"
     }
+  },
+  "validation": {
+    "notExported": true,
+    "invalidLink": true,
+    "rewrittenLink": false,
+    "notDocumented": false,
+    "unusedMergeModuleWith": true
   }
 }

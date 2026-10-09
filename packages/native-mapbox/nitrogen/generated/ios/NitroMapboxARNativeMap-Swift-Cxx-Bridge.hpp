@@ -8,21 +8,88 @@
 #pragma once
 
 // Forward declarations of C++ defined types
+// Forward declaration of `CameraAnimationEnd` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class CameraAnimationEnd; }
+// Forward declaration of `CameraAnimationOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CameraAnimationOptions; }
+// Forward declaration of `CameraState` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CameraState; }
+// Forward declaration of `CameraTarget` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CameraTarget; }
+// Forward declaration of `EdgeInsets` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct EdgeInsets; }
+// Forward declaration of `FitBoundsOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct FitBoundsOptions; }
+// Forward declaration of `GeographicCoordinate` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct GeographicCoordinate; }
+// Forward declaration of `HybridMapStyleSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridMapStyleSpec; }
 // Forward declaration of `HybridMapboxMapViewSpec` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { class HybridMapboxMapViewSpec; }
-// Forward declaration of `MapCamera` to properly resolve imports.
-namespace margelo::nitro::mapboxar::nativemap { struct MapCamera; }
+// Forward declaration of `HybridMapboxMapsSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridMapboxMapsSpec; }
+// Forward declaration of `HybridPointAnnotationManagerSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridPointAnnotationManagerSpec; }
+// Forward declaration of `HybridRenderedFeatureSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridRenderedFeatureSpec; }
+// Forward declaration of `ListenerSubscription` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct ListenerSubscription; }
+// Forward declaration of `MapProjection` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class MapProjection; }
+// Forward declaration of `MapTapEvent` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct MapTapEvent; }
+// Forward declaration of `PointAnnotation` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct PointAnnotation; }
+// Forward declaration of `ScreenBox` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct ScreenBox; }
+// Forward declaration of `ScreenPoint` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct ScreenPoint; }
+// Forward declaration of `StandardLightPreset` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class StandardLightPreset; }
 
 // Forward declarations of Swift defined types
+// Forward declaration of `HybridMapStyleSpec_cxx` to properly resolve imports.
+namespace NitroMapboxARNativeMap { class HybridMapStyleSpec_cxx; }
 // Forward declaration of `HybridMapboxMapViewSpec_cxx` to properly resolve imports.
 namespace NitroMapboxARNativeMap { class HybridMapboxMapViewSpec_cxx; }
+// Forward declaration of `HybridMapboxMapsSpec_cxx` to properly resolve imports.
+namespace NitroMapboxARNativeMap { class HybridMapboxMapsSpec_cxx; }
+// Forward declaration of `HybridPointAnnotationManagerSpec_cxx` to properly resolve imports.
+namespace NitroMapboxARNativeMap { class HybridPointAnnotationManagerSpec_cxx; }
+// Forward declaration of `HybridRenderedFeatureSpec_cxx` to properly resolve imports.
+namespace NitroMapboxARNativeMap { class HybridRenderedFeatureSpec_cxx; }
 
 // Include C++ defined types
+#include "CameraAnimationEnd.hpp"
+#include "CameraAnimationOptions.hpp"
+#include "CameraState.hpp"
+#include "CameraTarget.hpp"
+#include "EdgeInsets.hpp"
+#include "FitBoundsOptions.hpp"
+#include "GeographicCoordinate.hpp"
+#include "HybridMapStyleSpec.hpp"
 #include "HybridMapboxMapViewSpec.hpp"
-#include "MapCamera.hpp"
+#include "HybridMapboxMapsSpec.hpp"
+#include "HybridPointAnnotationManagerSpec.hpp"
+#include "HybridRenderedFeatureSpec.hpp"
+#include "ListenerSubscription.hpp"
+#include "MapProjection.hpp"
+#include "MapTapEvent.hpp"
+#include "PointAnnotation.hpp"
+#include "ScreenBox.hpp"
+#include "ScreenPoint.hpp"
+#include "StandardLightPreset.hpp"
+#include <NitroModules/AnyMap.hpp>
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/PromiseHolder.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
+#include <functional>
 #include <memory>
+#include <optional>
+#include <string>
+#include <variant>
+#include <vector>
 
 /**
  * Contains specialized versions of C++ templated types so they can be accessed from Swift,
@@ -30,6 +97,476 @@ namespace NitroMapboxARNativeMap { class HybridMapboxMapViewSpec_cxx; }
  */
 namespace margelo::nitro::mapboxar::nativemap::bridge::swift {
 
+  // pragma MARK: std::shared_ptr<HybridMapboxMapsSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridMapboxMapsSpec>`.
+   */
+  using std__shared_ptr_HybridMapboxMapsSpec_ = std::shared_ptr<HybridMapboxMapsSpec>;
+  std::shared_ptr<HybridMapboxMapsSpec> create_std__shared_ptr_HybridMapboxMapsSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridMapboxMapsSpec_(std__shared_ptr_HybridMapboxMapsSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridMapboxMapsSpec>
+  using std__weak_ptr_HybridMapboxMapsSpec_ = std::weak_ptr<HybridMapboxMapsSpec>;
+  inline std__weak_ptr_HybridMapboxMapsSpec_ weakify_std__shared_ptr_HybridMapboxMapsSpec_(const std::shared_ptr<HybridMapboxMapsSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: std::optional<double>
+  /**
+   * Specialized version of `std::optional<double>`.
+   */
+  using std__optional_double_ = std::optional<double>;
+  inline std::optional<double> create_std__optional_double_(const double& value) noexcept {
+    return std::optional<double>(value);
+  }
+  inline bool has_value_std__optional_double_(const std::optional<double>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline double get_std__optional_double_(const std::optional<double>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<GeographicCoordinate>
+  /**
+   * Specialized version of `std::optional<GeographicCoordinate>`.
+   */
+  using std__optional_GeographicCoordinate_ = std::optional<GeographicCoordinate>;
+  inline std::optional<GeographicCoordinate> create_std__optional_GeographicCoordinate_(const GeographicCoordinate& value) noexcept {
+    return std::optional<GeographicCoordinate>(value);
+  }
+  inline bool has_value_std__optional_GeographicCoordinate_(const std::optional<GeographicCoordinate>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline GeographicCoordinate get_std__optional_GeographicCoordinate_(const std::optional<GeographicCoordinate>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<EdgeInsets>
+  /**
+   * Specialized version of `std::optional<EdgeInsets>`.
+   */
+  using std__optional_EdgeInsets_ = std::optional<EdgeInsets>;
+  inline std::optional<EdgeInsets> create_std__optional_EdgeInsets_(const EdgeInsets& value) noexcept {
+    return std::optional<EdgeInsets>(value);
+  }
+  inline bool has_value_std__optional_EdgeInsets_(const std::optional<EdgeInsets>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline EdgeInsets get_std__optional_EdgeInsets_(const std::optional<EdgeInsets>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<CameraTarget>
+  /**
+   * Specialized version of `std::optional<CameraTarget>`.
+   */
+  using std__optional_CameraTarget_ = std::optional<CameraTarget>;
+  inline std::optional<CameraTarget> create_std__optional_CameraTarget_(const CameraTarget& value) noexcept {
+    return std::optional<CameraTarget>(value);
+  }
+  inline bool has_value_std__optional_CameraTarget_(const std::optional<CameraTarget>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline CameraTarget get_std__optional_CameraTarget_(const std::optional<CameraTarget>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MapProjection>
+  /**
+   * Specialized version of `std::optional<MapProjection>`.
+   */
+  using std__optional_MapProjection_ = std::optional<MapProjection>;
+  inline std::optional<MapProjection> create_std__optional_MapProjection_(const MapProjection& value) noexcept {
+    return std::optional<MapProjection>(value);
+  }
+  inline bool has_value_std__optional_MapProjection_(const std::optional<MapProjection>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MapProjection get_std__optional_MapProjection_(const std::optional<MapProjection>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<bool>
+  /**
+   * Specialized version of `std::optional<bool>`.
+   */
+  using std__optional_bool_ = std::optional<bool>;
+  inline std::optional<bool> create_std__optional_bool_(const bool& value) noexcept {
+    return std::optional<bool>(value);
+  }
+  inline bool has_value_std__optional_bool_(const std::optional<bool>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline bool get_std__optional_bool_(const std::optional<bool>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridMapStyleSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridMapStyleSpec>`.
+   */
+  using std__shared_ptr_HybridMapStyleSpec_ = std::shared_ptr<HybridMapStyleSpec>;
+  std::shared_ptr<HybridMapStyleSpec> create_std__shared_ptr_HybridMapStyleSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridMapStyleSpec_(std__shared_ptr_HybridMapStyleSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridMapStyleSpec>
+  using std__weak_ptr_HybridMapStyleSpec_ = std::weak_ptr<HybridMapStyleSpec>;
+  inline std__weak_ptr_HybridMapStyleSpec_ weakify_std__shared_ptr_HybridMapStyleSpec_(const std::shared_ptr<HybridMapStyleSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<HybridMapStyleSpec>>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<std::shared_ptr<HybridMapStyleSpec>>>`.
+   */
+  using std__shared_ptr_Promise_std__shared_ptr_HybridMapStyleSpec___ = std::shared_ptr<Promise<std::shared_ptr<HybridMapStyleSpec>>>;
+  inline std::shared_ptr<Promise<std::shared_ptr<HybridMapStyleSpec>>> create_std__shared_ptr_Promise_std__shared_ptr_HybridMapStyleSpec___() noexcept {
+    return Promise<std::shared_ptr<HybridMapStyleSpec>>::create();
+  }
+  inline PromiseHolder<std::shared_ptr<HybridMapStyleSpec>> wrap_std__shared_ptr_Promise_std__shared_ptr_HybridMapStyleSpec___(std::shared_ptr<Promise<std::shared_ptr<HybridMapStyleSpec>>> promise) noexcept {
+    return PromiseHolder<std::shared_ptr<HybridMapStyleSpec>>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const std::shared_ptr<HybridMapStyleSpec>& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const std::shared_ptr<HybridMapStyleSpec>&)>`.
+   */
+  using Func_void_std__shared_ptr_HybridMapStyleSpec_ = std::function<void(const std::shared_ptr<HybridMapStyleSpec>& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::shared_ptr<HybridMapStyleSpec>& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__shared_ptr_HybridMapStyleSpec__Wrapper final {
+  public:
+    explicit Func_void_std__shared_ptr_HybridMapStyleSpec__Wrapper(std::function<void(const std::shared_ptr<HybridMapStyleSpec>& /* result */)>&& func): _function(std::make_unique<std::function<void(const std::shared_ptr<HybridMapStyleSpec>& /* result */)>>(std::move(func))) {}
+    inline void call(std::shared_ptr<HybridMapStyleSpec> result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::shared_ptr<HybridMapStyleSpec>& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__shared_ptr_HybridMapStyleSpec_ create_Func_void_std__shared_ptr_HybridMapStyleSpec_(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__shared_ptr_HybridMapStyleSpec__Wrapper wrap_Func_void_std__shared_ptr_HybridMapStyleSpec_(Func_void_std__shared_ptr_HybridMapStyleSpec_ value) noexcept {
+    return Func_void_std__shared_ptr_HybridMapStyleSpec__Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
+  /**
+   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
+   */
+  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__exception_ptr_Wrapper final {
+  public:
+    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
+    inline void call(std::exception_ptr error) const noexcept {
+      _function->operator()(error);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
+    return Func_void_std__exception_ptr_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridPointAnnotationManagerSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridPointAnnotationManagerSpec>`.
+   */
+  using std__shared_ptr_HybridPointAnnotationManagerSpec_ = std::shared_ptr<HybridPointAnnotationManagerSpec>;
+  std::shared_ptr<HybridPointAnnotationManagerSpec> create_std__shared_ptr_HybridPointAnnotationManagerSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridPointAnnotationManagerSpec_(std__shared_ptr_HybridPointAnnotationManagerSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridPointAnnotationManagerSpec>
+  using std__weak_ptr_HybridPointAnnotationManagerSpec_ = std::weak_ptr<HybridPointAnnotationManagerSpec>;
+  inline std__weak_ptr_HybridPointAnnotationManagerSpec_ weakify_std__shared_ptr_HybridPointAnnotationManagerSpec_(const std::shared_ptr<HybridPointAnnotationManagerSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>>`.
+   */
+  using std__shared_ptr_Promise_std__shared_ptr_HybridPointAnnotationManagerSpec___ = std::shared_ptr<Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>>;
+  inline std::shared_ptr<Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>> create_std__shared_ptr_Promise_std__shared_ptr_HybridPointAnnotationManagerSpec___() noexcept {
+    return Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>::create();
+  }
+  inline PromiseHolder<std::shared_ptr<HybridPointAnnotationManagerSpec>> wrap_std__shared_ptr_Promise_std__shared_ptr_HybridPointAnnotationManagerSpec___(std::shared_ptr<Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>> promise) noexcept {
+    return PromiseHolder<std::shared_ptr<HybridPointAnnotationManagerSpec>>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const std::shared_ptr<HybridPointAnnotationManagerSpec>& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const std::shared_ptr<HybridPointAnnotationManagerSpec>&)>`.
+   */
+  using Func_void_std__shared_ptr_HybridPointAnnotationManagerSpec_ = std::function<void(const std::shared_ptr<HybridPointAnnotationManagerSpec>& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::shared_ptr<HybridPointAnnotationManagerSpec>& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__shared_ptr_HybridPointAnnotationManagerSpec__Wrapper final {
+  public:
+    explicit Func_void_std__shared_ptr_HybridPointAnnotationManagerSpec__Wrapper(std::function<void(const std::shared_ptr<HybridPointAnnotationManagerSpec>& /* result */)>&& func): _function(std::make_unique<std::function<void(const std::shared_ptr<HybridPointAnnotationManagerSpec>& /* result */)>>(std::move(func))) {}
+    inline void call(std::shared_ptr<HybridPointAnnotationManagerSpec> result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::shared_ptr<HybridPointAnnotationManagerSpec>& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__shared_ptr_HybridPointAnnotationManagerSpec_ create_Func_void_std__shared_ptr_HybridPointAnnotationManagerSpec_(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__shared_ptr_HybridPointAnnotationManagerSpec__Wrapper wrap_Func_void_std__shared_ptr_HybridPointAnnotationManagerSpec_(Func_void_std__shared_ptr_HybridPointAnnotationManagerSpec_ value) noexcept {
+    return Func_void_std__shared_ptr_HybridPointAnnotationManagerSpec__Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<CameraAnimationEnd>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<CameraAnimationEnd>>`.
+   */
+  using std__shared_ptr_Promise_CameraAnimationEnd__ = std::shared_ptr<Promise<CameraAnimationEnd>>;
+  inline std::shared_ptr<Promise<CameraAnimationEnd>> create_std__shared_ptr_Promise_CameraAnimationEnd__() noexcept {
+    return Promise<CameraAnimationEnd>::create();
+  }
+  inline PromiseHolder<CameraAnimationEnd> wrap_std__shared_ptr_Promise_CameraAnimationEnd__(std::shared_ptr<Promise<CameraAnimationEnd>> promise) noexcept {
+    return PromiseHolder<CameraAnimationEnd>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(CameraAnimationEnd /* result */)>
+  /**
+   * Specialized version of `std::function<void(CameraAnimationEnd)>`.
+   */
+  using Func_void_CameraAnimationEnd = std::function<void(CameraAnimationEnd /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(CameraAnimationEnd / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_CameraAnimationEnd_Wrapper final {
+  public:
+    explicit Func_void_CameraAnimationEnd_Wrapper(std::function<void(CameraAnimationEnd /* result */)>&& func): _function(std::make_unique<std::function<void(CameraAnimationEnd /* result */)>>(std::move(func))) {}
+    inline void call(int result) const noexcept {
+      _function->operator()(static_cast<CameraAnimationEnd>(result));
+    }
+  private:
+    std::unique_ptr<std::function<void(CameraAnimationEnd /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_CameraAnimationEnd create_Func_void_CameraAnimationEnd(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_CameraAnimationEnd_Wrapper wrap_Func_void_CameraAnimationEnd(Func_void_CameraAnimationEnd value) noexcept {
+    return Func_void_CameraAnimationEnd_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<CameraAnimationOptions>
+  /**
+   * Specialized version of `std::optional<CameraAnimationOptions>`.
+   */
+  using std__optional_CameraAnimationOptions_ = std::optional<CameraAnimationOptions>;
+  inline std::optional<CameraAnimationOptions> create_std__optional_CameraAnimationOptions_(const CameraAnimationOptions& value) noexcept {
+    return std::optional<CameraAnimationOptions>(value);
+  }
+  inline bool has_value_std__optional_CameraAnimationOptions_(const std::optional<CameraAnimationOptions>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline CameraAnimationOptions get_std__optional_CameraAnimationOptions_(const std::optional<CameraAnimationOptions>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<FitBoundsOptions>
+  /**
+   * Specialized version of `std::optional<FitBoundsOptions>`.
+   */
+  using std__optional_FitBoundsOptions_ = std::optional<FitBoundsOptions>;
+  inline std::optional<FitBoundsOptions> create_std__optional_FitBoundsOptions_(const FitBoundsOptions& value) noexcept {
+    return std::optional<FitBoundsOptions>(value);
+  }
+  inline bool has_value_std__optional_FitBoundsOptions_(const std::optional<FitBoundsOptions>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline FitBoundsOptions get_std__optional_FitBoundsOptions_(const std::optional<FitBoundsOptions>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<CameraState>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<CameraState>>`.
+   */
+  using std__shared_ptr_Promise_CameraState__ = std::shared_ptr<Promise<CameraState>>;
+  inline std::shared_ptr<Promise<CameraState>> create_std__shared_ptr_Promise_CameraState__() noexcept {
+    return Promise<CameraState>::create();
+  }
+  inline PromiseHolder<CameraState> wrap_std__shared_ptr_Promise_CameraState__(std::shared_ptr<Promise<CameraState>> promise) noexcept {
+    return PromiseHolder<CameraState>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const CameraState& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const CameraState&)>`.
+   */
+  using Func_void_CameraState = std::function<void(const CameraState& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const CameraState& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_CameraState_Wrapper final {
+  public:
+    explicit Func_void_CameraState_Wrapper(std::function<void(const CameraState& /* result */)>&& func): _function(std::make_unique<std::function<void(const CameraState& /* result */)>>(std::move(func))) {}
+    inline void call(CameraState result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(const CameraState& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_CameraState create_Func_void_CameraState(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_CameraState_Wrapper wrap_Func_void_CameraState(Func_void_CameraState value) noexcept {
+    return Func_void_CameraState_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<void()>
+  /**
+   * Specialized version of `std::function<void()>`.
+   */
+  using Func_void = std::function<void()>;
+  /**
+   * Wrapper class for a `std::function<void()>`, this can be used from Swift.
+   */
+  class Func_void_Wrapper final {
+  public:
+    explicit Func_void_Wrapper(std::function<void()>&& func): _function(std::make_unique<std::function<void()>>(std::move(func))) {}
+    inline void call() const noexcept {
+      _function->operator()();
+    }
+  private:
+    std::unique_ptr<std::function<void()>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_Wrapper wrap_Func_void(Func_void value) noexcept {
+    return Func_void_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<void(const MapTapEvent& /* event */)>
+  /**
+   * Specialized version of `std::function<void(const MapTapEvent&)>`.
+   */
+  using Func_void_MapTapEvent = std::function<void(const MapTapEvent& /* event */)>;
+  /**
+   * Wrapper class for a `std::function<void(const MapTapEvent& / * event * /)>`, this can be used from Swift.
+   */
+  class Func_void_MapTapEvent_Wrapper final {
+  public:
+    explicit Func_void_MapTapEvent_Wrapper(std::function<void(const MapTapEvent& /* event */)>&& func): _function(std::make_unique<std::function<void(const MapTapEvent& /* event */)>>(std::move(func))) {}
+    inline void call(MapTapEvent event) const noexcept {
+      _function->operator()(event);
+    }
+  private:
+    std::unique_ptr<std::function<void(const MapTapEvent& /* event */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_MapTapEvent create_Func_void_MapTapEvent(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_MapTapEvent_Wrapper wrap_Func_void_MapTapEvent(Func_void_MapTapEvent value) noexcept {
+    return Func_void_MapTapEvent_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridRenderedFeatureSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridRenderedFeatureSpec>`.
+   */
+  using std__shared_ptr_HybridRenderedFeatureSpec_ = std::shared_ptr<HybridRenderedFeatureSpec>;
+  std::shared_ptr<HybridRenderedFeatureSpec> create_std__shared_ptr_HybridRenderedFeatureSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridRenderedFeatureSpec_(std__shared_ptr_HybridRenderedFeatureSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridRenderedFeatureSpec>
+  using std__weak_ptr_HybridRenderedFeatureSpec_ = std::weak_ptr<HybridRenderedFeatureSpec>;
+  inline std__weak_ptr_HybridRenderedFeatureSpec_ weakify_std__shared_ptr_HybridRenderedFeatureSpec_(const std::shared_ptr<HybridRenderedFeatureSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>
+  /**
+   * Specialized version of `std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>`.
+   */
+  using std__vector_std__shared_ptr_HybridRenderedFeatureSpec__ = std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>;
+  inline std::vector<std::shared_ptr<HybridRenderedFeatureSpec>> create_std__vector_std__shared_ptr_HybridRenderedFeatureSpec__(size_t size) noexcept {
+    std::vector<std::shared_ptr<HybridRenderedFeatureSpec>> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>>`.
+   */
+  using std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridRenderedFeatureSpec____ = std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>>;
+  inline std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>> create_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridRenderedFeatureSpec____() noexcept {
+    return Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>::create();
+  }
+  inline PromiseHolder<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>> wrap_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridRenderedFeatureSpec____(std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>> promise) noexcept {
+    return PromiseHolder<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>&)>`.
+   */
+  using Func_void_std__vector_std__shared_ptr_HybridRenderedFeatureSpec__ = std::function<void(const std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__vector_std__shared_ptr_HybridRenderedFeatureSpec___Wrapper final {
+  public:
+    explicit Func_void_std__vector_std__shared_ptr_HybridRenderedFeatureSpec___Wrapper(std::function<void(const std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>& /* result */)>&& func): _function(std::make_unique<std::function<void(const std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>& /* result */)>>(std::move(func))) {}
+    inline void call(std::vector<std::shared_ptr<HybridRenderedFeatureSpec>> result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__vector_std__shared_ptr_HybridRenderedFeatureSpec__ create_Func_void_std__vector_std__shared_ptr_HybridRenderedFeatureSpec__(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__vector_std__shared_ptr_HybridRenderedFeatureSpec___Wrapper wrap_Func_void_std__vector_std__shared_ptr_HybridRenderedFeatureSpec__(Func_void_std__vector_std__shared_ptr_HybridRenderedFeatureSpec__ value) noexcept {
+    return Func_void_std__vector_std__shared_ptr_HybridRenderedFeatureSpec___Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::variant<ScreenPoint, ScreenBox>
+  /**
+   * Wrapper struct for `std::variant<ScreenPoint, ScreenBox>`.
+   * std::variant cannot be used in Swift because of a Swift bug.
+   * Not even specializing it works. So we create a wrapper struct.
+   */
+  struct std__variant_ScreenPoint__ScreenBox_ final {
+    std::variant<ScreenPoint, ScreenBox> variant;
+    std__variant_ScreenPoint__ScreenBox_(std::variant<ScreenPoint, ScreenBox> variant): variant(variant) { }
+    operator std::variant<ScreenPoint, ScreenBox>() const noexcept {
+      return variant;
+    }
+    inline size_t index() const noexcept {
+      return variant.index();
+    }
+    inline ScreenPoint get_0() const noexcept {
+      return std::get<0>(variant);
+    }
+    inline ScreenBox get_1() const noexcept {
+      return std::get<1>(variant);
+    }
+  };
+  inline std__variant_ScreenPoint__ScreenBox_ create_std__variant_ScreenPoint__ScreenBox_(const ScreenPoint& value) noexcept {
+    return std__variant_ScreenPoint__ScreenBox_(value);
+  }
+  inline std__variant_ScreenPoint__ScreenBox_ create_std__variant_ScreenPoint__ScreenBox_(const ScreenBox& value) noexcept {
+    return std__variant_ScreenPoint__ScreenBox_(value);
+  }
+  
+  // pragma MARK: std::vector<std::string>
+  /**
+   * Specialized version of `std::vector<std::string>`.
+   */
+  using std__vector_std__string_ = std::vector<std::string>;
+  inline std::vector<std::string> create_std__vector_std__string_(size_t size) noexcept {
+    std::vector<std::string> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::optional<std::vector<std::string>>
+  /**
+   * Specialized version of `std::optional<std::vector<std::string>>`.
+   */
+  using std__optional_std__vector_std__string__ = std::optional<std::vector<std::string>>;
+  inline std::optional<std::vector<std::string>> create_std__optional_std__vector_std__string__(const std::vector<std::string>& value) noexcept {
+    return std::optional<std::vector<std::string>>(value);
+  }
+  inline bool has_value_std__optional_std__vector_std__string__(const std::optional<std::vector<std::string>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::vector<std::string> get_std__optional_std__vector_std__string__(const std::optional<std::vector<std::string>>& optional) noexcept {
+    return optional.value();
+  }
+  
   // pragma MARK: std::shared_ptr<HybridMapboxMapViewSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridMapboxMapViewSpec>`.
@@ -42,22 +579,166 @@ namespace margelo::nitro::mapboxar::nativemap::bridge::swift {
   using std__weak_ptr_HybridMapboxMapViewSpec_ = std::weak_ptr<HybridMapboxMapViewSpec>;
   inline std__weak_ptr_HybridMapboxMapViewSpec_ weakify_std__shared_ptr_HybridMapboxMapViewSpec_(const std::shared_ptr<HybridMapboxMapViewSpec>& strong) noexcept { return strong; }
   
-  // pragma MARK: Result<void>
-  using Result_void_ = Result<void>;
-  inline Result_void_ create_Result_void_() noexcept {
-    return Result<void>::withValue();
+  // pragma MARK: Result<std::shared_ptr<Promise<std::shared_ptr<HybridMapStyleSpec>>>>
+  using Result_std__shared_ptr_Promise_std__shared_ptr_HybridMapStyleSpec____ = Result<std::shared_ptr<Promise<std::shared_ptr<HybridMapStyleSpec>>>>;
+  inline Result_std__shared_ptr_Promise_std__shared_ptr_HybridMapStyleSpec____ create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridMapStyleSpec____(const std::shared_ptr<Promise<std::shared_ptr<HybridMapStyleSpec>>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<std::shared_ptr<HybridMapStyleSpec>>>>::withValue(value);
   }
-  inline Result_void_ create_Result_void_(const std::exception_ptr& error) noexcept {
-    return Result<void>::withError(error);
+  inline Result_std__shared_ptr_Promise_std__shared_ptr_HybridMapStyleSpec____ create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridMapStyleSpec____(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<std::shared_ptr<HybridMapStyleSpec>>>>::withError(error);
   }
   
-  // pragma MARK: Result<MapCamera>
-  using Result_MapCamera_ = Result<MapCamera>;
-  inline Result_MapCamera_ create_Result_MapCamera_(const MapCamera& value) noexcept {
-    return Result<MapCamera>::withValue(value);
+  // pragma MARK: Result<std::shared_ptr<Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>>>
+  using Result_std__shared_ptr_Promise_std__shared_ptr_HybridPointAnnotationManagerSpec____ = Result<std::shared_ptr<Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>>>;
+  inline Result_std__shared_ptr_Promise_std__shared_ptr_HybridPointAnnotationManagerSpec____ create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridPointAnnotationManagerSpec____(const std::shared_ptr<Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>>>::withValue(value);
   }
-  inline Result_MapCamera_ create_Result_MapCamera_(const std::exception_ptr& error) noexcept {
-    return Result<MapCamera>::withError(error);
+  inline Result_std__shared_ptr_Promise_std__shared_ptr_HybridPointAnnotationManagerSpec____ create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridPointAnnotationManagerSpec____(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>>>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<CameraAnimationEnd>>>
+  using Result_std__shared_ptr_Promise_CameraAnimationEnd___ = Result<std::shared_ptr<Promise<CameraAnimationEnd>>>;
+  inline Result_std__shared_ptr_Promise_CameraAnimationEnd___ create_Result_std__shared_ptr_Promise_CameraAnimationEnd___(const std::shared_ptr<Promise<CameraAnimationEnd>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<CameraAnimationEnd>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_CameraAnimationEnd___ create_Result_std__shared_ptr_Promise_CameraAnimationEnd___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<CameraAnimationEnd>>>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<CameraState>>>
+  using Result_std__shared_ptr_Promise_CameraState___ = Result<std::shared_ptr<Promise<CameraState>>>;
+  inline Result_std__shared_ptr_Promise_CameraState___ create_Result_std__shared_ptr_Promise_CameraState___(const std::shared_ptr<Promise<CameraState>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<CameraState>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_CameraState___ create_Result_std__shared_ptr_Promise_CameraState___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<CameraState>>>::withError(error);
+  }
+  
+  // pragma MARK: Result<ListenerSubscription>
+  using Result_ListenerSubscription_ = Result<ListenerSubscription>;
+  inline Result_ListenerSubscription_ create_Result_ListenerSubscription_(const ListenerSubscription& value) noexcept {
+    return Result<ListenerSubscription>::withValue(value);
+  }
+  inline Result_ListenerSubscription_ create_Result_ListenerSubscription_(const std::exception_ptr& error) noexcept {
+    return Result<ListenerSubscription>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>>>
+  using Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridRenderedFeatureSpec_____ = Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>>>;
+  inline Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridRenderedFeatureSpec_____ create_Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridRenderedFeatureSpec_____(const std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridRenderedFeatureSpec_____ create_Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridRenderedFeatureSpec_____(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>>>::withError(error);
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<void>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<void>>`.
+   */
+  using std__shared_ptr_Promise_void__ = std::shared_ptr<Promise<void>>;
+  inline std::shared_ptr<Promise<void>> create_std__shared_ptr_Promise_void__() noexcept {
+    return Promise<void>::create();
+  }
+  inline PromiseHolder<void> wrap_std__shared_ptr_Promise_void__(std::shared_ptr<Promise<void>> promise) noexcept {
+    return PromiseHolder<void>(std::move(promise));
+  }
+  
+  // pragma MARK: std::optional<std::string>
+  /**
+   * Specialized version of `std::optional<std::string>`.
+   */
+  using std__optional_std__string_ = std::optional<std::string>;
+  inline std::optional<std::string> create_std__optional_std__string_(const std::string& value) noexcept {
+    return std::optional<std::string>(value);
+  }
+  inline bool has_value_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::string get_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<std::shared_ptr<AnyMap>>
+  /**
+   * Specialized version of `std::optional<std::shared_ptr<AnyMap>>`.
+   */
+  using std__optional_std__shared_ptr_AnyMap__ = std::optional<std::shared_ptr<AnyMap>>;
+  inline std::optional<std::shared_ptr<AnyMap>> create_std__optional_std__shared_ptr_AnyMap__(const std::shared_ptr<AnyMap>& value) noexcept {
+    return std::optional<std::shared_ptr<AnyMap>>(value);
+  }
+  inline bool has_value_std__optional_std__shared_ptr_AnyMap__(const std::optional<std::shared_ptr<AnyMap>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::shared_ptr<AnyMap> get_std__optional_std__shared_ptr_AnyMap__(const std::optional<std::shared_ptr<AnyMap>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<StandardLightPreset>
+  /**
+   * Specialized version of `std::optional<StandardLightPreset>`.
+   */
+  using std__optional_StandardLightPreset_ = std::optional<StandardLightPreset>;
+  inline std::optional<StandardLightPreset> create_std__optional_StandardLightPreset_(const StandardLightPreset& value) noexcept {
+    return std::optional<StandardLightPreset>(value);
+  }
+  inline bool has_value_std__optional_StandardLightPreset_(const std::optional<StandardLightPreset>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline StandardLightPreset get_std__optional_StandardLightPreset_(const std::optional<StandardLightPreset>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<void>>>
+  using Result_std__shared_ptr_Promise_void___ = Result<std::shared_ptr<Promise<void>>>;
+  inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::shared_ptr<Promise<void>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<void>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<void>>>::withError(error);
+  }
+  
+  // pragma MARK: std::vector<PointAnnotation>
+  /**
+   * Specialized version of `std::vector<PointAnnotation>`.
+   */
+  using std__vector_PointAnnotation_ = std::vector<PointAnnotation>;
+  inline std::vector<PointAnnotation> create_std__vector_PointAnnotation_(size_t size) noexcept {
+    std::vector<PointAnnotation> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::function<void(const std::string& /* annotationId */)>
+  /**
+   * Specialized version of `std::function<void(const std::string&)>`.
+   */
+  using Func_void_std__string = std::function<void(const std::string& /* annotationId */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::string& / * annotationId * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__string_Wrapper final {
+  public:
+    explicit Func_void_std__string_Wrapper(std::function<void(const std::string& /* annotationId */)>&& func): _function(std::make_unique<std::function<void(const std::string& /* annotationId */)>>(std::move(func))) {}
+    inline void call(std::string annotationId) const noexcept {
+      _function->operator()(annotationId);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::string& /* annotationId */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__string create_Func_void_std__string(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__string_Wrapper wrap_Func_void_std__string(Func_void_std__string value) noexcept {
+    return Func_void_std__string_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: Result<std::string>
+  using Result_std__string_ = Result<std::string>;
+  inline Result_std__string_ create_Result_std__string_(const std::string& value) noexcept {
+    return Result<std::string>::withValue(value);
+  }
+  inline Result_std__string_ create_Result_std__string_(const std::exception_ptr& error) noexcept {
+    return Result<std::string>::withError(error);
   }
 
 } // namespace margelo::nitro::mapboxar::nativemap::bridge::swift

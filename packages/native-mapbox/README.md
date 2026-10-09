@@ -35,25 +35,29 @@ Keeping it optional:
   though Mapbox Maps for iOS is not our visionOS renderer;
 - lets Android/iOS apps opt into Mapbox's full native UI when needed.
 
-## Nitro HybridView
+## API
 
-`MapboxMapView` is a Nitro HybridView implemented directly with
-`MapboxMaps.MapView` on iOS and `com.mapbox.maps.MapView` on Android.
+`MapboxMaps` (root): `isMapViewAvailable`, `sdkVersion`, `capabilities`.
 
-Props:
+`MapboxMapView` (Nitro Hybrid View, raw `getHostComponent`). Props:
+`styleUri`, `camera` (`CameraTarget`, jump on change), `projection`,
+`enableGestures`. There is no `accessToken` prop: set
+`MapboxAR.accessToken` from `@mikevocalz/nitro-mapbox-ar` before mounting.
 
-- `accessToken`
-- `styleURI`: `standard`, `standard-satellite`, or a full Mapbox style URI
-- `camera`: latitude, longitude, zoom, bearing, pitch
+Methods through `hybridRef`, all returning promises except listener
+registration: `loadStyle` (resolves a `MapStyle`),
+`createPointAnnotationManager`, `flyTo`, `easeTo`, `fitBounds`,
+`getCameraState`, `queryRenderedFeatures`, and
+`addOnCameraChangedListener` / `addOnMapTapListener` /
+`addOnStyleLoadedListener` / `addOnMapLoadingErrorListener`, each returning
+a `ListenerSubscription`.
 
-Hybrid ref methods:
+`MapStyle` goes stale when the next style load starts. `PointAnnotationManager`
+survives style reloads. The SDK symbol behind every member is listed in
+`docs/MAPS_SDK_INVENTORY.md`.
 
-- `setCamera(camera)`
-- `getCamera()`
-- `loadStyle(styleURI)`
-
-The camera is passed as one struct so React/Fabric does not issue five separate
-native prop transitions for one camera update.
+On visionOS the pod builds without MapboxMaps: `isMapViewAvailable` is
+`false` and every view method rejects.
 
 ## Code generation
 

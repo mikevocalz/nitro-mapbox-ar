@@ -13,19 +13,20 @@ import {
   SpatialAgentRuntime,
   listMapboxFeatures,
 } from '@mikevocalz/nitro-mapbox-ar'
-import { MapboxMapView } from '@mikevocalz/nitro-mapbox-ar-maps'
 import {
   ViroAmbientLight,
   ViroARScene,
   ViroARSceneNavigator,
   ViroText,
+  isVisionOS,
 } from '@reactvision/react-viro'
 import { SpatialSceneProvider } from '@metavr/layout-compat'
 import { createWindowScene } from '@metavr/layout-window-compat'
 
 import { rendererLabel } from './src/rendererLabel'
+import { MapScreen } from './src/screens/MapScreen'
 import { TabletopScreen } from './src/screens/TabletopScreen'
-import { navigation, searchClient, token } from './src/services'
+import { navigation, searchClient } from './src/services'
 import { isMapViewLinked } from './src/spatial/isMapViewLinked'
 import { useReferenceStore, type ReferenceMode } from './src/store'
 
@@ -41,17 +42,6 @@ function Tab({ mode, label }: { mode: ReferenceMode; label: string }) {
     <Pressable onPress={() => setMode(mode)} style={[styles.tab, active && styles.tabActive]}>
       <Text style={styles.tabText}>{label}</Text>
     </Pressable>
-  )
-}
-
-function MapMode() {
-  return (
-    <MapboxMapView
-      style={styles.fill}
-      accessToken={token}
-      styleURI="standard-satellite"
-      camera={{ ...nyc, zoom: 14, bearing: 0, pitch: 55 }}
-    />
   )
 }
 
@@ -159,21 +149,22 @@ export default function App() {
         <View style={styles.tabs}>
           <Tab mode="map" label="Map" />
           <Tab mode="navigate" label="Navigate" />
-          <Tab mode="ar" label="AR" />
+          {/* visionOS has no ARKit scene: ViroARSceneNavigator renders nothing there. */}
+          {!isVisionOS() && <Tab mode="ar" label="AR" />}
           <Tab mode="tabletop" label="Table" />
           <Tab mode="agent" label="Agent" />
         </View>
         <View style={styles.content}>
           {mode === 'map' &&
             (mapViewLinked ? (
-              <MapMode />
+              <MapScreen />
             ) : (
               <Text style={styles.copy}>The Mapbox map view is not available on this device.</Text>
             ))}
           {mode === 'navigate' && <NavigateMode />}
           {mode === 'ar' && <ARMode />}
           {mode === 'tabletop' && (
-            <TabletopScreen map={mapViewLinked ? <MapMode /> : undefined} />
+            <TabletopScreen map={mapViewLinked ? <MapScreen /> : undefined} />
           )}
           {mode === 'agent' && <AgentMode />}
         </View>

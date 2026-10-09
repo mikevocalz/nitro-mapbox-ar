@@ -91,6 +91,9 @@ def mapboxVersion = extOrDefault("NitroMapboxARMapboxVersion", "11.32.0")
 dependencies {
   implementation "com.facebook.react:react-native:+"
   implementation project(":react-native-nitro-modules")
+  // MapboxARAccessToken (docs/NITRO.md, decision 1). React Native autolinking
+  // names the core package's Gradle project after its npm name.
+  implementation project(":mikevocalz_nitro-mapbox-ar")
 
   // NDK 27 artifact includes Android 15+ 16 KB page-size support.
   implementation "com.mapbox.maps:android-ndk27:${mapboxVersion}"

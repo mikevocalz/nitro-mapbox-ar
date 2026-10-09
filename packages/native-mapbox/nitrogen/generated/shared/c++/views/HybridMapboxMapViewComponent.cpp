@@ -20,16 +20,18 @@ namespace margelo::nitro::mapboxar::nativemap::views {
                                                      const HybridMapboxMapViewProps& sourceProps,
                                                      const react::RawProps& rawProps):
     react::ViewProps(context, sourceProps, rawProps, filterObjectKeys),
-    accessToken(nitro::ReactProp<std::string>::fromRawValue("MapboxMapView", "accessToken", rawProps, sourceProps.accessToken)),
-    styleURI(nitro::ReactProp<std::string>::fromRawValue("MapboxMapView", "styleURI", rawProps, sourceProps.styleURI)),
-    camera(nitro::ReactProp<MapCamera>::fromRawValue("MapboxMapView", "camera", rawProps, sourceProps.camera)),
+    styleUri(nitro::ReactProp<std::string>::fromRawValue("MapboxMapView", "styleUri", rawProps, sourceProps.styleUri)),
+    camera(nitro::ReactProp<std::optional<CameraTarget>>::fromRawValue("MapboxMapView", "camera", rawProps, sourceProps.camera)),
+    projection(nitro::ReactProp<std::optional<MapProjection>>::fromRawValue("MapboxMapView", "projection", rawProps, sourceProps.projection)),
+    enableGestures(nitro::ReactProp<std::optional<bool>>::fromRawValue("MapboxMapView", "enableGestures", rawProps, sourceProps.enableGestures)),
     hybridRef(nitro::ReactProp<std::optional<std::function<void(const std::shared_ptr<HybridMapboxMapViewSpec>& /* ref */)>>>::fromRawValue("MapboxMapView", "hybridRef", rawProps, sourceProps.hybridRef)) { }
 
   bool HybridMapboxMapViewProps::filterObjectKeys(const std::string& propName) {
     switch (hashString(propName)) {
-      case hashString("accessToken"): return true;
-      case hashString("styleURI"): return true;
+      case hashString("styleUri"): return true;
       case hashString("camera"): return true;
+      case hashString("projection"): return true;
+      case hashString("enableGestures"): return true;
       case hashString("hybridRef"): return true;
       default: return false;
     }

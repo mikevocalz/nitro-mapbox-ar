@@ -15,8 +15,18 @@
 #include <fbjni/fbjni.h>
 #include <NitroModules/HybridObjectRegistry.hpp>
 
+#include "JHybridMapboxMapsSpec.hpp"
 #include "JHybridMapboxMapViewSpec.hpp"
+#include "JFunc_void.hpp"
+#include "JFunc_void_CameraState.hpp"
+#include "JFunc_void_MapTapEvent.hpp"
+#include "JFunc_void_std__shared_ptr_HybridMapStyleSpec_.hpp"
+#include "JFunc_void_std__exception_ptr.hpp"
 #include "views/JHybridMapboxMapViewStateUpdater.hpp"
+#include "JHybridMapStyleSpec.hpp"
+#include "JHybridPointAnnotationManagerSpec.hpp"
+#include "JFunc_void_std__string.hpp"
+#include "JHybridRenderedFeatureSpec.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::mapboxar::nativemap {
@@ -27,6 +37,14 @@ int initialize(JavaVM* vm) {
   });
 }
 
+struct JHybridMapboxMapsSpecImpl: public jni::JavaClass<JHybridMapboxMapsSpecImpl, JHybridMapboxMapsSpec::JavaPart> {
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/mapboxar/nativemap/HybridMapboxMaps;";
+  static std::shared_ptr<JHybridMapboxMapsSpec> create() {
+    static const auto constructorFn = javaClassStatic()->getConstructor<JHybridMapboxMapsSpecImpl::javaobject()>();
+    jni::local_ref<JHybridMapboxMapsSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
+    return javaPart->getJHybridMapboxMapsSpec();
+  }
+};
 struct JHybridMapboxMapViewSpecImpl: public jni::JavaClass<JHybridMapboxMapViewSpecImpl, JHybridMapboxMapViewSpec::JavaPart> {
   static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/mapboxar/nativemap/HybridMapboxMapView;";
   static std::shared_ptr<JHybridMapboxMapViewSpec> create() {
@@ -41,10 +59,26 @@ void registerAllNatives() {
   using namespace margelo::nitro::mapboxar::nativemap;
 
   // Register native JNI methods
+  margelo::nitro::mapboxar::nativemap::JHybridMapboxMapsSpec::CxxPart::registerNatives();
   margelo::nitro::mapboxar::nativemap::JHybridMapboxMapViewSpec::CxxPart::registerNatives();
+  margelo::nitro::mapboxar::nativemap::JFunc_void_cxx::registerNatives();
+  margelo::nitro::mapboxar::nativemap::JFunc_void_CameraState_cxx::registerNatives();
+  margelo::nitro::mapboxar::nativemap::JFunc_void_MapTapEvent_cxx::registerNatives();
+  margelo::nitro::mapboxar::nativemap::JFunc_void_std__shared_ptr_HybridMapStyleSpec__cxx::registerNatives();
+  margelo::nitro::mapboxar::nativemap::JFunc_void_std__exception_ptr_cxx::registerNatives();
   margelo::nitro::mapboxar::nativemap::views::JHybridMapboxMapViewStateUpdater::registerNatives();
+  margelo::nitro::mapboxar::nativemap::JHybridMapStyleSpec::CxxPart::registerNatives();
+  margelo::nitro::mapboxar::nativemap::JHybridPointAnnotationManagerSpec::CxxPart::registerNatives();
+  margelo::nitro::mapboxar::nativemap::JFunc_void_std__string_cxx::registerNatives();
+  margelo::nitro::mapboxar::nativemap::JHybridRenderedFeatureSpec::CxxPart::registerNatives();
 
   // Register Nitro Hybrid Objects
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "MapboxMaps",
+    []() -> std::shared_ptr<HybridObject> {
+      return JHybridMapboxMapsSpecImpl::create();
+    }
+  );
   HybridObjectRegistry::registerHybridObjectConstructor(
     "MapboxMapView",
     []() -> std::shared_ptr<HybridObject> {

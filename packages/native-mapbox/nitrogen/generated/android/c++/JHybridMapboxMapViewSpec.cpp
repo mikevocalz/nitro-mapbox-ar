@@ -7,12 +7,91 @@
 
 #include "JHybridMapboxMapViewSpec.hpp"
 
-// Forward declaration of `MapCamera` to properly resolve imports.
-namespace margelo::nitro::mapboxar::nativemap { struct MapCamera; }
+// Forward declaration of `CameraTarget` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CameraTarget; }
+// Forward declaration of `GeographicCoordinate` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct GeographicCoordinate; }
+// Forward declaration of `EdgeInsets` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct EdgeInsets; }
+// Forward declaration of `MapProjection` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class MapProjection; }
+// Forward declaration of `HybridMapStyleSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridMapStyleSpec; }
+// Forward declaration of `HybridPointAnnotationManagerSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridPointAnnotationManagerSpec; }
+// Forward declaration of `CameraAnimationEnd` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class CameraAnimationEnd; }
+// Forward declaration of `CameraState` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CameraState; }
+// Forward declaration of `ListenerSubscription` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct ListenerSubscription; }
+// Forward declaration of `HybridRenderedFeatureSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridRenderedFeatureSpec; }
+// Forward declaration of `CameraAnimationOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CameraAnimationOptions; }
+// Forward declaration of `CoordinateBounds` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CoordinateBounds; }
+// Forward declaration of `FitBoundsOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct FitBoundsOptions; }
+// Forward declaration of `MapTapEvent` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct MapTapEvent; }
+// Forward declaration of `ScreenPoint` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct ScreenPoint; }
+// Forward declaration of `RenderedFeatureQuery` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct RenderedFeatureQuery; }
+// Forward declaration of `ScreenBox` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct ScreenBox; }
 
 #include <string>
-#include "MapCamera.hpp"
-#include "JMapCamera.hpp"
+#include "CameraTarget.hpp"
+#include <optional>
+#include "JCameraTarget.hpp"
+#include "GeographicCoordinate.hpp"
+#include "JGeographicCoordinate.hpp"
+#include "EdgeInsets.hpp"
+#include "JEdgeInsets.hpp"
+#include "MapProjection.hpp"
+#include "JMapProjection.hpp"
+#include <memory>
+#include "HybridMapStyleSpec.hpp"
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
+#include "JHybridMapStyleSpec.hpp"
+#include "HybridPointAnnotationManagerSpec.hpp"
+#include "JHybridPointAnnotationManagerSpec.hpp"
+#include "CameraAnimationEnd.hpp"
+#include "JCameraAnimationEnd.hpp"
+#include "CameraState.hpp"
+#include "JCameraState.hpp"
+#include "ListenerSubscription.hpp"
+#include "JListenerSubscription.hpp"
+#include <functional>
+#include "JFunc_void.hpp"
+#include <NitroModules/JNICallable.hpp>
+#include "HybridRenderedFeatureSpec.hpp"
+#include <vector>
+#include "JHybridRenderedFeatureSpec.hpp"
+#include "CameraAnimationOptions.hpp"
+#include "JCameraAnimationOptions.hpp"
+#include "CoordinateBounds.hpp"
+#include "JCoordinateBounds.hpp"
+#include "FitBoundsOptions.hpp"
+#include "JFitBoundsOptions.hpp"
+#include "JFunc_void_CameraState.hpp"
+#include "MapTapEvent.hpp"
+#include "JFunc_void_MapTapEvent.hpp"
+#include "JMapTapEvent.hpp"
+#include "ScreenPoint.hpp"
+#include "JScreenPoint.hpp"
+#include "JFunc_void_std__shared_ptr_HybridMapStyleSpec_.hpp"
+#include <exception>
+#include "JFunc_void_std__exception_ptr.hpp"
+#include "RenderedFeatureQuery.hpp"
+#include "JRenderedFeatureQuery.hpp"
+#include "ScreenBox.hpp"
+#include <variant>
+#include "JVariant_ScreenPoint_ScreenBox.hpp"
+#include "JScreenBox.hpp"
 
 namespace margelo::nitro::mapboxar::nativemap {
 
@@ -44,47 +123,184 @@ namespace margelo::nitro::mapboxar::nativemap {
   }
 
   // Properties
-  std::string JHybridMapboxMapViewSpec::getAccessToken() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getAccessToken");
+  std::string JHybridMapboxMapViewSpec::getStyleUri() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getStyleUri");
     auto __result = method(_javaPart);
     return __result->toStdString();
   }
-  void JHybridMapboxMapViewSpec::setAccessToken(const std::string& accessToken) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* accessToken */)>("setAccessToken");
-    method(_javaPart, jni::make_jstring(accessToken));
+  void JHybridMapboxMapViewSpec::setStyleUri(const std::string& styleUri) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* styleUri */)>("setStyleUri");
+    method(_javaPart, jni::make_jstring(styleUri));
   }
-  std::string JHybridMapboxMapViewSpec::getStyleURI() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getStyleURI");
+  std::optional<CameraTarget> JHybridMapboxMapViewSpec::getCamera() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JCameraTarget>()>("getCamera");
     auto __result = method(_javaPart);
-    return __result->toStdString();
+    return __result != nullptr ? std::make_optional(__result->toCpp()) : std::nullopt;
   }
-  void JHybridMapboxMapViewSpec::setStyleURI(const std::string& styleURI) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* styleURI */)>("setStyleURI");
-    method(_javaPart, jni::make_jstring(styleURI));
+  void JHybridMapboxMapViewSpec::setCamera(const std::optional<CameraTarget>& camera) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JCameraTarget> /* camera */)>("setCamera");
+    method(_javaPart, camera.has_value() ? JCameraTarget::fromCpp(camera.value()) : nullptr);
   }
-  MapCamera JHybridMapboxMapViewSpec::getCamera() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JMapCamera>()>("getCamera");
+  std::optional<MapProjection> JHybridMapboxMapViewSpec::getProjection() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JMapProjection>()>("getProjection");
     auto __result = method(_javaPart);
-    return __result->toCpp();
+    return __result != nullptr ? std::make_optional(__result->toCpp()) : std::nullopt;
   }
-  void JHybridMapboxMapViewSpec::setCamera(const MapCamera& camera) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JMapCamera> /* camera */)>("setCamera");
-    method(_javaPart, JMapCamera::fromCpp(camera));
+  void JHybridMapboxMapViewSpec::setProjection(std::optional<MapProjection> projection) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JMapProjection> /* projection */)>("setProjection");
+    method(_javaPart, projection.has_value() ? JMapProjection::fromCpp(projection.value()) : nullptr);
+  }
+  std::optional<bool> JHybridMapboxMapViewSpec::getEnableGestures() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JBoolean>()>("getEnableGestures");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional(static_cast<bool>(__result->value())) : std::nullopt;
+  }
+  void JHybridMapboxMapViewSpec::setEnableGestures(std::optional<bool> enableGestures) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JBoolean> /* enableGestures */)>("setEnableGestures");
+    method(_javaPart, enableGestures.has_value() ? jni::JBoolean::valueOf(enableGestures.value()) : nullptr);
   }
 
   // Methods
-  void JHybridMapboxMapViewSpec::setCamera(const MapCamera& camera) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JMapCamera> /* camera */)>("setCamera");
-    method(_javaPart, JMapCamera::fromCpp(camera));
+  std::shared_ptr<Promise<std::shared_ptr<HybridMapStyleSpec>>> JHybridMapboxMapViewSpec::loadStyle(const std::string& uri) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* uri */)>("loadStyle");
+    auto __result = method(_javaPart, jni::make_jstring(uri));
+    return [&]() {
+      auto __promise = Promise<std::shared_ptr<HybridMapStyleSpec>>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JHybridMapStyleSpec::JavaPart>(__boxedResult);
+        __promise->resolve(__result->getJHybridMapStyleSpec());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
   }
-  MapCamera JHybridMapboxMapViewSpec::getCamera() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JMapCamera>()>("getCamera");
+  std::shared_ptr<Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>> JHybridMapboxMapViewSpec::createPointAnnotationManager() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("createPointAnnotationManager");
     auto __result = method(_javaPart);
+    return [&]() {
+      auto __promise = Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JHybridPointAnnotationManagerSpec::JavaPart>(__boxedResult);
+        __promise->resolve(__result->getJHybridPointAnnotationManagerSpec());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<CameraAnimationEnd>> JHybridMapboxMapViewSpec::flyTo(const CameraTarget& target, const std::optional<CameraAnimationOptions>& options) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JCameraTarget> /* target */, jni::alias_ref<JCameraAnimationOptions> /* options */)>("flyTo");
+    auto __result = method(_javaPart, JCameraTarget::fromCpp(target), options.has_value() ? JCameraAnimationOptions::fromCpp(options.value()) : nullptr);
+    return [&]() {
+      auto __promise = Promise<CameraAnimationEnd>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JCameraAnimationEnd>(__boxedResult);
+        __promise->resolve(__result->toCpp());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<CameraAnimationEnd>> JHybridMapboxMapViewSpec::easeTo(const CameraTarget& target, const std::optional<CameraAnimationOptions>& options) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JCameraTarget> /* target */, jni::alias_ref<JCameraAnimationOptions> /* options */)>("easeTo");
+    auto __result = method(_javaPart, JCameraTarget::fromCpp(target), options.has_value() ? JCameraAnimationOptions::fromCpp(options.value()) : nullptr);
+    return [&]() {
+      auto __promise = Promise<CameraAnimationEnd>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JCameraAnimationEnd>(__boxedResult);
+        __promise->resolve(__result->toCpp());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<CameraAnimationEnd>> JHybridMapboxMapViewSpec::fitBounds(const CoordinateBounds& bounds, const std::optional<FitBoundsOptions>& options) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JCoordinateBounds> /* bounds */, jni::alias_ref<JFitBoundsOptions> /* options */)>("fitBounds");
+    auto __result = method(_javaPart, JCoordinateBounds::fromCpp(bounds), options.has_value() ? JFitBoundsOptions::fromCpp(options.value()) : nullptr);
+    return [&]() {
+      auto __promise = Promise<CameraAnimationEnd>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JCameraAnimationEnd>(__boxedResult);
+        __promise->resolve(__result->toCpp());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<CameraState>> JHybridMapboxMapViewSpec::getCameraState() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("getCameraState");
+    auto __result = method(_javaPart);
+    return [&]() {
+      auto __promise = Promise<CameraState>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JCameraState>(__boxedResult);
+        __promise->resolve(__result->toCpp());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  ListenerSubscription JHybridMapboxMapViewSpec::addOnCameraChangedListener(const std::function<void(const CameraState& /* state */)>& listener) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JListenerSubscription>(jni::alias_ref<JFunc_void_CameraState::javaobject> /* listener */)>("addOnCameraChangedListener_cxx");
+    auto __result = method(_javaPart, JFunc_void_CameraState_cxx::fromCpp(listener));
     return __result->toCpp();
   }
-  void JHybridMapboxMapViewSpec::loadStyle(const std::string& styleURI) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* styleURI */)>("loadStyle");
-    method(_javaPart, jni::make_jstring(styleURI));
+  ListenerSubscription JHybridMapboxMapViewSpec::addOnMapTapListener(const std::function<void(const MapTapEvent& /* event */)>& listener) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JListenerSubscription>(jni::alias_ref<JFunc_void_MapTapEvent::javaobject> /* listener */)>("addOnMapTapListener_cxx");
+    auto __result = method(_javaPart, JFunc_void_MapTapEvent_cxx::fromCpp(listener));
+    return __result->toCpp();
+  }
+  ListenerSubscription JHybridMapboxMapViewSpec::addOnStyleLoadedListener(const std::function<void(const std::shared_ptr<HybridMapStyleSpec>& /* style */)>& listener) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JListenerSubscription>(jni::alias_ref<JFunc_void_std__shared_ptr_HybridMapStyleSpec_::javaobject> /* listener */)>("addOnStyleLoadedListener_cxx");
+    auto __result = method(_javaPart, JFunc_void_std__shared_ptr_HybridMapStyleSpec__cxx::fromCpp(listener));
+    return __result->toCpp();
+  }
+  ListenerSubscription JHybridMapboxMapViewSpec::addOnMapLoadingErrorListener(const std::function<void(const std::exception_ptr& /* error */)>& listener) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JListenerSubscription>(jni::alias_ref<JFunc_void_std__exception_ptr::javaobject> /* listener */)>("addOnMapLoadingErrorListener_cxx");
+    auto __result = method(_javaPart, JFunc_void_std__exception_ptr_cxx::fromCpp(listener));
+    return __result->toCpp();
+  }
+  std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>> JHybridMapboxMapViewSpec::queryRenderedFeatures(const RenderedFeatureQuery& query) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JRenderedFeatureQuery> /* query */)>("queryRenderedFeatures");
+    auto __result = method(_javaPart, JRenderedFeatureQuery::fromCpp(query));
+    return [&]() {
+      auto __promise = Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<jni::JArrayClass<JHybridRenderedFeatureSpec::JavaPart>>(__boxedResult);
+        __promise->resolve([&](auto&& __input) {
+          size_t __size = __input->size();
+          std::vector<std::shared_ptr<HybridRenderedFeatureSpec>> __vector;
+          __vector.reserve(__size);
+          for (size_t __i = 0; __i < __size; __i++) {
+            auto __element = __input->getElement(__i);
+            __vector.push_back(__element->getJHybridRenderedFeatureSpec());
+          }
+          return __vector;
+        }(__result));
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
   }
 
 } // namespace margelo::nitro::mapboxar::nativemap

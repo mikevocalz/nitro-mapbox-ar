@@ -12,6 +12,18 @@ import NitroModules
 public final class NitroMapboxARNativeMapAutolinking {
   public typealias bridge = margelo.nitro.mapboxar.nativemap.bridge.swift
 
+  public static func createMapboxMaps() -> bridge.std__shared_ptr_HybridMapboxMapsSpec_ {
+    let hybridObject = HybridMapboxMaps()
+    return { () -> bridge.std__shared_ptr_HybridMapboxMapsSpec_ in
+      let __cxxWrapped = hybridObject.getCxxWrapper()
+      return __cxxWrapped.getCxxPart()
+    }()
+  }
+  
+  public static func isMapboxMapsRecyclable() -> Bool {
+    return HybridMapboxMaps.self is any RecyclableView.Type
+  }
+  
   public static func createMapboxMapView() -> bridge.std__shared_ptr_HybridMapboxMapViewSpec_ {
     let hybridObject = HybridMapboxMapView()
     return { () -> bridge.std__shared_ptr_HybridMapboxMapViewSpec_ in

@@ -18,11 +18,12 @@
 #include <string>
 
 #include <string>
-#include "MapCamera.hpp"
+#include "CameraTarget.hpp"
+#include <optional>
+#include "MapProjection.hpp"
 #include <memory>
 #include "HybridMapboxMapViewSpec.hpp"
 #include <functional>
-#include <optional>
 
 namespace margelo::nitro::mapboxar::nativemap::views {
 
@@ -44,24 +45,27 @@ namespace margelo::nitro::mapboxar::nativemap::views {
                              const react::RawProps& rawProps);
 
   public:
-    nitro::ReactProp<std::string> accessToken;
-    nitro::ReactProp<std::string> styleURI;
-    nitro::ReactProp<MapCamera> camera;
+    nitro::ReactProp<std::string> styleUri;
+    nitro::ReactProp<std::optional<CameraTarget>> camera;
+    nitro::ReactProp<std::optional<MapProjection>> projection;
+    nitro::ReactProp<std::optional<bool>> enableGestures;
     nitro::ReactProp<std::optional<std::function<void(const std::shared_ptr<HybridMapboxMapViewSpec>& /* ref */)>>> hybridRef;
 
     [[nodiscard]]
     bool hasSameProps(const HybridMapboxMapViewProps& other) const noexcept {
-      return accessToken.hasSameValue(other.accessToken) &&
-             styleURI.hasSameValue(other.styleURI) &&
+      return styleUri.hasSameValue(other.styleUri) &&
              camera.hasSameValue(other.camera) &&
+             projection.hasSameValue(other.projection) &&
+             enableGestures.hasSameValue(other.enableGestures) &&
              hybridRef.hasSameValue(other.hybridRef);
     }
 
     [[nodiscard]]
     bool hasAnyProvidedProps() const noexcept {
-      return accessToken.isProvided() ||
-             styleURI.isProvided() ||
+      return styleUri.isProvided() ||
              camera.isProvided() ||
+             projection.isProvided() ||
+             enableGestures.isProvided() ||
              hybridRef.isProvided();
     }
 

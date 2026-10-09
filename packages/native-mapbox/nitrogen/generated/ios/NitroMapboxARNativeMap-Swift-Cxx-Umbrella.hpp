@@ -8,18 +8,105 @@
 #pragma once
 
 // Forward declarations of C++ defined types
+// Forward declaration of `CameraAnimationEnd` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class CameraAnimationEnd; }
+// Forward declaration of `CameraAnimationOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CameraAnimationOptions; }
+// Forward declaration of `CameraState` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CameraState; }
+// Forward declaration of `CameraTarget` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CameraTarget; }
+// Forward declaration of `CoordinateBounds` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CoordinateBounds; }
+// Forward declaration of `EdgeInsets` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct EdgeInsets; }
+// Forward declaration of `FitBoundsOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct FitBoundsOptions; }
+// Forward declaration of `GeoJsonSource` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct GeoJsonSource; }
+// Forward declaration of `GeographicCoordinate` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct GeographicCoordinate; }
+// Forward declaration of `HybridMapStyleSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridMapStyleSpec; }
 // Forward declaration of `HybridMapboxMapViewSpec` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { class HybridMapboxMapViewSpec; }
-// Forward declaration of `MapCamera` to properly resolve imports.
-namespace margelo::nitro::mapboxar::nativemap { struct MapCamera; }
+// Forward declaration of `HybridMapboxMapsSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridMapboxMapsSpec; }
+// Forward declaration of `HybridPointAnnotationManagerSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridPointAnnotationManagerSpec; }
+// Forward declaration of `HybridRenderedFeatureSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridRenderedFeatureSpec; }
+// Forward declaration of `ListenerSubscription` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct ListenerSubscription; }
+// Forward declaration of `MapCapabilities` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct MapCapabilities; }
+// Forward declaration of `MapProjection` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class MapProjection; }
+// Forward declaration of `MapTapEvent` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct MapTapEvent; }
+// Forward declaration of `PointAnnotation` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct PointAnnotation; }
+// Forward declaration of `RasterDemSource` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct RasterDemSource; }
+// Forward declaration of `RenderedFeatureQuery` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct RenderedFeatureQuery; }
+// Forward declaration of `ScreenBox` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct ScreenBox; }
+// Forward declaration of `ScreenPoint` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct ScreenPoint; }
+// Forward declaration of `StandardLightPreset` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class StandardLightPreset; }
+// Forward declaration of `StandardStyleConfig` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct StandardStyleConfig; }
+// Forward declaration of `StyleLayerType` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class StyleLayerType; }
+// Forward declaration of `StyleLayer` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct StyleLayer; }
+// Forward declaration of `TerrainOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct TerrainOptions; }
+// Forward declaration of `VectorSource` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct VectorSource; }
 
 // Include C++ defined types
+#include "CameraAnimationEnd.hpp"
+#include "CameraAnimationOptions.hpp"
+#include "CameraState.hpp"
+#include "CameraTarget.hpp"
+#include "CoordinateBounds.hpp"
+#include "EdgeInsets.hpp"
+#include "FitBoundsOptions.hpp"
+#include "GeoJsonSource.hpp"
+#include "GeographicCoordinate.hpp"
+#include "HybridMapStyleSpec.hpp"
 #include "HybridMapboxMapViewSpec.hpp"
-#include "MapCamera.hpp"
+#include "HybridMapboxMapsSpec.hpp"
+#include "HybridPointAnnotationManagerSpec.hpp"
+#include "HybridRenderedFeatureSpec.hpp"
+#include "ListenerSubscription.hpp"
+#include "MapCapabilities.hpp"
+#include "MapProjection.hpp"
+#include "MapTapEvent.hpp"
+#include "PointAnnotation.hpp"
+#include "RasterDemSource.hpp"
+#include "RenderedFeatureQuery.hpp"
+#include "ScreenBox.hpp"
+#include "ScreenPoint.hpp"
+#include "StandardLightPreset.hpp"
+#include "StandardStyleConfig.hpp"
+#include "StyleLayer.hpp"
+#include "StyleLayerType.hpp"
+#include "TerrainOptions.hpp"
+#include "VectorSource.hpp"
+#include <NitroModules/AnyMap.hpp>
+#include <NitroModules/Promise.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
+#include <functional>
 #include <memory>
+#include <optional>
 #include <string>
+#include <variant>
+#include <vector>
 
 // C++ helpers for Swift
 #include "NitroMapboxARNativeMap-Swift-Cxx-Bridge.hpp"
@@ -31,8 +118,16 @@ namespace margelo::nitro::mapboxar::nativemap { struct MapCamera; }
 #include <NitroModules/DateToChronoDate.hpp>
 
 // Forward declarations of Swift defined types
+// Forward declaration of `HybridMapStyleSpec_cxx` to properly resolve imports.
+namespace NitroMapboxARNativeMap { class HybridMapStyleSpec_cxx; }
 // Forward declaration of `HybridMapboxMapViewSpec_cxx` to properly resolve imports.
 namespace NitroMapboxARNativeMap { class HybridMapboxMapViewSpec_cxx; }
+// Forward declaration of `HybridMapboxMapsSpec_cxx` to properly resolve imports.
+namespace NitroMapboxARNativeMap { class HybridMapboxMapsSpec_cxx; }
+// Forward declaration of `HybridPointAnnotationManagerSpec_cxx` to properly resolve imports.
+namespace NitroMapboxARNativeMap { class HybridPointAnnotationManagerSpec_cxx; }
+// Forward declaration of `HybridRenderedFeatureSpec_cxx` to properly resolve imports.
+namespace NitroMapboxARNativeMap { class HybridRenderedFeatureSpec_cxx; }
 
 // Include Swift defined types
 #if __has_include("NitroMapboxARNativeMap-Swift.h")

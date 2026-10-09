@@ -14,15 +14,25 @@ namespace margelo::nitro::mapboxar::nativemap {
     HybridObject::loadHybridMethods();
     // load custom methods/properties
     registerHybrids(this, [](Prototype& prototype) {
-      prototype.registerHybridGetter("accessToken", &HybridMapboxMapViewSpec::getAccessToken);
-      prototype.registerHybridSetter("accessToken", &HybridMapboxMapViewSpec::setAccessToken);
-      prototype.registerHybridGetter("styleURI", &HybridMapboxMapViewSpec::getStyleURI);
-      prototype.registerHybridSetter("styleURI", &HybridMapboxMapViewSpec::setStyleURI);
+      prototype.registerHybridGetter("styleUri", &HybridMapboxMapViewSpec::getStyleUri);
+      prototype.registerHybridSetter("styleUri", &HybridMapboxMapViewSpec::setStyleUri);
       prototype.registerHybridGetter("camera", &HybridMapboxMapViewSpec::getCamera);
       prototype.registerHybridSetter("camera", &HybridMapboxMapViewSpec::setCamera);
-      prototype.registerHybridMethod("setCamera", &HybridMapboxMapViewSpec::setCamera);
-      prototype.registerHybridMethod("getCamera", &HybridMapboxMapViewSpec::getCamera);
+      prototype.registerHybridGetter("projection", &HybridMapboxMapViewSpec::getProjection);
+      prototype.registerHybridSetter("projection", &HybridMapboxMapViewSpec::setProjection);
+      prototype.registerHybridGetter("enableGestures", &HybridMapboxMapViewSpec::getEnableGestures);
+      prototype.registerHybridSetter("enableGestures", &HybridMapboxMapViewSpec::setEnableGestures);
       prototype.registerHybridMethod("loadStyle", &HybridMapboxMapViewSpec::loadStyle);
+      prototype.registerHybridMethod("createPointAnnotationManager", &HybridMapboxMapViewSpec::createPointAnnotationManager);
+      prototype.registerHybridMethod("flyTo", &HybridMapboxMapViewSpec::flyTo);
+      prototype.registerHybridMethod("easeTo", &HybridMapboxMapViewSpec::easeTo);
+      prototype.registerHybridMethod("fitBounds", &HybridMapboxMapViewSpec::fitBounds);
+      prototype.registerHybridMethod("getCameraState", &HybridMapboxMapViewSpec::getCameraState);
+      prototype.registerHybridMethod("addOnCameraChangedListener", &HybridMapboxMapViewSpec::addOnCameraChangedListener);
+      prototype.registerHybridMethod("addOnMapTapListener", &HybridMapboxMapViewSpec::addOnMapTapListener);
+      prototype.registerHybridMethod("addOnStyleLoadedListener", &HybridMapboxMapViewSpec::addOnStyleLoadedListener);
+      prototype.registerHybridMethod("addOnMapLoadingErrorListener", &HybridMapboxMapViewSpec::addOnMapLoadingErrorListener);
+      prototype.registerHybridMethod("queryRenderedFeatures", &HybridMapboxMapViewSpec::queryRenderedFeatures);
     });
   }
 
