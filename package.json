@@ -28,7 +28,9 @@
     "typecheck:specs-lens": "tsc -p examples/specs-lens/tsconfig.json",
     "prepack": "bob build",
     "typecheck:navigation": "npm run typecheck --workspace @mikevocalz/nitro-mapbox-ar-navigation",
-    "typecheck:api-sketch": "tsc --noEmit -p tests/api-sketch/tsconfig.json"
+    "typecheck:api-sketch": "tsc --noEmit -p tests/api-sketch/tsconfig.json",
+    "perf:tracesift:init": "npx --yes @callstack/tracesift@0.3.1 init",
+    "perf:tracesift": "npx --yes @callstack/tracesift@0.3.1 start"
   },
   "repository": {
     "type": "git",
