@@ -46,7 +46,7 @@ MapboxAR.accessToken = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN ?? ''
 
 The maps view and navigation trip sessions read it from there; there is no per-view token. Work that needs a token and finds it empty rejects with an `Error` whose message starts `Mapbox access token is not set` and names the operation. The JS clients (`MapboxNavigationClient`, `MapboxSearchClient`, and everything in `/core`) take `accessToken` in their constructor options instead, because `/core` has no native root.
 
-**Android build token (secret, `DOWNLOADS:READ` scope).** The maps and navigation packages pull their AARs from Mapbox's Maven repository, which needs a secret token at build time. Put it in `~/.gradle/gradle.properties` or the environment as `MAPBOX_DOWNLOADS_TOKEN`. Never ship it in app code or commit it. iOS needs no build token: the maps package uses the `MapboxMaps` CocoaPod and navigation links `MapboxNavigationCore` through Swift Package Manager.
+**Android build token (secret, `DOWNLOADS:READ` scope).** The maps and navigation packages pull their AARs from Mapbox's Maven repository, which needs a secret token at build time. Put it in `~/.gradle/gradle.properties` or the environment as `MAPBOX_DOWNLOADS_TOKEN`. Never ship it in app code or commit it. iOS needs no build token: the maps package links `MapboxMaps` and navigation links `MapboxNavigationCore`, both through Swift Package Manager, so the two share one copy of MapboxMaps.
 
 ## Quick look
 
@@ -82,7 +82,7 @@ Every map method returns a Promise because the Maps SDK runs on the UI thread. F
 | Core: `MapboxAR`, terrain decode | yes | yes | yes (Android build) | yes | `index.web.ts`: JS root, `RangeError` on bad input | `/core` JS decoder |
 | Terrain renderer (`'auto'`) | Graphite, WebGPU, then Nitro CPU | Graphite, WebGPU, then Nitro CPU | Graphite, WebGPU, then Nitro CPU | WebGPU, then Nitro CPU (`isGraphiteAvailable` is `false`) | browser WebGPU, then JS CPU | no |
 | Routing and search clients | yes | yes | yes | yes | yes | yes, with an injected `fetch` |
-| Maps (`MapboxMapView`) | 11.32.0 | 11.32.0 | 11.32.0 in a 2D panel or `SpatialWindow`; no location puck without location hardware | **not available**: `MapboxMaps.isMapViewAvailable` is `false`, the MapboxMaps pod declares iOS only | no | no |
+| Maps (`MapboxMapView`) | 11.32.0 | 11.32.0 | 11.32.0 in a 2D panel or `SpatialWindow`; no location puck without location hardware | **not available**: `MapboxMaps.isMapViewAvailable` is `false`, the package imports MapboxMaps on iOS only | no | no |
 | Navigation (`TripSession`) | 3.32.0 | 3.32.0 | Android build, not run on a headset yet; no GPS, so use `locationSource: 'replay-primary-route'` | no (iOS-only podspec) | no | no |
 | ReactVision adapter | camera AR, geospatial anchors | camera AR, geospatial anchors | passthrough tabletop; `hasDeviceLocation` is `false`, so no geospatial anchors | immersive scene via `ViroScene`; route drawn as dots | no | no |
 | Specs adapter | no | no | no | no | no | yes |

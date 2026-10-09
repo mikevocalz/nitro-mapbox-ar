@@ -17,9 +17,9 @@ export interface MapboxMaps
    * A mounted {@linkcode MapboxMapView} on such a host renders nothing and
    * reports a map loading error, so check this before mounting one.
    *
-   * @platform ios, android: `true`. visionOS: `false`, because the
-   * `MapboxMaps` 11.32.0 CocoaPod declares iOS only and this package builds
-   * without it there.
+   * @platform ios, android: `true`. visionOS: `false`, because this package
+   * imports the Mapbox Maps SDK on iOS only and builds without the map view
+   * there.
    */
   readonly isMapViewAvailable: boolean
   /** Version of the linked Mapbox Maps SDK, for example `11.32.0`. */
