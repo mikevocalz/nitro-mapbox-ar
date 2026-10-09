@@ -5,8 +5,8 @@ import { fileURLToPath } from 'node:url'
 
 /**
  * Runs `npm pack --dry-run` for the root package and every workspace and fails
- * when a tarball is missing its entry points, README, license, or committed
- * Nitrogen output, or would ship tests or local env files.
+ * when a tarball is missing its entry points, README, LICENSE file, or committed
+ * Nitrogen output, or would ship tests, local env files or build caches.
  */
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const rootManifest = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
@@ -31,11 +31,15 @@ for (const dir of dirs) {
     if (manifest[field] && !paths.has(manifest[field])) fail(`${field} (${manifest[field]}) is not in the tarball`)
   }
   if (![...paths].some((path) => /^readme\.md$/i.test(path))) fail('README.md is not in the tarball')
+  if (!paths.has('LICENSE')) fail('LICENSE is not in the tarball')
   if (existsSync(join(cwd, 'nitro.json')) && ![...paths].some((path) => path.startsWith('nitrogen/generated/'))) {
     fail('nitrogen/generated is not in the tarball; consumers cannot build the native code without it')
   }
   for (const path of paths) {
     if (/^tests?\//.test(path) || /(^|\/)\.env(\.|$)/.test(path)) fail(`ships ${path}`)
+    // Gradle and Xcode caches are git-ignored but a `files` allowlist does not
+    // apply .gitignore, so a publish from a dev machine would ship them.
+    if (/(^|\/)(\.gradle|\.cxx|build|DerivedData|xcuserdata)\//.test(path)) fail(`ships local build output ${path}`)
   }
 }
 

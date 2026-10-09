@@ -44,5 +44,9 @@
     "@reactvision/react-native-visionos": {
       "optional": true
     }
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "next"
   }
 }

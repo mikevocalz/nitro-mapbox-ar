@@ -49,5 +49,9 @@
     "@mikevocalz/nitro-mapbox-ar": {
       "optional": true
     }
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "next"
   }
 }

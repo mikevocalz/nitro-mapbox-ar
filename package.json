@@ -153,5 +153,9 @@
         }
       ]
     ]
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "next"
   }
 }
