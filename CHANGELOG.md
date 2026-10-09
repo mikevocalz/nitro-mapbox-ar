@@ -26,6 +26,7 @@ First release under the `@mikevocalz` scope. Every break from the earlier `@mapb
 - Every `MapboxMapView` method returns a Promise, including camera reads (`getCamera()` → `getCameraState()`).
 - `styleURI` prop → `styleUri`, taking a full URI; presets moved to `MapStyles`.
 - `MapCapabilities` is read from the `MapboxMaps` root, not the view.
+- `normalizeMapboxARConfig` accepts `renderer: 'cpu'`, which `selectRendererBackend` already resolved to Nitro CPU or JS CPU. It used to throw.
 - `canShareColocationFrame` takes two `ColocationPeer`s; `ColocationPlatform` is an open `string`.
 - React Native 0.86, Expo SDK 57, Viro 3.0.3, Skia 2.14.0, react-native-webgpu 0.13.0, TypeGPU 0.12.7.
 

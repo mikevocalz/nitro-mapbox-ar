@@ -25,8 +25,7 @@ export type BBox = readonly [
  * - `'cpu'` uses Nitro CPU when present, otherwise the JS CPU path.
  *
  * Every value other than `'auto'` is a requirement: `selectRendererBackend`
- * throws when that backend is unavailable. `normalizeMapboxARConfig` does not
- * accept `'cpu'` and throws for it.
+ * throws when that backend is unavailable.
  *
  * @see {@linkcode NormalizedMapboxARConfig.renderer}
  */
