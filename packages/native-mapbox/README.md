@@ -76,8 +76,8 @@ Mapbox's Maven repository requires a secret downloads token with
 `DOWNLOADS:READ`.
 
 Expose it as `MAPBOX_DOWNLOADS_TOKEN` in Gradle properties or the environment.
-Do not ship that secret token in application code. The runtime `accessToken`
-prop is the public Mapbox token.
+Do not ship that secret token in application code. The runtime token is the
+public one, assigned to `MapboxAR.accessToken` from `@mikevocalz/nitro-mapbox-ar`.
 
 ## iOS setup
 
