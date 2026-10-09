@@ -26,7 +26,7 @@ Each row names the code that does it.
 | Stable scene objects | `src/screens/ARScreen.tsx` `initialScene`, `src/screens/TabletopScreen.tsx` `tabletopScene` | Viro scene descriptors are module constants, so a parent re-render never hands the navigator a new `initialScene` |
 | Release native resources (`js-memory-leaks`) | `src/mapStore.ts` `detach` | Unmounting the map removes every listener subscription and the point-annotation manager |
 | Bounded scene work | `TabletopScreen.tsx` `MAX_ROUTE_DOTS` | The visionOS fallback draws at most 64 spheres for the route, whatever its vertex count |
-| Short list, no virtualisation needed (`js-lists-flatlist-flashlist`) | `App.tsx` feature strip, `AgentScreen` results | 11 feature entries and at most 5 search results; a virtualised list would cost more than it saves |
+| Short list, no virtualisation needed (`js-lists-flatlist-flashlist`) | `App.tsx` feature strip, `AgentScreen` results | 9 feature entries (`listMapboxFeatures().length`) and at most 5 search results; a virtualised list would cost more than it saves |
 | Off-JS-thread heavy work (`native-threading-model`) | `MapboxAR.decodeTerrainRgbAsync` (`src/native/MapboxAR.nitro.ts`) | Decodes on a C++ worker queue; the sync form refuses inputs over 1 MiB so a stitched region cannot block the JS thread |
 | Async native calls (`native-turbo-modules`) | `packages/native-mapbox/src/specs/MapboxMapView.nitro.ts` | Every map method returns a Promise and runs on the UI thread; no sync method hides a thread hop |
 | Avoid barrel imports in app code (`bundle-barrel-exports`) | not applied | The app imports from package roots. Tree-shaking those roots has not been measured; see "Not done" |
