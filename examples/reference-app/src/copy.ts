@@ -1,0 +1,66 @@
+/** Every user-facing string in the reference app. */
+export const copy = {
+  brand: 'Nitro Mapbox AR',
+  tabs: {
+    map: 'Map',
+    navigate: 'Navigate',
+    ar: 'AR',
+    tabletop: 'Table',
+    agent: 'Agent',
+  },
+  map: {
+    unavailable: 'Mapbox Maps is not available on this device.',
+    missingToken: 'Set EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN to show the map.',
+    loading: 'Loading map…',
+    ready: 'Tap the map to read a coordinate.',
+    failed: (message: string) => `Map failed to load: ${message}`,
+    tapped: (latitude: number, longitude: number) =>
+      `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`,
+  },
+  navigate: {
+    title: 'Traffic-aware routing',
+    trip: 'Times Square to Brooklyn Bridge',
+    plan: 'Plan route',
+    planning: 'Planning…',
+    planningLabel: 'Planning route',
+    idle: 'Plan the trip to see distance and drive time.',
+    result: (miles: number, minutes: number) =>
+      `${miles.toFixed(1)} mi · ${minutes} min with current traffic`,
+    failed: (message: string) => `Route failed: ${message}. Check the token and try again.`,
+  },
+  ar: {
+    sceneLabel: 'Camera view with a floating “Nitro Mapbox AR” label',
+    sceneText: 'Nitro Mapbox AR',
+    checking: 'Checking AR support…',
+    unsupported: 'This device does not support camera AR. Try the Table tab.',
+    failed: (message: string) => `Could not check AR support: ${message}`,
+  },
+  agent: {
+    title: 'Place search',
+    queryLabel: 'What are you looking for?',
+    queryPlaceholder: 'coffee near Times Square',
+    search: 'Search places',
+    searching: 'Searching…',
+    searchingLabel: 'Searching places',
+    idle: 'Results near Times Square appear here.',
+    emptyQuery: 'Type something to search for.',
+    noResults: 'No places matched. Try a broader search.',
+    resultCount: (count: number) => (count === 1 ? '1 place found' : `${count} places found`),
+    failed: (message: string) => `Search failed: ${message}`,
+    unnamedPlace: 'Unnamed place',
+  },
+  tabletop: {
+    title: 'Tabletop route',
+    enter: 'Enter immersive view',
+    probing: 'Reading host capabilities…',
+    probeFailed: (message: string) => `Host probe failed: ${message}`,
+    geospatial: 'Route on the table, with your position from geospatial tracking.',
+    tableOnly: 'Route on the table. This host has no device location, so no position is shown.',
+    routeFailed: (message: string) => `Route failed: ${message}`,
+    mapUnavailable: 'The Mapbox map view is not available on this device.',
+  },
+  features: {
+    label: 'Library feature status',
+    item: (id: string, status: string) => `${id}: ${status}`,
+  },
+} as const

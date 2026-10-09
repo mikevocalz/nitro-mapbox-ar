@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import {
   ViroAmbientLight,
   ViroARScene,
@@ -21,6 +21,10 @@ import {
   type ReactVisionGeospatialNavigator,
 } from '@mikevocalz/nitro-mapbox-ar-reactvision'
 
+import { copy } from '../copy'
+import { ActionButton } from '../design/ActionButton'
+import { StatusText } from '../design/StatusText'
+import { colors, fontSize, spacing } from '../design/tokens'
 import { useReferenceStore, type HostState } from '../store'
 import { fitRouteToTable } from '../spatial/fitRouteToTable'
 
@@ -36,8 +40,8 @@ const ROUTE_DOT = 'tabletop-route-dot'
 const MAX_ROUTE_DOTS = 64
 
 ViroMaterials.createMaterials({
-  [USER_MARKER]: { diffuseColor: '#f97316', lightingModel: 'Constant' },
-  [ROUTE_DOT]: { diffuseColor: '#38bdf8', lightingModel: 'Constant' },
+  [USER_MARKER]: { diffuseColor: colors.userMarker, lightingModel: 'Constant' },
+  [ROUTE_DOT]: { diffuseColor: colors.routeLine, lightingModel: 'Constant' },
 })
 
 // visionOS rejects ARKit-rooted scenes ("View config not found for component
@@ -139,7 +143,7 @@ function TabletopContent({
 
   return (
     <Root>
-      <ViroAmbientLight color="#ffffff" />
+      <ViroAmbientLight color={colors.textPrimary} />
       {origin !== undefined && coordinates !== undefined && fit !== undefined ? (
         <ViroNode position={TABLE_POSITION}>
           <ViroNode
@@ -180,13 +184,13 @@ function describeHost(host: HostState): string {
   switch (host.status) {
     case 'idle':
     case 'probing':
-      return 'Reading host capabilities…'
+      return copy.tabletop.probing
     case 'failed':
-      return `Host probe failed: ${host.message}`
+      return copy.tabletop.probeFailed(host.message)
     case 'ready':
       return host.placement.kind === 'geospatial'
-        ? 'Route on the table, with your position from geospatial tracking.'
-        : 'Route on the table. This host has no device location, so no position is shown.'
+        ? copy.tabletop.geospatial
+        : copy.tabletop.tableOnly
   }
 }
 
@@ -194,11 +198,11 @@ function QuestPanel({ enter }: { enter: () => void }) {
   const host = useReferenceStore((state) => state.host)
   return (
     <View style={styles.panel}>
-      <Text style={styles.title}>Tabletop route</Text>
-      <Text style={styles.copy}>{describeHost(host)}</Text>
-      <Pressable style={styles.action} onPress={enter}>
-        <Text style={styles.actionText}>Enter immersive view</Text>
-      </Pressable>
+      <Text accessibilityRole="header" style={styles.title}>
+        {copy.tabletop.title}
+      </Text>
+      <StatusText text={describeHost(host)} tone={host.status === 'failed' ? 'error' : 'neutral'} />
+      <ActionButton label={copy.tabletop.enter} onPress={enter} />
     </View>
   )
 }
@@ -235,11 +239,13 @@ export function TabletopScreen({ map }: TabletopScreenProps) {
         visionOSImmersionStyle="mixed"
         renderQuestPanel={(enter) => <QuestPanel enter={enter} />}
       />
-      <Text style={styles.status}>
-        {route.status === 'failed' ? `Route failed: ${route.message}` : describeHost(host)}
-      </Text>
+      <StatusText
+        text={route.status === 'failed' ? copy.tabletop.routeFailed(route.message) : describeHost(host)}
+        tone={route.status === 'failed' || host.status === 'failed' ? 'error' : 'neutral'}
+        style={styles.status}
+      />
       {map === undefined ? (
-        <Text style={styles.status}>The Mapbox map view is not available on this device.</Text>
+        <Text style={styles.status}>{copy.tabletop.mapUnavailable}</Text>
       ) : (
         <SpatialWindow
           label="tabletop-map"
@@ -258,10 +264,7 @@ export function TabletopScreen({ map }: TabletopScreenProps) {
 const styles = StyleSheet.create({
   fill: { flex: 1 },
   map: { height: 280 },
-  panel: { flex: 1, padding: 24, justifyContent: 'center', gap: 16 },
-  title: { color: 'white', fontSize: 26, fontWeight: '700' },
-  copy: { color: '#d4d8df', fontSize: 16 },
-  status: { color: '#aab2c0', paddingHorizontal: 16, paddingVertical: 8 },
-  action: { padding: 14, borderRadius: 12, backgroundColor: '#2563eb' },
-  actionText: { color: 'white', textAlign: 'center', fontWeight: '700' },
+  panel: { flex: 1, padding: spacing.xl, justifyContent: 'center', gap: spacing.lg },
+  title: { color: colors.textPrimary, fontSize: fontSize.title, fontWeight: '700' },
+  status: { color: colors.textMuted, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
 })

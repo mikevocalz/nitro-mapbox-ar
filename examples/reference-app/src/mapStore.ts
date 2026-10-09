@@ -9,6 +9,8 @@ import {
 } from '@mikevocalz/nitro-mapbox-ar-maps'
 import { create } from 'zustand'
 
+import { TIMES_SQUARE } from './services'
+
 export type MapScreenStatus =
   | { readonly status: 'loading' }
   | { readonly status: 'ready'; readonly styleUri: string }
@@ -24,7 +26,6 @@ interface MapScreenState {
 }
 
 export const MAP_STYLE_URI = MapStyles.standardSatellite
-export const TIMES_SQUARE = { latitude: 40.758, longitude: -73.9855 }
 
 let subscriptions: ListenerSubscription[] = []
 let markers: PointAnnotationManager | undefined
