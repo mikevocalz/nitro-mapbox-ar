@@ -52,20 +52,36 @@ because the manifest merger rejects two different values for
 
 ## visionOS
 
-`@reactvision/react-native-visionos` 0.86.4 is installed alongside
-`react-native`. Create the `visionos/` folder once, before prebuild:
+Follows Viro's [visionOS setup guide](https://viro-community.readme.io/docs/visionos-setup-guide).
+It needs Xcode 26.6 or later with the visionOS 26.5 SDK, and the app deploys
+to visionOS 26.0. `@reactvision/react-native-visionos` 0.86.4 is installed
+alongside `react-native`. Generate `visionos/` once; after that
+`expo prebuild` manages it:
 
 ```bash
 npx @react-native-community/cli@latest init NitroMapboxAR \
   --template github:ReactVision/visionos-template \
-  --directory .visionos-template --skip-install
-mv .visionos-template/visionos ./visionos && rm -rf .visionos-template
+  --directory visionos --skip-install
 npx expo prebuild
+npm install        # applies the patches withViroVisionOS adds
 cd visionos && pod install
 ```
 
-The template's Podfile pins `platform :visionos, '26.0'`, which ViroReactUI
-requires; Viro's `withViroVisionOS` plugin raises an older Podfile to 26.0.
+Build for the headset. `-allowProvisioningUpdates` is required, and Debug
+builds load JS from Metro, so Metro must be reachable from the headset:
+
+```bash
+cd visionos
+xcodebuild -workspace NitroMapboxAR.xcworkspace -scheme NitroMapboxAR \
+  -configuration Debug -destination 'generic/platform=visionOS' \
+  DEVELOPMENT_TEAM=YOUR_TEAM CODE_SIGN_STYLE=Automatic \
+  -allowProvisioningUpdates build
+```
+
+On visionOS the Table scene is rooted in `ViroScene`, because ARKit-rooted
+scenes do not exist there. The route draws as dots, because `ViroPolyline`'s
+shader modifier does not compile there. The AR tab is hidden.
+`Platform.OS` reports `ios`, so the app checks `isVisionOS()`.
 
 The Mapbox map is not available on visionOS. CocoaPods' MapboxMaps 11.32.0
 spec declares iOS only, so the visionOS Podfile skips the maps package and
