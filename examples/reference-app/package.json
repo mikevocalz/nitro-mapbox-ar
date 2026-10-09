@@ -19,6 +19,7 @@
     "@metavr/layout-window-compat": "1.0.0",
     "@mikevocalz/nitro-mapbox-ar": "file:../..",
     "@mikevocalz/nitro-mapbox-ar-maps": "file:../../packages/native-mapbox",
+    "@mikevocalz/nitro-mapbox-ar-navigation": "file:../../packages/navigation",
     "@mikevocalz/nitro-mapbox-ar-reactvision": "file:../../packages/reactvision",
     "@reactvision/react-native-visionos": "0.86.4",
     "@reactvision/react-viro": "3.0.3",
