@@ -5,6 +5,7 @@ import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.easeTo
 import com.mapbox.maps.plugin.animation.flyTo
+import com.mapbox.maps.util.isEmpty
 
 /*
  * Camera commands for MapboxMapViewMethods.flyTo / easeTo / fitBounds.

@@ -4,7 +4,7 @@ Who it is for: developers evaluating `@mikevocalz/nitro-mapbox-ar` on a phone, M
 
 Reviewed from source at `c7e6ba7` against the ten usability heuristics and the design-critique framework. Fixes landed in `323d1d4`. Accessibility findings are in [A11Y.md](A11Y.md) and not repeated here.
 
-**Verdict:** several issues to address, all but one fixed in code.
+**Verdict:** several issues to address, all fixed in code.
 
 ## Overall impression
 
@@ -25,7 +25,7 @@ The tab bar and dark palette read clearly, and the Map and Table screens already
 | 9 | Navigate, `App.tsx:49` | H6 | The trip was only named inside the initial result string, which the first result replaced | Minor | Fixed `323d1d4`: the trip stays on screen as its own line; the result adds "with current traffic" |
 | 10 | Map, `MapScreen.tsx:49-53` | H2, H1 | Status showed raw state names (`loading`, `ready`) | Moderate | Fixed `323d1d4`: "Loading map…" with a spinner, "Tap the map to read a coordinate.", "Map failed to load: …" |
 | 11 | AR, `App.tsx:95-97` | H1, H9 | No support check; an unsupported device showed a black view | Critical | Fixed `323d1d4`: `ARScreen` checks support first and points to the Table tab when AR is unavailable |
-| 12 | All, `App.tsx:144` | H4 platform standards | `SafeAreaView` from `react-native` is deprecated in 0.86.3 and ignores Android insets | Moderate | **Deferred.** Needs `react-native-safe-area-context`, a native module: add it with the next dev-client rebuild and check on Pixel and Quest. No device was used in this pass |
+| 12 | All, `App.tsx:144` | H4 platform standards | `SafeAreaView` from `react-native` is deprecated in 0.86.3 and ignores Android insets | Moderate | Fixed `d9ff13c`: `SafeAreaProvider` at the root and `SafeAreaView` from `react-native-safe-area-context` 5.7.0 (the SDK 57 pin). The iOS simulator and Android `mobileDebug` builds compile with it; insets have not been checked on a Pixel or Quest |
 | 13 | All, `App.tsx:183-202`, `MapScreen.tsx:59-64`, `TabletopScreen.tsx:258-267` | H4 consistency | Hex colours, sizes and copy repeated per file (`#d4d8df` in three files, two copies of the action button style) | Moderate | Fixed `323d1d4`: `src/design/tokens.ts`, `src/copy.ts`, `ActionButton`, `StatusText` |
 | 14 | Table, `TabletopScreen.tsx:238-242` | H1 | Route and host failures used the muted secondary style | Minor | Fixed `323d1d4`: `StatusText` with the error tone |
 | 15 | Header, `App.tsx:171-177` | H8 minimalism | The feature-flag strip is developer data on a user surface | Minor | Kept on purpose: the reference app exists to show library state. It now has an accessible name ("Library feature status") and no longer clips at large text |

@@ -89,7 +89,11 @@ test('visionOS builds without MapboxMaps: SDK imports are iOS-only and both root
     assert.match(source, /#else\n[\s\S]*final class Hybrid/, `${name} has no non-iOS branch`)
   }
   assert.match(read(join(iosDir, 'HybridMapboxMaps.swift')), /#else[\s\S]*let isMapViewAvailable = false/)
-  assert.match(read(join(pkg, 'NitroMapboxARNativeMap.podspec')), /s\.ios\.dependency "MapboxMaps"/)
+  // MapboxMaps comes from SPM so it can share one package with the navigation
+  // package's MapboxNavigationCore; a CocoaPod copy redefines the module.
+  const podspec = read(join(pkg, 'NitroMapboxARNativeMap.podspec'))
+  assert.doesNotMatch(podspec, /s\.(ios\.)?dependency "MapboxMaps"/)
+  assert.match(podspec, /url: "https:\/\/github\.com\/mapbox\/mapbox-maps-ios\.git"/)
 })
 
 test('MapStyles holds the SDK 11.32.0 Standard style URIs', async () => {

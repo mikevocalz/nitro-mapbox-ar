@@ -10,9 +10,9 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/mikevocalz/nitro-mapbox-ar"
   s.license      = package["license"]
   s.authors      = "Nitro Mapbox AR contributors"
-  # MapboxMaps' CocoaPods spec is iOS-only (MapboxMaps.podspec:16 at 11.32.0).
-  # On visionOS the pod builds the #if os(visionOS) branches of HybridMapboxMaps
-  # and HybridMapboxMapView, which report isMapViewAvailable = false.
+  # The Swift sources import MapboxMaps only under #if os(iOS). On visionOS the
+  # pod builds the other branches of HybridMapboxMaps and HybridMapboxMapView,
+  # which report isMapViewAvailable = false.
   s.platforms    = { :ios => "14.0", :visionos => "1.0" }
   s.source       = {
     :git => "https://github.com/mikevocalz/nitro-mapbox-ar.git",
@@ -26,7 +26,16 @@ Pod::Spec.new do |s|
   load "nitrogen/generated/ios/NitroMapboxARNativeMap+autolinking.rb"
   add_nitrogen_files(s)
 
-  s.ios.dependency "MapboxMaps", mapbox_version
+  # MapboxMaps comes from Swift Package Manager, not its CocoaPod. The
+  # navigation package links MapboxNavigationCore through SPM, which depends on
+  # this same package URL; a CocoaPod copy next to it fails the app build with
+  # "Redefinition of module 'MapboxMaps'". React Native's spm_dependency
+  # registers each package URL once, so both pods share one MapboxMaps.
+  spm_dependency(s,
+    url: "https://github.com/mapbox/mapbox-maps-ios.git",
+    requirement: { kind: "exactVersion", version: mapbox_version },
+    products: ["MapboxMaps"]
+  )
   # MapboxARAccessToken: the process-wide token set through MapboxAR.accessToken.
   s.dependency "NitroMapboxAR"
   s.dependency "NitroModules"

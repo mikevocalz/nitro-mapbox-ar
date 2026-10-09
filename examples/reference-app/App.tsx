@@ -1,4 +1,5 @@
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { listMapboxFeatures } from '@mikevocalz/nitro-mapbox-ar'
 import { isVisionOS } from '@reactvision/react-viro'
 import { SpatialSceneProvider } from '@metavr/layout-compat'
@@ -40,50 +41,52 @@ export default function App() {
   const mode = useReferenceStore((state) => state.mode)
 
   return (
-    <SpatialSceneProvider initializer={windowScene}>
-      <SafeAreaView style={styles.root}>
-        <View style={styles.header}>
-          <Text accessibilityRole="header" style={styles.brand}>
-            {copy.brand}
-          </Text>
-          <Text style={styles.subhead}>{rendererLabel()}</Text>
-        </View>
-        <View accessibilityRole="tablist" style={styles.tabs}>
-          <Tab mode="map" />
-          <Tab mode="navigate" />
-          {/* visionOS has no ARKit scene: ViroARSceneNavigator renders nothing there. */}
-          {!isVisionOS() && <Tab mode="ar" />}
-          <Tab mode="tabletop" />
-          <Tab mode="agent" />
-        </View>
-        <View style={styles.content}>
-          {mode === 'map' &&
-            (mapViewLinked ? (
-              <MapScreen />
-            ) : (
-              <Text style={styles.copy}>{copy.map.unavailable}</Text>
-            ))}
-          {mode === 'navigate' && <NavigateScreen />}
-          {mode === 'ar' && <ARScreen />}
-          {mode === 'tabletop' && (
-            <TabletopScreen map={mapViewLinked ? <MapScreen /> : undefined} />
-          )}
-          {mode === 'agent' && <AgentScreen />}
-        </View>
-        <ScrollView
-          horizontal
-          accessibilityLabel={copy.features.label}
-          style={styles.flags}
-          contentContainerStyle={styles.flagsContent}
-        >
-          {features.map((feature) => (
-            <Text key={feature.id} style={styles.flag}>
-              {copy.features.item(feature.id, feature.status)}
+    <SafeAreaProvider>
+      <SpatialSceneProvider initializer={windowScene}>
+        <SafeAreaView style={styles.root}>
+          <View style={styles.header}>
+            <Text accessibilityRole="header" style={styles.brand}>
+              {copy.brand}
             </Text>
-          ))}
-        </ScrollView>
-      </SafeAreaView>
-    </SpatialSceneProvider>
+            <Text style={styles.subhead}>{rendererLabel()}</Text>
+          </View>
+          <View accessibilityRole="tablist" style={styles.tabs}>
+            <Tab mode="map" />
+            <Tab mode="navigate" />
+            {/* visionOS has no ARKit scene: ViroARSceneNavigator renders nothing there. */}
+            {!isVisionOS() && <Tab mode="ar" />}
+            <Tab mode="tabletop" />
+            <Tab mode="agent" />
+          </View>
+          <View style={styles.content}>
+            {mode === 'map' &&
+              (mapViewLinked ? (
+                <MapScreen />
+              ) : (
+                <Text style={styles.copy}>{copy.map.unavailable}</Text>
+              ))}
+            {mode === 'navigate' && <NavigateScreen />}
+            {mode === 'ar' && <ARScreen />}
+            {mode === 'tabletop' && (
+              <TabletopScreen map={mapViewLinked ? <MapScreen /> : undefined} />
+            )}
+            {mode === 'agent' && <AgentScreen />}
+          </View>
+          <ScrollView
+            horizontal
+            accessibilityLabel={copy.features.label}
+            style={styles.flags}
+            contentContainerStyle={styles.flagsContent}
+          >
+            {features.map((feature) => (
+              <Text key={feature.id} style={styles.flag}>
+                {copy.features.item(feature.id, feature.status)}
+              </Text>
+            ))}
+          </ScrollView>
+        </SafeAreaView>
+      </SpatialSceneProvider>
+    </SafeAreaProvider>
   )
 }
 

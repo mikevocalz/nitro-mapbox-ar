@@ -42,7 +42,7 @@ hardware only; there is no puck API in this package.
 
 | Member | iOS | Android |
 | --- | --- | --- |
-| `isMapViewAvailable` | `true` in the iOS build. visionOS builds a separate class that returns `false`: the CocoaPods `MapboxMaps` spec is iOS-only (`MapboxMaps.podspec:16`, `m.ios.deployment_target = '14.0'`) | `true` |
+| `isMapViewAvailable` | `true` in the iOS build. visionOS builds a separate class that returns `false`: the package imports MapboxMaps only under `#if os(iOS)`. MapboxMaps comes from Swift Package Manager (`mapbox-maps-ios` 11.32.0), shared with the navigation package's `MapboxNavigationCore` | `true` |
 | `sdkVersion` | `MapboxMaps.json` resource (`{"version": "11.32.0"}`), found the way `Foundation/Extensions/Bundle+MapboxMaps.swift:10-26` finds it; `Bundle.mapboxMapsMetadata` itself is `@_spi(Internal)` | `com.mapbox.maps.base.BuildConfig.MAPBOX_SDK_VERSION` `sdk-base/build.gradle.kts:16,27` |
 | `capabilities.supportsGlobeProjection` | `StyleProjectionName.globe` `Style/Generated/Properties/Properties.swift:743` | `true`; GPUs without vertex texture units fall back to Mercator (`extension-style/.../projection/generated/Projection.kt:26-28`), which cannot be detected before a map renders |
 | `capabilities.supportsTerrain` | `StyleManager.setTerrain(_:)` `Style/StyleManager.swift:1293` | `setStyleTerrain` `sdk-base/api/Release/metalava.txt:247` |

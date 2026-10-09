@@ -24,9 +24,9 @@ final class HybridMapboxMaps: HybridMapboxMapsSpec {
   )
 }
 #else
-/// The `MapboxMaps` root where the Maps SDK is not linked. The CocoaPods
-/// `MapboxMaps` 11.32.0 spec declares iOS only (`MapboxMaps.podspec:16`), so
-/// this pod builds without it on visionOS.
+/// The `MapboxMaps` root where the Maps SDK is not used. The Swift sources
+/// import MapboxMaps only under `#if os(iOS)`, so on visionOS this pod builds
+/// without the map view.
 final class HybridMapboxMaps: HybridMapboxMapsSpec {
   let isMapViewAvailable = false
   let sdkVersion = ""
