@@ -1,6 +1,6 @@
 {
   "name": "@mikevocalz/nitro-mapbox-ar-maps",
-  "version": "0.0.1",
+  "version": "0.1.0-alpha.0",
   "description": "Optional Nitro HybridView backed directly by Mapbox Maps SDK v11",
   "main": "src/index.ts",
   "react-native": "src/index.ts",

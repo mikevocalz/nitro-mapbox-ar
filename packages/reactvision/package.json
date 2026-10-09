@@ -1,6 +1,6 @@
 {
   "name": "@mikevocalz/nitro-mapbox-ar-reactvision",
-  "version": "0.0.1",
+  "version": "0.1.0-alpha.0",
   "description": "Optional ReactVision/Viro geospatial adapter for Nitro Mapbox AR",
   "main": "src/index.ts",
   "react-native": "src/index.ts",

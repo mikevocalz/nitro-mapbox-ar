@@ -1,6 +1,6 @@
 {
   "name": "@mikevocalz/nitro-mapbox-ar-navigation",
-  "version": "0.0.1",
+  "version": "0.1.0-alpha.0",
   "description": "Optional Nitro trip sessions backed by the Mapbox Navigation SDK v3",
   "main": "src/index.ts",
   "react-native": "src/index.ts",
@@ -24,7 +24,7 @@
     "prepack": "npm run codegen"
   },
   "peerDependencies": {
-    "@mikevocalz/nitro-mapbox-ar": ">=0.0.1",
+    "@mikevocalz/nitro-mapbox-ar": "^0.1.0-alpha.0",
     "react-native": ">=0.86.0",
     "react-native-nitro-modules": "^0.37.1"
   },

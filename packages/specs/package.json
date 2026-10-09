@@ -1,6 +1,6 @@
 {
   "name": "@mikevocalz/nitro-mapbox-ar-specs",
-  "version": "0.0.1",
+  "version": "0.1.0-alpha.0",
   "description": "Snap Spectacles Navigation Kit adapter for Nitro Mapbox AR routes",
   "main": "src/index.ts",
   "source": "src/index.ts",
@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "peerDependencies": {
-    "@mikevocalz/nitro-mapbox-ar": ">=0.0.1"
+    "@mikevocalz/nitro-mapbox-ar": "^0.1.0-alpha.0"
   },
   "devDependencies": {
     "typescript": "7.0.2"

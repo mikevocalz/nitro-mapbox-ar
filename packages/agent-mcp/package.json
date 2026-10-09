@@ -1,6 +1,6 @@
 {
   "name": "@mikevocalz/nitro-mapbox-ar-agent-mcp",
-  "version": "0.0.1",
+  "version": "0.1.0-alpha.0",
   "description": "Optional Mapbox MCP configuration helpers for Nitro Mapbox AR agent workflows",
   "main": "src/index.ts",
   "source": "src/index.ts",
