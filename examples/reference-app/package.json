@@ -6,16 +6,27 @@
   "scripts": {
     "start": "expo start --dev-client",
     "ios": "expo run:ios",
-    "android": "expo run:android",
-    "web": "expo start --web"
+    "android": "expo run:android --variant mobileDebug",
+    "mobile": "expo run:android --variant mobileDebug",
+    "mobile:release": "expo run:android --variant mobileRelease",
+    "quest": "expo run:android --variant questDebug",
+    "quest:release": "expo run:android --variant questRelease",
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.web.json"
   },
   "dependencies": {
+    "@metavr/layout-compat": "1.0.0",
+    "@metavr/layout-window-compat": "1.0.0",
     "@mikevocalz/nitro-mapbox-ar": "file:../..",
     "@mikevocalz/nitro-mapbox-ar-maps": "file:../../packages/native-mapbox",
     "@mikevocalz/nitro-mapbox-ar-reactvision": "file:../../packages/reactvision",
+    "@reactvision/react-native-visionos": "0.86.4",
     "@reactvision/react-viro": "3.0.3",
     "@shopify/react-native-skia": "2.14.0",
     "expo": "~57.0.27",
+    "expo-build-properties": "57.0.22",
+    "expo-horizon-core": "57.0.2",
+    "expo-horizon-location": "57.0.2",
     "react": "19.3.0",
     "react-native": "0.86.3",
     "react-native-nitro-modules": "0.37.1",
@@ -25,6 +36,8 @@
     "zustand": "5.0.15"
   },
   "devDependencies": {
+    "@callstack/out-of-tree-platforms": "0.77.0",
+    "@react-native-community/cli": "20.2.0",
     "@types/react": "19.3.0",
     "babel-preset-expo": "57.0.14",
     "typescript": "7.0.2"

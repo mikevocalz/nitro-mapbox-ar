@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   ActivityIndicator,
   Pressable,
@@ -10,13 +10,8 @@ import {
   View,
 } from 'react-native'
 import {
-  MapboxNavigationClient,
-  MapboxSearchClient,
-  NavigationSession,
   SpatialAgentRuntime,
-  getBrowserRendererCapabilities,
   listMapboxFeatures,
-  selectRendererBackend,
 } from '@mikevocalz/nitro-mapbox-ar'
 import { MapboxMapView } from '@mikevocalz/nitro-mapbox-ar-maps'
 import {
@@ -25,15 +20,19 @@ import {
   ViroARSceneNavigator,
   ViroText,
 } from '@reactvision/react-viro'
+import { SpatialSceneProvider } from '@metavr/layout-compat'
+import { createWindowScene } from '@metavr/layout-window-compat'
 
+import { rendererLabel } from './src/rendererLabel'
+import { TabletopScreen } from './src/screens/TabletopScreen'
+import { navigation, searchClient, token } from './src/services'
+import { isMapViewLinked } from './src/spatial/isMapViewLinked'
 import { useReferenceStore, type ReferenceMode } from './src/store'
 
-const token = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN ?? ''
 const nyc = { latitude: 40.758, longitude: -73.9855 }
 
-const navigationClient = new MapboxNavigationClient({ accessToken: token })
-const searchClient = new MapboxSearchClient({ accessToken: token })
-const navigation = new NavigationSession({ client: navigationClient })
+const windowScene = createWindowScene({ fallback: 'inline' })
+const mapViewLinked = isMapViewLinked()
 
 function Tab({ mode, label }: { mode: ReferenceMode; label: string }) {
   const active = useReferenceStore((state) => state.mode === mode)
@@ -149,39 +148,44 @@ function AgentMode() {
 
 export default function App() {
   const mode = useReferenceStore((state) => state.mode)
-  const browserBackend =
-    typeof document === 'undefined'
-      ? null
-      : selectRendererBackend('auto', getBrowserRendererCapabilities())
 
   return (
-    <SafeAreaView style={styles.root}>
-      <View style={styles.header}>
-        <Text style={styles.brand}>Nitro Mapbox AR</Text>
-        <Text style={styles.subhead}>
-          {browserBackend ? `web backend: ${browserBackend}` : 'Graphite-first native reference'}
-        </Text>
-      </View>
-      <View style={styles.tabs}>
-        <Tab mode="map" label="Map" />
-        <Tab mode="navigate" label="Navigate" />
-        <Tab mode="ar" label="AR" />
-        <Tab mode="agent" label="Agent" />
-      </View>
-      <View style={styles.content}>
-        {mode === 'map' && <MapMode />}
-        {mode === 'navigate' && <NavigateMode />}
-        {mode === 'ar' && <ARMode />}
-        {mode === 'agent' && <AgentMode />}
-      </View>
-      <ScrollView horizontal style={styles.flags}>
-        {listMapboxFeatures().map((feature) => (
-          <Text key={feature.id} style={styles.flag}>
-            {feature.id}: {feature.status}
-          </Text>
-        ))}
-      </ScrollView>
-    </SafeAreaView>
+    <SpatialSceneProvider initializer={windowScene}>
+      <SafeAreaView style={styles.root}>
+        <View style={styles.header}>
+          <Text style={styles.brand}>Nitro Mapbox AR</Text>
+          <Text style={styles.subhead}>{rendererLabel()}</Text>
+        </View>
+        <View style={styles.tabs}>
+          <Tab mode="map" label="Map" />
+          <Tab mode="navigate" label="Navigate" />
+          <Tab mode="ar" label="AR" />
+          <Tab mode="tabletop" label="Table" />
+          <Tab mode="agent" label="Agent" />
+        </View>
+        <View style={styles.content}>
+          {mode === 'map' &&
+            (mapViewLinked ? (
+              <MapMode />
+            ) : (
+              <Text style={styles.copy}>The Mapbox map view is not available on this device.</Text>
+            ))}
+          {mode === 'navigate' && <NavigateMode />}
+          {mode === 'ar' && <ARMode />}
+          {mode === 'tabletop' && (
+            <TabletopScreen map={mapViewLinked ? <MapMode /> : undefined} />
+          )}
+          {mode === 'agent' && <AgentMode />}
+        </View>
+        <ScrollView horizontal style={styles.flags}>
+          {listMapboxFeatures().map((feature) => (
+            <Text key={feature.id} style={styles.flag}>
+              {feature.id}: {feature.status}
+            </Text>
+          ))}
+        </ScrollView>
+      </SafeAreaView>
+    </SpatialSceneProvider>
   )
 }
 
