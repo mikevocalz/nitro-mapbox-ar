@@ -73,15 +73,26 @@ android {
 repositories {
   google()
   mavenCentral()
+}
 
-  maven {
-    url "https://api.mapbox.com/downloads/v2/releases/maven"
-    authentication {
-      basic(BasicAuthentication)
-    }
-    credentials {
-      username = "mapbox"
-      password = project.findProperty("MAPBOX_DOWNLOADS_TOKEN") ?: System.getenv("MAPBOX_DOWNLOADS_TOKEN")
+// The Mapbox SDK AARs live on Mapbox's authenticated Maven repository and
+// need a secret token with the DOWNLOADS:READ scope, read from the
+// MAPBOX_DOWNLOADS_TOKEN Gradle property or environment variable. Never commit
+// it. Gradle resolves this module's transitive dependencies with the
+// consuming app's repositories, so the repository is registered on every
+// project in the build. The maps and navigation packages share it by name.
+rootProject.allprojects { p ->
+  if (p.repositories.findByName("MapboxDownloads") == null) {
+    p.repositories.maven {
+      name = "MapboxDownloads"
+      url "https://api.mapbox.com/downloads/v2/releases/maven"
+      authentication {
+        basic(BasicAuthentication)
+      }
+      credentials {
+        username = "mapbox"
+        password = p.findProperty("MAPBOX_DOWNLOADS_TOKEN") ?: System.getenv("MAPBOX_DOWNLOADS_TOKEN")
+      }
     }
   }
 }
