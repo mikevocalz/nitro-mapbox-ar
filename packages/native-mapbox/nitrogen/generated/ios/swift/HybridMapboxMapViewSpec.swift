@@ -10,14 +10,23 @@ import NitroModules
 /// See ``HybridMapboxMapViewSpec``
 public protocol HybridMapboxMapViewSpec_protocol: HybridObject, HybridView {
   // Properties
-  var accessToken: String { get set }
-  var styleURI: String { get set }
-  var camera: MapCamera { get set }
+  var styleUri: String { get set }
+  var camera: CameraTarget? { get set }
+  var projection: MapProjection? { get set }
+  var enableGestures: Bool? { get set }
 
   // Methods
-  func setCamera(camera: MapCamera) throws -> Void
-  func getCamera() throws -> MapCamera
-  func loadStyle(styleURI: String) throws -> Void
+  func loadStyle(uri: String) throws -> Promise<(any HybridMapStyleSpec)>
+  func createPointAnnotationManager() throws -> Promise<(any HybridPointAnnotationManagerSpec)>
+  func flyTo(target: CameraTarget, options: CameraAnimationOptions?) throws -> Promise<CameraAnimationEnd>
+  func easeTo(target: CameraTarget, options: CameraAnimationOptions?) throws -> Promise<CameraAnimationEnd>
+  func fitBounds(bounds: CoordinateBounds, options: FitBoundsOptions?) throws -> Promise<CameraAnimationEnd>
+  func getCameraState() throws -> Promise<CameraState>
+  func addOnCameraChangedListener(listener: @escaping (_ state: CameraState) -> Void) throws -> ListenerSubscription
+  func addOnMapTapListener(listener: @escaping (_ event: MapTapEvent) -> Void) throws -> ListenerSubscription
+  func addOnStyleLoadedListener(listener: @escaping (_ style: (any HybridMapStyleSpec)) -> Void) throws -> ListenerSubscription
+  func addOnMapLoadingErrorListener(listener: @escaping (_ error: Error) -> Void) throws -> ListenerSubscription
+  func queryRenderedFeatures(query: RenderedFeatureQuery) throws -> Promise<[(any HybridRenderedFeatureSpec)]>
 }
 
 public extension HybridMapboxMapViewSpec_protocol {

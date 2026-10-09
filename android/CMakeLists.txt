@@ -9,7 +9,9 @@ add_library(
   ${PACKAGE_NAME}
   SHARED
   src/main/cpp/cpp-adapter.cpp
-  ../cpp/HybridMapboxARCore.cpp
+  ../cpp/AccessTokenStore.cpp
+  ../cpp/HybridMapboxAR.cpp
+  ../cpp/SerialWorkQueue.cpp
 )
 
 include_directories(
@@ -17,22 +19,13 @@ include_directories(
   "src/main/cpp"
 )
 
+# Generated spec, OnLoad registration, and the fbjni / JSI / NitroModules links.
+include(${CMAKE_SOURCE_DIR}/../nitrogen/generated/android/NitroMapboxAR+autolinking.cmake)
+
 find_library(LOG_LIB log)
-find_package(fbjni REQUIRED)
-find_package(ReactAndroid REQUIRED)
-find_package(react-native-nitro-modules REQUIRED)
 
 target_link_libraries(
   ${PACKAGE_NAME}
   ${LOG_LIB}
   android
-  fbjni::fbjni
-  ReactAndroid::jsi
-  react-native-nitro-modules::NitroModules
 )
-
-if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
-  target_link_libraries(${PACKAGE_NAME} ReactAndroid::reactnative)
-else()
-  target_link_libraries(${PACKAGE_NAME} ReactAndroid::react_nativemodule_core)
-endif()

@@ -50,18 +50,28 @@ namespace margelo::nitro::mapboxar::nativemap {
 
   public:
     // Properties
-    std::string getAccessToken() override;
-    void setAccessToken(const std::string& accessToken) override;
-    std::string getStyleURI() override;
-    void setStyleURI(const std::string& styleURI) override;
-    MapCamera getCamera() override;
-    void setCamera(const MapCamera& camera) override;
+    std::string getStyleUri() override;
+    void setStyleUri(const std::string& styleUri) override;
+    std::optional<CameraTarget> getCamera() override;
+    void setCamera(const std::optional<CameraTarget>& camera) override;
+    std::optional<MapProjection> getProjection() override;
+    void setProjection(std::optional<MapProjection> projection) override;
+    std::optional<bool> getEnableGestures() override;
+    void setEnableGestures(std::optional<bool> enableGestures) override;
 
   public:
     // Methods
-    void setCamera(const MapCamera& camera) override;
-    MapCamera getCamera() override;
-    void loadStyle(const std::string& styleURI) override;
+    std::shared_ptr<Promise<std::shared_ptr<HybridMapStyleSpec>>> loadStyle(const std::string& uri) override;
+    std::shared_ptr<Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>> createPointAnnotationManager() override;
+    std::shared_ptr<Promise<CameraAnimationEnd>> flyTo(const CameraTarget& target, const std::optional<CameraAnimationOptions>& options) override;
+    std::shared_ptr<Promise<CameraAnimationEnd>> easeTo(const CameraTarget& target, const std::optional<CameraAnimationOptions>& options) override;
+    std::shared_ptr<Promise<CameraAnimationEnd>> fitBounds(const CoordinateBounds& bounds, const std::optional<FitBoundsOptions>& options) override;
+    std::shared_ptr<Promise<CameraState>> getCameraState() override;
+    ListenerSubscription addOnCameraChangedListener(const std::function<void(const CameraState& /* state */)>& listener) override;
+    ListenerSubscription addOnMapTapListener(const std::function<void(const MapTapEvent& /* event */)>& listener) override;
+    ListenerSubscription addOnStyleLoadedListener(const std::function<void(const std::shared_ptr<HybridMapStyleSpec>& /* style */)>& listener) override;
+    ListenerSubscription addOnMapLoadingErrorListener(const std::function<void(const std::exception_ptr& /* error */)>& listener) override;
+    std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>> queryRenderedFeatures(const RenderedFeatureQuery& query) override;
 
   private:
     jni::global_ref<JHybridMapboxMapViewSpec::JavaPart> _javaPart;

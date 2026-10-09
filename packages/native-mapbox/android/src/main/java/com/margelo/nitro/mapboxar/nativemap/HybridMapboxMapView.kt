@@ -1,164 +1,185 @@
 package com.margelo.nitro.mapboxar.nativemap
 
 import android.view.View
-import android.widget.FrameLayout
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.ThemedReactContext
-import com.mapbox.geojson.Point
-import com.mapbox.maps.CameraOptions
+import com.margelo.nitro.core.Promise
 import com.mapbox.maps.MapView
-import com.mapbox.maps.MapboxOptions
-import com.mapbox.maps.Style
+import com.mapbox.maps.plugin.gestures.gestures
 
+/**
+ * The `MapboxMapView` Hybrid View. Props arrive on the main thread and are
+ * applied in [afterUpdate]; methods arrive on the JS thread and cross to the
+ * main thread once through [MainThreadPromise].
+ */
 @Keep
 @DoNotStrip
 class HybridMapboxMapView(
   private val context: ThemedReactContext,
 ) : HybridMapboxMapViewSpec(), LifecycleEventListener {
-  private val container = FrameLayout(context)
-  private var mapView: MapView? = null
-  private var cameraUpdateScheduled = false
+  private val host = MapHost(context)
+  private var appliedStyleUri: String? = null
+  private var cameraChanged = false
+  private var gesturesChanged = true
   private var started = false
 
   init {
     context.addLifecycleEventListener(this)
   }
 
-  override val view: View = container
+  override val view: View = host.container
 
-  override var accessToken: String = ""
+  override var styleUri: String = ""
+
+  override var camera: CameraTarget? = null
     set(value) {
       field = value
-      if (value.isNotBlank()) {
-        MapboxOptions.accessToken = value
-        ensureMapView()
-      }
+      cameraChanged = true
     }
 
-  override var styleURI: String = "standard"
+  override var projection: MapProjection? = null
     set(value) {
       field = value
-      applyStyle()
+      host.projection = value
     }
 
-  override var camera: MapCamera = MapCamera(
-    latitude = 0.0,
-    longitude = 0.0,
-    zoom = 0.0,
-    bearing = 0.0,
-    pitch = 0.0,
-  )
+  override var enableGestures: Boolean? = null
     set(value) {
       field = value
-      scheduleCameraUpdate()
+      gesturesChanged = true
     }
 
-  override fun setCamera(camera: MapCamera) {
-    this.camera = camera
-  }
-
-  override fun getCamera(): MapCamera {
-    val state = mapView?.mapboxMap?.cameraState ?: return camera
-    return MapCamera(
-      latitude = state.center.latitude(),
-      longitude = state.center.longitude(),
-      zoom = state.zoom,
-      bearing = state.bearing,
-      pitch = state.pitch,
-    )
-  }
-
-  override fun loadStyle(styleURI: String) {
-    this.styleURI = styleURI
+  override fun afterUpdate() {
+    super.afterUpdate()
+    // An invalid camera prop is reported by applyCameraProp below.
+    val initialCamera = runCatching { camera?.toValidatedCameraOptions("camera", density) }.getOrNull()
+    val map = host.ensureMapForProps(initialCamera) ?: return
+    if (!started) {
+      host.start()
+      started = true
+    }
+    if (cameraChanged) {
+      cameraChanged = false
+      applyCameraProp(map)
+    }
+    if (gesturesChanged) {
+      gesturesChanged = false
+      applyGestures(map)
+    }
+    if (appliedStyleUri != styleUri && styleUri.isNotEmpty()) {
+      appliedStyleUri = styleUri
+      host.loadStyle(styleUri, map, null)
+    }
   }
 
   override fun onHostResume() {
-    if (!started) {
-      mapView?.onStart()
+    if (!started && host.mapView != null) {
+      host.start()
       started = true
     }
   }
 
   override fun onHostPause() {
     if (started) {
-      mapView?.onStop()
+      host.stop()
       started = false
     }
   }
 
   override fun onHostDestroy() {
-    releaseMapView()
+    release()
   }
 
   override fun onDropView() {
+    super.onDropView()
     context.removeLifecycleEventListener(this)
-    releaseMapView()
+    release()
   }
 
-  private fun ensureMapView() {
-    if (mapView != null || accessToken.isBlank()) return
+  override fun loadStyle(uri: String): Promise<HybridMapStyleSpec> =
+    MainThreadPromise.complete { settle ->
+      host.loadStyle(uri, host.requireMap("MapboxMapView.loadStyle"), settle)
+    }
 
-    MapboxOptions.accessToken = accessToken
+  override fun createPointAnnotationManager(): Promise<HybridPointAnnotationManagerSpec> =
+    MainThreadPromise.run {
+      host.createPointAnnotationManager(host.requireMap("MapboxMapView.createPointAnnotationManager"))
+    }
 
-    val map = MapView(context)
-    map.layoutParams = FrameLayout.LayoutParams(
-      FrameLayout.LayoutParams.MATCH_PARENT,
-      FrameLayout.LayoutParams.MATCH_PARENT,
-    )
-    container.addView(map)
-    mapView = map
+  override fun flyTo(target: CameraTarget, options: CameraAnimationOptions?): Promise<CameraAnimationEnd> =
+    MainThreadPromise.complete { settle ->
+      host.requireMap("MapboxMapView.flyTo").flyTo(target, options?.durationMs) { settle(Result.success(it)) }
+    }
 
-    map.mapboxMap.setCamera(camera.toCameraOptions())
-    map.mapboxMap.loadStyle(resolvedStyleURI(styleURI))
-  }
+  override fun easeTo(target: CameraTarget, options: CameraAnimationOptions?): Promise<CameraAnimationEnd> =
+    MainThreadPromise.complete { settle ->
+      host.requireMap("MapboxMapView.easeTo").easeTo(target, options?.durationMs) { settle(Result.success(it)) }
+    }
 
-  private fun scheduleCameraUpdate() {
-    if (cameraUpdateScheduled) return
-    cameraUpdateScheduled = true
+  override fun fitBounds(bounds: CoordinateBounds, options: FitBoundsOptions?): Promise<CameraAnimationEnd> =
+    MainThreadPromise.complete { settle ->
+      host.requireMap("MapboxMapView.fitBounds").fitBounds(bounds, options) { settle(Result.success(it)) }
+    }
 
-    container.post {
-      cameraUpdateScheduled = false
-      applyCamera()
+  override fun getCameraState(): Promise<CameraState> =
+    MainThreadPromise.run {
+      host.requireMap("MapboxMapView.getCameraState").mapboxMap.cameraState.toNitroCameraState(density)
+    }
+
+  override fun addOnCameraChangedListener(listener: (state: CameraState) -> Unit): ListenerSubscription =
+    host.cameraChanged.add(listener)
+
+  override fun addOnMapTapListener(listener: (event: MapTapEvent) -> Unit): ListenerSubscription =
+    host.mapTapped.add(listener)
+
+  override fun addOnStyleLoadedListener(listener: (style: HybridMapStyleSpec) -> Unit): ListenerSubscription =
+    host.styleLoaded.add(listener)
+
+  override fun addOnMapLoadingErrorListener(listener: (error: Throwable) -> Unit): ListenerSubscription =
+    host.loadingFailed.add(listener)
+
+  override fun queryRenderedFeatures(query: RenderedFeatureQuery): Promise<Array<HybridRenderedFeatureSpec>> =
+    MainThreadPromise.complete { settle ->
+      host.requireMap("MapboxMapView.queryRenderedFeatures").queryRenderedFeatures(query) { result ->
+        settle(result.map { features -> features.map<_, HybridRenderedFeatureSpec> { HybridRenderedFeature(it) }.toTypedArray() })
+      }
+    }
+
+  private val density: Float
+    get() = context.resources.displayMetrics.density
+
+  private fun applyCameraProp(map: MapView) {
+    val camera = camera ?: return
+    try {
+      map.mapboxMap.setCamera(camera.toValidatedCameraOptions("camera", density))
+    } catch (error: IllegalArgumentException) {
+      host.loadingFailed.emit(error)
     }
   }
 
-  private fun applyCamera() {
-    ensureMapView()
-    mapView?.mapboxMap?.setCamera(camera.toCameraOptions())
+  /** SDK: `GesturesSettings` fields (sdk-base/api/Release/metalava.txt:2583-2599), `updateSettings`. */
+  private fun applyGestures(map: MapView) {
+    val enabled = enableGestures ?: true
+    map.gestures.updateSettings {
+      scrollEnabled = enabled
+      pinchToZoomEnabled = enabled
+      rotateEnabled = enabled
+      pitchEnabled = enabled
+      doubleTapToZoomInEnabled = enabled
+      doubleTouchToZoomOutEnabled = enabled
+      quickZoomEnabled = enabled
+    }
   }
 
-  private fun applyStyle() {
-    ensureMapView()
-    mapView?.mapboxMap?.loadStyle(resolvedStyleURI(styleURI))
-  }
-
-  private fun releaseMapView() {
-    cameraUpdateScheduled = false
-
+  private fun release() {
     if (started) {
-      mapView?.onStop()
       started = false
     }
-
-    mapView?.onDestroy()
-    container.removeAllViews()
-    mapView = null
+    host.tearDown()
+    appliedStyleUri = null
+    cameraChanged = true
+    gesturesChanged = true
   }
-
-  private fun MapCamera.toCameraOptions(): CameraOptions =
-    CameraOptions.Builder()
-      .center(Point.fromLngLat(longitude, latitude))
-      .zoom(zoom)
-      .bearing(bearing)
-      .pitch(pitch)
-      .build()
-
-  private fun resolvedStyleURI(value: String): String =
-    when (value) {
-      "standard" -> Style.STANDARD
-      "standard-satellite" -> Style.STANDARD_SATELLITE
-      else -> value
-    }
 }

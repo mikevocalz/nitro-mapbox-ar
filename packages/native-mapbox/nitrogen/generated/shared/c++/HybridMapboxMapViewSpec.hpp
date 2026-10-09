@@ -13,11 +13,53 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
-// Forward declaration of `MapCamera` to properly resolve imports.
-namespace margelo::nitro::mapboxar::nativemap { struct MapCamera; }
+// Forward declaration of `CameraTarget` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CameraTarget; }
+// Forward declaration of `MapProjection` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class MapProjection; }
+// Forward declaration of `HybridMapStyleSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridMapStyleSpec; }
+// Forward declaration of `HybridPointAnnotationManagerSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridPointAnnotationManagerSpec; }
+// Forward declaration of `CameraAnimationEnd` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class CameraAnimationEnd; }
+// Forward declaration of `CameraAnimationOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CameraAnimationOptions; }
+// Forward declaration of `CoordinateBounds` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CoordinateBounds; }
+// Forward declaration of `FitBoundsOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct FitBoundsOptions; }
+// Forward declaration of `CameraState` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CameraState; }
+// Forward declaration of `ListenerSubscription` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct ListenerSubscription; }
+// Forward declaration of `MapTapEvent` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct MapTapEvent; }
+// Forward declaration of `HybridRenderedFeatureSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridRenderedFeatureSpec; }
+// Forward declaration of `RenderedFeatureQuery` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct RenderedFeatureQuery; }
 
 #include <string>
-#include "MapCamera.hpp"
+#include "CameraTarget.hpp"
+#include <optional>
+#include "MapProjection.hpp"
+#include <memory>
+#include "HybridMapStyleSpec.hpp"
+#include <NitroModules/Promise.hpp>
+#include "HybridPointAnnotationManagerSpec.hpp"
+#include "CameraAnimationEnd.hpp"
+#include "CameraAnimationOptions.hpp"
+#include "CoordinateBounds.hpp"
+#include "FitBoundsOptions.hpp"
+#include "CameraState.hpp"
+#include "ListenerSubscription.hpp"
+#include <functional>
+#include "MapTapEvent.hpp"
+#include <exception>
+#include "HybridRenderedFeatureSpec.hpp"
+#include <vector>
+#include "RenderedFeatureQuery.hpp"
 
 namespace margelo::nitro::mapboxar::nativemap {
 
@@ -46,18 +88,28 @@ namespace margelo::nitro::mapboxar::nativemap {
 
     public:
       // Properties
-      virtual std::string getAccessToken() = 0;
-      virtual void setAccessToken(const std::string& accessToken) = 0;
-      virtual std::string getStyleURI() = 0;
-      virtual void setStyleURI(const std::string& styleURI) = 0;
-      virtual MapCamera getCamera() = 0;
-      virtual void setCamera(const MapCamera& camera) = 0;
+      virtual std::string getStyleUri() = 0;
+      virtual void setStyleUri(const std::string& styleUri) = 0;
+      virtual std::optional<CameraTarget> getCamera() = 0;
+      virtual void setCamera(const std::optional<CameraTarget>& camera) = 0;
+      virtual std::optional<MapProjection> getProjection() = 0;
+      virtual void setProjection(std::optional<MapProjection> projection) = 0;
+      virtual std::optional<bool> getEnableGestures() = 0;
+      virtual void setEnableGestures(std::optional<bool> enableGestures) = 0;
 
     public:
       // Methods
-      virtual void setCamera(const MapCamera& camera) = 0;
-      virtual MapCamera getCamera() = 0;
-      virtual void loadStyle(const std::string& styleURI) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<HybridMapStyleSpec>>> loadStyle(const std::string& uri) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>> createPointAnnotationManager() = 0;
+      virtual std::shared_ptr<Promise<CameraAnimationEnd>> flyTo(const CameraTarget& target, const std::optional<CameraAnimationOptions>& options) = 0;
+      virtual std::shared_ptr<Promise<CameraAnimationEnd>> easeTo(const CameraTarget& target, const std::optional<CameraAnimationOptions>& options) = 0;
+      virtual std::shared_ptr<Promise<CameraAnimationEnd>> fitBounds(const CoordinateBounds& bounds, const std::optional<FitBoundsOptions>& options) = 0;
+      virtual std::shared_ptr<Promise<CameraState>> getCameraState() = 0;
+      virtual ListenerSubscription addOnCameraChangedListener(const std::function<void(const CameraState& /* state */)>& listener) = 0;
+      virtual ListenerSubscription addOnMapTapListener(const std::function<void(const MapTapEvent& /* event */)>& listener) = 0;
+      virtual ListenerSubscription addOnStyleLoadedListener(const std::function<void(const std::shared_ptr<HybridMapStyleSpec>& /* style */)>& listener) = 0;
+      virtual ListenerSubscription addOnMapLoadingErrorListener(const std::function<void(const std::exception_ptr& /* error */)>& listener) = 0;
+      virtual std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>> queryRenderedFeatures(const RenderedFeatureQuery& query) = 0;
 
     protected:
       // Hybrid Setup

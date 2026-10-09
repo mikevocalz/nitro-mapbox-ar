@@ -9,9 +9,10 @@ def extOrDefault(name, fallback) {
 
 apply plugin: "com.android.library"
 apply plugin: "org.jetbrains.kotlin.android"
+apply from: "../nitrogen/generated/android/NitroMapboxAR+autolinking.gradle"
 
 android {
-  namespace "com.mikevocalz.nitromapboxar"
+  namespace "com.margelo.nitro.mapboxar"
 
   ndkVersion extOrDefault("ndkVersion", "27.1.12297006")
   compileSdkVersion extOrDefault("compileSdkVersion", 36)

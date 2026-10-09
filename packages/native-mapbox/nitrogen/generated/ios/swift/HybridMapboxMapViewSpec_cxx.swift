@@ -121,71 +121,292 @@ open class HybridMapboxMapViewSpec_cxx {
   }
 
   // Properties
-  public final var accessToken: std.string {
+  public final var styleUri: std.string {
     @inline(__always)
     get {
-      return std.string(self.__implementation.accessToken)
+      return std.string(self.__implementation.styleUri)
     }
     @inline(__always)
     set {
-      self.__implementation.accessToken = String(newValue)
+      self.__implementation.styleUri = String(newValue)
     }
   }
   
-  public final var styleURI: std.string {
+  public final var camera: bridge.std__optional_CameraTarget_ {
     @inline(__always)
     get {
-      return std.string(self.__implementation.styleURI)
+      return { () -> bridge.std__optional_CameraTarget_ in
+        if let __unwrappedValue = self.__implementation.camera {
+          return bridge.create_std__optional_CameraTarget_(__unwrappedValue)
+        } else {
+          return .init()
+        }
+      }()
     }
     @inline(__always)
     set {
-      self.__implementation.styleURI = String(newValue)
+      self.__implementation.camera = newValue.value
     }
   }
   
-  public final var camera: MapCamera {
+  public final var projection: bridge.std__optional_MapProjection_ {
     @inline(__always)
     get {
-      return self.__implementation.camera
+      return { () -> bridge.std__optional_MapProjection_ in
+        if let __unwrappedValue = self.__implementation.projection {
+          return bridge.create_std__optional_MapProjection_(__unwrappedValue)
+        } else {
+          return .init()
+        }
+      }()
     }
     @inline(__always)
     set {
-      self.__implementation.camera = newValue
+      self.__implementation.projection = newValue.value
+    }
+  }
+  
+  public final var enableGestures: bridge.std__optional_bool_ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__optional_bool_ in
+        if let __unwrappedValue = self.__implementation.enableGestures {
+          return bridge.create_std__optional_bool_(__unwrappedValue)
+        } else {
+          return .init()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__implementation.enableGestures = { () -> Bool? in
+        if bridge.has_value_std__optional_bool_(newValue) {
+          let __unwrapped = bridge.get_std__optional_bool_(newValue)
+          return __unwrapped
+        } else {
+          return nil
+        }
+      }()
     }
   }
 
   // Methods
   @inline(__always)
-  public final func setCamera(camera: MapCamera) -> bridge.Result_void_ {
+  public final func loadStyle(uri: std.string) -> bridge.Result_std__shared_ptr_Promise_std__shared_ptr_HybridMapStyleSpec____ {
     do {
-      try self.__implementation.setCamera(camera: camera)
-      return bridge.create_Result_void_()
+      let __result = try self.__implementation.loadStyle(uri: String(uri))
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__shared_ptr_HybridMapStyleSpec___ in
+        let __promise = bridge.create_std__shared_ptr_Promise_std__shared_ptr_HybridMapStyleSpec___()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__shared_ptr_HybridMapStyleSpec___(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve({ () -> bridge.std__shared_ptr_HybridMapStyleSpec_ in
+              let __cxxWrapped = __result.getCxxWrapper()
+              return __cxxWrapped.getCxxPart()
+            }()) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridMapStyleSpec____(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_void_(__exceptionPtr)
+      return bridge.create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridMapStyleSpec____(__exceptionPtr)
     }
   }
   
   @inline(__always)
-  public final func getCamera() -> bridge.Result_MapCamera_ {
+  public final func createPointAnnotationManager() -> bridge.Result_std__shared_ptr_Promise_std__shared_ptr_HybridPointAnnotationManagerSpec____ {
     do {
-      let __result = try self.__implementation.getCamera()
+      let __result = try self.__implementation.createPointAnnotationManager()
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__shared_ptr_HybridPointAnnotationManagerSpec___ in
+        let __promise = bridge.create_std__shared_ptr_Promise_std__shared_ptr_HybridPointAnnotationManagerSpec___()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__shared_ptr_HybridPointAnnotationManagerSpec___(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve({ () -> bridge.std__shared_ptr_HybridPointAnnotationManagerSpec_ in
+              let __cxxWrapped = __result.getCxxWrapper()
+              return __cxxWrapped.getCxxPart()
+            }()) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridPointAnnotationManagerSpec____(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridPointAnnotationManagerSpec____(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func flyTo(target: CameraTarget, options: bridge.std__optional_CameraAnimationOptions_) -> bridge.Result_std__shared_ptr_Promise_CameraAnimationEnd___ {
+    do {
+      let __result = try self.__implementation.flyTo(target: target, options: options.value)
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_CameraAnimationEnd__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_CameraAnimationEnd__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_CameraAnimationEnd__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve(__result) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_CameraAnimationEnd___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_CameraAnimationEnd___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func easeTo(target: CameraTarget, options: bridge.std__optional_CameraAnimationOptions_) -> bridge.Result_std__shared_ptr_Promise_CameraAnimationEnd___ {
+    do {
+      let __result = try self.__implementation.easeTo(target: target, options: options.value)
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_CameraAnimationEnd__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_CameraAnimationEnd__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_CameraAnimationEnd__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve(__result) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_CameraAnimationEnd___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_CameraAnimationEnd___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func fitBounds(bounds: CoordinateBounds, options: bridge.std__optional_FitBoundsOptions_) -> bridge.Result_std__shared_ptr_Promise_CameraAnimationEnd___ {
+    do {
+      let __result = try self.__implementation.fitBounds(bounds: bounds, options: options.value)
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_CameraAnimationEnd__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_CameraAnimationEnd__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_CameraAnimationEnd__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve(__result) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_CameraAnimationEnd___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_CameraAnimationEnd___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func getCameraState() -> bridge.Result_std__shared_ptr_Promise_CameraState___ {
+    do {
+      let __result = try self.__implementation.getCameraState()
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_CameraState__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_CameraState__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_CameraState__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve(__result) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_CameraState___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_CameraState___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func addOnCameraChangedListener(listener: bridge.Func_void_CameraState) -> bridge.Result_ListenerSubscription_ {
+    do {
+      let __result = try self.__implementation.addOnCameraChangedListener(listener: { () -> (CameraState) -> Void in
+        let __wrappedFunction = bridge.wrap_Func_void_CameraState(listener)
+        return { (__state: CameraState) -> Void in
+          __wrappedFunction.call(__state)
+        }
+      }())
       let __resultCpp = __result
-      return bridge.create_Result_MapCamera_(__resultCpp)
+      return bridge.create_Result_ListenerSubscription_(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_MapCamera_(__exceptionPtr)
+      return bridge.create_Result_ListenerSubscription_(__exceptionPtr)
     }
   }
   
   @inline(__always)
-  public final func loadStyle(styleURI: std.string) -> bridge.Result_void_ {
+  public final func addOnMapTapListener(listener: bridge.Func_void_MapTapEvent) -> bridge.Result_ListenerSubscription_ {
     do {
-      try self.__implementation.loadStyle(styleURI: String(styleURI))
-      return bridge.create_Result_void_()
+      let __result = try self.__implementation.addOnMapTapListener(listener: { () -> (MapTapEvent) -> Void in
+        let __wrappedFunction = bridge.wrap_Func_void_MapTapEvent(listener)
+        return { (__event: MapTapEvent) -> Void in
+          __wrappedFunction.call(__event)
+        }
+      }())
+      let __resultCpp = __result
+      return bridge.create_Result_ListenerSubscription_(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_void_(__exceptionPtr)
+      return bridge.create_Result_ListenerSubscription_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func addOnStyleLoadedListener(listener: bridge.Func_void_std__shared_ptr_HybridMapStyleSpec_) -> bridge.Result_ListenerSubscription_ {
+    do {
+      let __result = try self.__implementation.addOnStyleLoadedListener(listener: { () -> ((any HybridMapStyleSpec)) -> Void in
+        let __wrappedFunction = bridge.wrap_Func_void_std__shared_ptr_HybridMapStyleSpec_(listener)
+        return { (__style: (any HybridMapStyleSpec)) -> Void in
+          __wrappedFunction.call({ () -> bridge.std__shared_ptr_HybridMapStyleSpec_ in
+            let __cxxWrapped = __style.getCxxWrapper()
+            return __cxxWrapped.getCxxPart()
+          }())
+        }
+      }())
+      let __resultCpp = __result
+      return bridge.create_Result_ListenerSubscription_(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_ListenerSubscription_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func addOnMapLoadingErrorListener(listener: bridge.Func_void_std__exception_ptr) -> bridge.Result_ListenerSubscription_ {
+    do {
+      let __result = try self.__implementation.addOnMapLoadingErrorListener(listener: { () -> (Error) -> Void in
+        let __wrappedFunction = bridge.wrap_Func_void_std__exception_ptr(listener)
+        return { (__error: Error) -> Void in
+          __wrappedFunction.call(__error.toCpp())
+        }
+      }())
+      let __resultCpp = __result
+      return bridge.create_Result_ListenerSubscription_(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_ListenerSubscription_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func queryRenderedFeatures(query: RenderedFeatureQuery) -> bridge.Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridRenderedFeatureSpec_____ {
+    do {
+      let __result = try self.__implementation.queryRenderedFeatures(query: query)
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridRenderedFeatureSpec____ in
+        let __promise = bridge.create_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridRenderedFeatureSpec____()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridRenderedFeatureSpec____(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve({ () -> bridge.std__vector_std__shared_ptr_HybridRenderedFeatureSpec__ in
+              var __vector = bridge.create_std__vector_std__shared_ptr_HybridRenderedFeatureSpec__(__result.count)
+              for __item in __result {
+                __vector.push_back({ () -> bridge.std__shared_ptr_HybridRenderedFeatureSpec_ in
+                  let __cxxWrapped = __item.getCxxWrapper()
+                  return __cxxWrapped.getCxxPart()
+                }())
+              }
+              return __vector
+            }()) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridRenderedFeatureSpec_____(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridRenderedFeatureSpec_____(__exceptionPtr)
     }
   }
   

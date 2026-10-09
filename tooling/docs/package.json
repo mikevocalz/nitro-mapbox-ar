@@ -1,0 +1,9 @@
+{
+  "name": "nitro-mapbox-ar-docs",
+  "private": true,
+  "description": "TypeDoc for the public API. Kept out of the workspaces because TypeDoc needs the TypeScript 6 compiler API, which TypeScript 7 does not ship.",
+  "devDependencies": {
+    "typedoc": "0.28.20",
+    "typescript": "6.0.3"
+  }
+}

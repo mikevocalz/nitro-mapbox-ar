@@ -9,22 +9,49 @@ import {
   type GpuHeightField,
 } from './terrainRgb'
 
+/**
+ * One Terrain-RGB tile decoded on the GPU: the source texture plus the
+ * elevation buffer computed from it. Produced by
+ * {@linkcode loadTerrainTileOnGpu}.
+ *
+ * The caller owns both resources and must call
+ * {@linkcode GpuTerrainTile.dispose} after every renderer drawing this tile
+ * has been disposed.
+ */
 export interface GpuTerrainTile {
+  /** XYZ tile this elevation covers. */
   readonly tile: TileId
+  /** Decoded Terrain-RGB texture (`rgba8unorm`) on the shared Graphite device. */
   readonly sourceTexture: AdoptedWebGPUTexture
+  /** Per-texel elevations in metres, one `f32` per source texel. */
   readonly heights: GpuHeightField
+  /** Decoded width in texels. Matches `heights.width`. */
   readonly width: number
+  /** Decoded height in texels. Matches `heights.height`. */
   readonly height: number
+  /**
+   * Destroys the height buffer and the source texture. Safe to call more than
+   * once.
+   */
   dispose(): void
 }
 
+/**
+ * Result of {@linkcode loadTerrainTileOnGpu}. Mapbox answers HTTP 404 for
+ * Terrain-RGB tiles that are entirely ocean; that case comes back as
+ * `kind: 'water'` with no GPU resources.
+ */
 export type GpuTerrainTileResult =
   | {
+      /** The tile decoded. */
       readonly kind: 'tile'
+      /** Decoded tile. The caller must dispose it. */
       readonly value: GpuTerrainTile
     }
   | {
+      /** Mapbox has no elevation for this tile (HTTP 404). */
       readonly kind: 'water'
+      /** The requested tile. */
       readonly tile: TileId
     }
 

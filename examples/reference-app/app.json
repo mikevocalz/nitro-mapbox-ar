@@ -6,7 +6,47 @@
     "version": "0.0.1",
     "orientation": "default",
     "newArchEnabled": true,
-    "plugins": ["@reactvision/react-viro"],
+    "plugins": [
+      [
+        "expo-horizon-core",
+        {
+          "supportedDevices": "quest2|questpro|quest3|quest3s|vrglasses",
+          "defaultWidth": "1280dp",
+          "defaultHeight": "800dp"
+        }
+      ],
+      [
+        "expo-horizon-location",
+        {
+          "locationWhenInUsePermission": "Location powers Mapbox search, routing and geospatial AR."
+        }
+      ],
+      [
+        "@reactvision/react-viro",
+        {
+          "android": {
+            "xRMode": [
+              "AR",
+              "QUEST"
+            ],
+            "questSupportedDevices": "quest2|questpro|quest3|quest3s|vrglasses"
+          }
+        }
+      ],
+      "@reactvision/react-viro/plugins/withViroVisionOS",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 29
+          },
+          "ios": {
+            "enableSceneSupport": true
+          }
+        }
+      ],
+      "./plugins/withMetaVR"
+    ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -15,7 +55,11 @@
       }
     },
     "android": {
-      "permissions": ["CAMERA", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro"

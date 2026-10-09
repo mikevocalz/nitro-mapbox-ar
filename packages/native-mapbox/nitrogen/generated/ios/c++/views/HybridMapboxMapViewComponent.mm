@@ -98,23 +98,29 @@ using namespace margelo::nitro::mapboxar::nativemap::views;
   if (hasTransactionPropChanges) {
     swiftPart.beforeUpdate();
 
-    // accessToken: string
+    // styleUri: string
     if (oldViewProps == nullptr
-          ? newViewProps.accessToken.isProvided()
-          : !newViewProps.accessToken.hasSameValue(oldViewProps->accessToken)) {
-      swiftPart.setAccessToken(newViewProps.accessToken.get());
+          ? newViewProps.styleUri.isProvided()
+          : !newViewProps.styleUri.hasSameValue(oldViewProps->styleUri)) {
+      swiftPart.setStyleUri(newViewProps.styleUri.get());
     }
-    // styleURI: string
-    if (oldViewProps == nullptr
-          ? newViewProps.styleURI.isProvided()
-          : !newViewProps.styleURI.hasSameValue(oldViewProps->styleURI)) {
-      swiftPart.setStyleURI(newViewProps.styleURI.get());
-    }
-    // camera: struct
+    // camera: optional
     if (oldViewProps == nullptr
           ? newViewProps.camera.isProvided()
           : !newViewProps.camera.hasSameValue(oldViewProps->camera)) {
       swiftPart.setCamera(newViewProps.camera.get());
+    }
+    // projection: optional
+    if (oldViewProps == nullptr
+          ? newViewProps.projection.isProvided()
+          : !newViewProps.projection.hasSameValue(oldViewProps->projection)) {
+      swiftPart.setProjection(newViewProps.projection.get());
+    }
+    // enableGestures: optional
+    if (oldViewProps == nullptr
+          ? newViewProps.enableGestures.isProvided()
+          : !newViewProps.enableGestures.hasSameValue(oldViewProps->enableGestures)) {
+      swiftPart.setEnableGestures(newViewProps.enableGestures.get());
     }
 
     // Update hybridRef if it changed

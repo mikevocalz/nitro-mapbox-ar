@@ -2,15 +2,29 @@ import type { TileId } from '../../mapbox/tiles'
 
 const WEB_MERCATOR_CIRCUMFERENCE_METERS = 40075016.68557849
 
+/**
+ * Draw geometry for one terrain tile at one LOD stride, computed by
+ * {@linkcode getTerrainGridLayout}. All counts are logical: the vertex shader
+ * builds positions from `vertex_index`, so nothing is uploaded.
+ */
 export interface TerrainGridLayout {
+  /** Height samples per row. */
   readonly width: number
+  /** Height sample rows. */
   readonly height: number
+  /** Sample step between drawn vertices. 1 is full resolution. */
   readonly stride: number
+  /** Cells across, `ceil((width - 1) / stride)`. */
   readonly cellColumns: number
+  /** Cells down, `ceil((height - 1) / stride)`. */
   readonly cellRows: number
+  /** `cellColumns * cellRows`. */
   readonly cellCount: number
+  /** Surface vertices drawn, six per cell (two triangles). */
   readonly vertexCount: number
+  /** Edge segments around the tile, `2 * cellColumns + 2 * cellRows`. */
   readonly skirtSegmentCount: number
+  /** Skirt vertices drawn when skirts are on, six per segment. */
   readonly skirtVertexCount: number
 }
 

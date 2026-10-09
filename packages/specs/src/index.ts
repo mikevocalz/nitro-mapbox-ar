@@ -1,0 +1,6 @@
+export type { GeoLocationPlaceInput } from './GeoLocationPlaceInput'
+export type { GeoPositionLike } from './GeoPositionLike'
+export type { RouteToPlacesOptions } from './RouteToPlacesOptions'
+export type { UserPositionLike } from './UserPositionLike'
+export { routeToPlaces } from './routeToPlaces'
+export { userPositionToProgress } from './userPositionToProgress'

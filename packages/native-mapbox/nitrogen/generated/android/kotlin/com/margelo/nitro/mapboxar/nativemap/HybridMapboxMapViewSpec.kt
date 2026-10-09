@@ -11,6 +11,7 @@ import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
 import dalvik.annotation.optimization.FastNative
+import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
 import com.margelo.nitro.views.HybridView
 
@@ -31,32 +32,90 @@ abstract class HybridMapboxMapViewSpec: HybridView() {
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var accessToken: String
+  abstract var styleUri: String
   
   @get:DoNotStrip
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var styleURI: String
+  abstract var camera: CameraTarget?
   
   @get:DoNotStrip
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var camera: MapCamera
+  abstract var projection: MapProjection?
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
+  abstract var enableGestures: Boolean?
 
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun setCamera(camera: MapCamera): Unit
+  abstract fun loadStyle(uri: String): Promise<HybridMapStyleSpec>
   
   @DoNotStrip
   @Keep
-  abstract fun getCamera(): MapCamera
+  abstract fun createPointAnnotationManager(): Promise<HybridPointAnnotationManagerSpec>
   
   @DoNotStrip
   @Keep
-  abstract fun loadStyle(styleURI: String): Unit
+  abstract fun flyTo(target: CameraTarget, options: CameraAnimationOptions?): Promise<CameraAnimationEnd>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun easeTo(target: CameraTarget, options: CameraAnimationOptions?): Promise<CameraAnimationEnd>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun fitBounds(bounds: CoordinateBounds, options: FitBoundsOptions?): Promise<CameraAnimationEnd>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun getCameraState(): Promise<CameraState>
+  
+  abstract fun addOnCameraChangedListener(listener: (state: CameraState) -> Unit): ListenerSubscription
+  
+  @DoNotStrip
+  @Keep
+  private fun addOnCameraChangedListener_cxx(listener: Func_void_CameraState): ListenerSubscription {
+    val __result = addOnCameraChangedListener(listener)
+    return __result
+  }
+  
+  abstract fun addOnMapTapListener(listener: (event: MapTapEvent) -> Unit): ListenerSubscription
+  
+  @DoNotStrip
+  @Keep
+  private fun addOnMapTapListener_cxx(listener: Func_void_MapTapEvent): ListenerSubscription {
+    val __result = addOnMapTapListener(listener)
+    return __result
+  }
+  
+  abstract fun addOnStyleLoadedListener(listener: (style: HybridMapStyleSpec) -> Unit): ListenerSubscription
+  
+  @DoNotStrip
+  @Keep
+  private fun addOnStyleLoadedListener_cxx(listener: Func_void_std__shared_ptr_HybridMapStyleSpec_): ListenerSubscription {
+    val __result = addOnStyleLoadedListener(listener)
+    return __result
+  }
+  
+  abstract fun addOnMapLoadingErrorListener(listener: (error: Throwable) -> Unit): ListenerSubscription
+  
+  @DoNotStrip
+  @Keep
+  private fun addOnMapLoadingErrorListener_cxx(listener: Func_void_std__exception_ptr): ListenerSubscription {
+    val __result = addOnMapLoadingErrorListener(listener)
+    return __result
+  }
+  
+  @DoNotStrip
+  @Keep
+  abstract fun queryRenderedFeatures(query: RenderedFeatureQuery): Promise<Array<HybridRenderedFeatureSpec>>
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

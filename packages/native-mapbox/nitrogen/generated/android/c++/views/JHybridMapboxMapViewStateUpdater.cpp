@@ -54,19 +54,24 @@ void JHybridMapboxMapViewStateUpdater::updateViewProps(jni::alias_ref<jni::JClas
 
   // Update only props that differ from the previous State snapshot.
   if (oldProps == nullptr
-        ? newProps->accessToken.isProvided()
-        : !newProps->accessToken.hasSameValue(oldProps->accessToken)) {
-    hybridView->setAccessToken(newProps->accessToken.get());
-  }
-  if (oldProps == nullptr
-        ? newProps->styleURI.isProvided()
-        : !newProps->styleURI.hasSameValue(oldProps->styleURI)) {
-    hybridView->setStyleURI(newProps->styleURI.get());
+        ? newProps->styleUri.isProvided()
+        : !newProps->styleUri.hasSameValue(oldProps->styleUri)) {
+    hybridView->setStyleUri(newProps->styleUri.get());
   }
   if (oldProps == nullptr
         ? newProps->camera.isProvided()
         : !newProps->camera.hasSameValue(oldProps->camera)) {
     hybridView->setCamera(newProps->camera.get());
+  }
+  if (oldProps == nullptr
+        ? newProps->projection.isProvided()
+        : !newProps->projection.hasSameValue(oldProps->projection)) {
+    hybridView->setProjection(newProps->projection.get());
+  }
+  if (oldProps == nullptr
+        ? newProps->enableGestures.isProvided()
+        : !newProps->enableGestures.hasSameValue(oldProps->enableGestures)) {
+    hybridView->setEnableGestures(newProps->enableGestures.get());
   }
 
   // Update hybridRef if it changed

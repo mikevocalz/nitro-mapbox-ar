@@ -1,9 +1,6 @@
 export { normalizeMapboxARConfig } from './core/config'
 export { bboxCrossesAntimeridian, validateBBox } from './geo/bbox'
-export {
-  getMapboxARCore,
-  type MapboxARCore,
-} from './native/MapboxARCore.web'
+export { MapboxAR } from './native/MapboxAR.web'
 export {
   MapboxRasterClient,
   terrainRgbSourceZoom,

@@ -1,9 +1,21 @@
 import type { SearchFeature } from './client'
 
+/**
+ * The WGS84 point to place an AR marker for a search result, from
+ * {@linkcode getSpatialSearchAnchor}.
+ */
 export interface SpatialSearchAnchor {
+  /** Degrees east of the prime meridian. */
   readonly longitude: number
+  /** Degrees north of the equator. */
   readonly latitude: number
+  /**
+   * Which point of the feature was used: `entrance` is the routable point
+   * named `entrance`, `routable` is the one named `default`, and `feature` is
+   * the feature's own geometry.
+   */
   readonly source: 'entrance' | 'routable' | 'feature'
+  /** The search result the anchor was taken from. */
   readonly feature: SearchFeature
 }
 
@@ -34,6 +46,9 @@ function routablePoints(feature: SearchFeature): readonly Record<string, unknown
  *
  * Geocoding v6 entrance points are preferred over the vehicle-oriented default
  * routable point and over the feature centroid.
+ *
+ * @returns `undefined` when no routable point and no feature geometry has a
+ * finite `[longitude, latitude]` pair.
  */
 export function getSpatialSearchAnchor(
   feature: SearchFeature,

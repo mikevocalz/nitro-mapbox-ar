@@ -15,19 +15,20 @@ Pod::Spec.new do |s|
     :tag => "#{s.version}"
   }
 
-  # Only the revived Nitro core is compiled. The historical Obj-C bridge was
-  # removed from the active tree and remains available through Git history.
+  # The C++ core plus the Objective-C token reader. Nitrogen adds the generated
+  # spec and the autolinking +load registration below.
   s.source_files = [
     "cpp/**/*.{h,hpp,c,cc,cpp}",
-    "ios/Nitro/**/*.{h,hpp,m,mm,c,cc,cpp}"
+    "ios/Nitro/**/*.{h,m,mm}"
+  ]
+  # MapboxARAccessToken.h is the one header other pods (maps, navigation) import.
+  s.public_header_files = [
+    "ios/Nitro/MapboxARAccessToken.h"
   ]
 
-  s.pod_target_xcconfig = {
-    "CLANG_CXX_LANGUAGE_STANDARD" => "c++20",
-    "DEFINES_MODULE" => "YES"
-  }
+  load "nitrogen/generated/ios/NitroMapboxAR+autolinking.rb"
+  add_nitrogen_files(s)
 
-  s.dependency "NitroModules"
   s.dependency "React-jsi"
   s.dependency "React-callinvoker"
 

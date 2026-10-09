@@ -4,9 +4,10 @@
   "bubblingEventTypes": {},
   "directEventTypes": {},
   "validAttributes": {
-    "accessToken": true,
-    "styleURI": true,
+    "styleUri": true,
     "camera": true,
+    "projection": true,
+    "enableGestures": true,
     "hybridRef": true
   }
 }

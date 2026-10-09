@@ -1,48 +1,46 @@
 # XR and spatial-AI continuity
 
-The ReactVision adapter normalizes spatial capabilities across:
+The ReactVision adapter reads spatial capabilities from the running host
+instead of deriving them from a platform name. `getSpatialHostCapabilities()`
+asks a `SpatialHostProbe` and returns `SpatialHostCapabilities`:
 
-- iOS
-- Android
-- Meta Quest
-- Apple Vision Pro
-- web
+| Field | Probe source (Viro 3.0.3, `node_modules/@reactvision/react-viro/dist/`) |
+| --- | --- |
+| `isImmersive` | `isQuest` (`components/Utilities/ViroPlatform.d.ts:7`), `isVisionOS()` (`components/VisionOS/ViroVisionOSModule.d.ts:57`) |
+| `supportsGaze` | same head-mounted check; Viro has no gaze query |
+| `supportsGeospatialAnchors`, `supportsVps` | `arSceneNavigator.isGeospatialModeSupported()` (`components/AR/ViroARSceneNavigator.d.ts:780`), and only when `hasDeviceLocation` is `true` |
+| `supportsColocation` | `isColocationAvailable()` (`components/AR/ViroColocation.d.ts:63`) |
+| `supportsPassthrough` | `VRModuleOpenXR.setPassthroughEnabled` (`components/Utilities/VRModuleOpenXR.d.ts:34`) or `isARSupportedOnDevice()` (`components/Utilities/ViroUtils.d.ts:95`) |
+| `supportsReplicatedState` | a JS `WebSocket`, which `ViroReplicationClient` opens (`components/AR/ViroReplication.d.ts:14`, `:97`) |
+| `hasDeviceLocation` | supplied by the app; Viro has no location-hardware query |
+| `isGraphiteAvailable` | supplied by the app, usually `isGraphiteWebGPUAvailable()` from `src/rendering/graphite.ts`; Viro does not render through Graphite |
 
-## Same-family co-location
+## Co-location
 
-ReactVision co-location currently shares frames only within a platform family:
+ReactVision shares frames only within a family: phone with phone, Quest with
+Quest, visionOS with visionOS. Viro ships one frame source per family
+(`cloudAnchorFrameSource`, `metaSpatialAnchorFrameSource`,
+`visionOSSharedSpaceFrameSource`) and none that bridges two.
 
-- phone ↔ phone
-- Quest ↔ Quest
-- Vision ↔ Vision
+`ColocationPeer.platform` is a string, because a peer can run a different
+platform from this device. `canShareColocationFrame(a, b)` applies the family
+rule; web peers never align, and a platform the adapter does not know aligns
+only with peers reporting the same string. This is the only place the adapter
+switches on a platform.
 
-There is no phone ↔ Quest or Quest ↔ Vision frame conversion. The adapter
-models that explicitly with `canShareColocationFrame()`.
+## Spatial context for agents
 
-## Gaze-aware spatial context
+`SpatialContextSnapshot` can carry camera location, heading, a head ray and
+its hit target, visible anchors, the co-located peer count and application
+metadata. `createSpatialContextSnapshot(host, input)` drops the head ray unless
+`supportsGaze` and the peer count unless `supportsColocation`, instead of
+passing through values the host cannot produce.
 
-`SpatialContextSnapshot` can carry:
+## Graphite on visionOS
 
-- camera geographic location;
-- heading;
-- gaze ray / hit target;
-- visible anchors;
-- co-located peer count;
-- application metadata.
-
-On platforms without gaze support, gaze is stripped instead of fabricated.
-
-## Vision Pro + Graphite
-
-ReactVision can run immersive scenes on visionOS through its own Metal renderer.
-
-Skia Graphite remains the preferred shared GPU compositor when the host has a
-validated compatible build, but `graphiteOnVisionOS` defaults to `false`.
-This prevents the SDK from claiming a published Graphite visionOS binary exists
-when it has not been validated for the consuming app.
-
-The safe visionOS path is therefore:
-
-1. ReactVision/Viro Metal renderer for immersive tracking/content;
-2. Mapbox Search/Navigation/spatial state shared through this adapter;
-3. Graphite-enabled compositing only after explicit host capability validation.
+Viro renders immersive scenes on visionOS through its own Metal renderer.
+Skia 2.14.0 does not build for visionOS, so the app reports
+`isGraphiteAvailable: false` there and `selectRendererBackend('auto', ...)`
+resolves to `webgpu` when callers fill `graphite` and `sharedDawnDevice` from
+that field. No platform check is involved; `tests/reactvision-xr.test.ts`
+asserts the selection from injected capabilities.

@@ -30,6 +30,16 @@ function normalizeByteBudget(
   return value
 }
 
+/**
+ * Validates {@linkcode MapboxAROptions} and fills in defaults: renderer
+ * `'auto'`, a 96 MiB memory cache and a 512 MiB disk cache.
+ *
+ * @throws {Error} When the access token is empty after trimming, or the
+ * renderer is not `'auto'`, `'graphite'`, `'webgpu'` or `'nitro'` (`'cpu'` is
+ * rejected here).
+ * @throws {RangeError} When a cache budget is not a non-negative safe integer.
+ * @see {@linkcode NormalizedMapboxARConfig}
+ */
 export function normalizeMapboxARConfig(
   options: MapboxAROptions,
 ): NormalizedMapboxARConfig {

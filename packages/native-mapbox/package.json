@@ -1,13 +1,15 @@
 {
-  "name": "@mapbox/react-native-mapbox-ar-native-map",
-  "version": "0.0.1",
+  "name": "@mikevocalz/nitro-mapbox-ar-maps",
+  "version": "0.1.0-alpha.0",
   "description": "Optional Nitro HybridView backed directly by Mapbox Maps SDK v11",
   "main": "src/index.ts",
   "react-native": "src/index.ts",
   "source": "src/index.ts",
   "files": [
     "src",
-    "android",
+    "android/src",
+    "android/build.gradle",
+    "android/CMakeLists.txt",
     "ios",
     "nitrogen/generated",
     "nitro.json",
@@ -36,5 +38,15 @@
     "type": "git",
     "url": "https://github.com/mikevocalz/nitro-mapbox-ar.git",
     "directory": "packages/native-mapbox"
+  },
+  "author": "Mike W. Allen (https://github.com/mikevocalz)",
+  "homepage": "https://github.com/mikevocalz/nitro-mapbox-ar#readme",
+  "bugs": {
+    "url": "https://github.com/mikevocalz/nitro-mapbox-ar/issues"
+  },
+  "funding": "https://github.com/sponsors/mikevocalz",
+  "publishConfig": {
+    "access": "public",
+    "tag": "next"
   }
 }

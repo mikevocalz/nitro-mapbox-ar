@@ -8,14 +8,20 @@ import type {
 /**
  * A WGS84 position in degrees, with altitude in metres when known.
  * Structurally identical to `GeoCoordinate` in
- * `@mapbox/react-native-mapbox-ar-reactvision`, so it can go straight to the
+ * `@mikevocalz/nitro-mapbox-ar-reactvision`, so it can go straight to the
  * ENU projection helpers there.
  *
  * @see {@linkcode NavigationManeuver.location}
  */
 export interface GeographicCoordinate {
+  /** Degrees north of the equator, -90..90. */
   readonly latitude: number
+  /** Degrees east of the prime meridian, -180..180. */
   readonly longitude: number
+  /**
+   * Metres, when known. {@linkcode mapboxRouteLegs} never sets it, because
+   * Directions API positions are two-dimensional.
+   */
   readonly altitude?: number
 }
 
@@ -24,9 +30,15 @@ export interface GeographicCoordinate {
  * {@linkcode RouteStep}.
  */
 export interface NavigationManeuver {
+  /**
+   * What the traveller does here, such as `turn`, `depart` or `arrive`. Copied
+   * from the Directions API `maneuver.type`, so values outside the known list
+   * can appear.
+   */
   readonly kind: ManeuverType
   /** Turn direction relative to travel before the manoeuvre, when given. */
   readonly modifier?: ManeuverModifier
+  /** Where the manoeuvre happens. */
   readonly location: GeographicCoordinate
   /** Compass bearing in degrees [0, 360) of travel into the manoeuvre. */
   readonly bearingBeforeDeg: number
@@ -45,6 +57,7 @@ export interface NavigationManeuver {
  * @see {@linkcode RouteLeg.steps}
  */
 export interface RouteStep {
+  /** The manoeuvre that starts this step. */
   readonly maneuver: NavigationManeuver
   /** Metres from this manoeuvre to the next. */
   readonly distanceM: number
@@ -65,7 +78,9 @@ export interface RouteStep {
  * @see {@linkcode mapboxRouteLegs}
  */
 export interface RouteLeg {
+  /** Metres of travel from the leg's start waypoint to its end waypoint. */
   readonly distanceM: number
+  /** Expected travel time across the leg, in seconds. */
   readonly durationS: number
   /** Steps in travel order; the last one is the leg's arrival. */
   readonly steps: readonly RouteStep[]

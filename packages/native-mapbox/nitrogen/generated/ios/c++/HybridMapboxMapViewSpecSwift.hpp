@@ -12,11 +12,66 @@
 // Forward declaration of `HybridMapboxMapViewSpec_cxx` to properly resolve imports.
 namespace NitroMapboxARNativeMap { class HybridMapboxMapViewSpec_cxx; }
 
-// Forward declaration of `MapCamera` to properly resolve imports.
-namespace margelo::nitro::mapboxar::nativemap { struct MapCamera; }
+// Forward declaration of `CameraTarget` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CameraTarget; }
+// Forward declaration of `GeographicCoordinate` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct GeographicCoordinate; }
+// Forward declaration of `EdgeInsets` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct EdgeInsets; }
+// Forward declaration of `MapProjection` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class MapProjection; }
+// Forward declaration of `HybridMapStyleSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridMapStyleSpec; }
+// Forward declaration of `HybridPointAnnotationManagerSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridPointAnnotationManagerSpec; }
+// Forward declaration of `CameraAnimationEnd` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class CameraAnimationEnd; }
+// Forward declaration of `CameraAnimationOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CameraAnimationOptions; }
+// Forward declaration of `CoordinateBounds` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CoordinateBounds; }
+// Forward declaration of `FitBoundsOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct FitBoundsOptions; }
+// Forward declaration of `CameraState` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct CameraState; }
+// Forward declaration of `ListenerSubscription` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct ListenerSubscription; }
+// Forward declaration of `MapTapEvent` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct MapTapEvent; }
+// Forward declaration of `ScreenPoint` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct ScreenPoint; }
+// Forward declaration of `HybridRenderedFeatureSpec` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { class HybridRenderedFeatureSpec; }
+// Forward declaration of `RenderedFeatureQuery` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct RenderedFeatureQuery; }
+// Forward declaration of `ScreenBox` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct ScreenBox; }
 
 #include <string>
-#include "MapCamera.hpp"
+#include "CameraTarget.hpp"
+#include <optional>
+#include "GeographicCoordinate.hpp"
+#include "EdgeInsets.hpp"
+#include "MapProjection.hpp"
+#include <memory>
+#include "HybridMapStyleSpec.hpp"
+#include <NitroModules/Promise.hpp>
+#include "HybridPointAnnotationManagerSpec.hpp"
+#include "CameraAnimationEnd.hpp"
+#include "CameraAnimationOptions.hpp"
+#include "CoordinateBounds.hpp"
+#include "FitBoundsOptions.hpp"
+#include "CameraState.hpp"
+#include "ListenerSubscription.hpp"
+#include <functional>
+#include "MapTapEvent.hpp"
+#include "ScreenPoint.hpp"
+#include <exception>
+#include "HybridRenderedFeatureSpec.hpp"
+#include <vector>
+#include "RenderedFeatureQuery.hpp"
+#include "ScreenBox.hpp"
+#include <variant>
 
 #include "NitroMapboxARNativeMap-Swift-Cxx-Umbrella.hpp"
 
@@ -64,48 +119,124 @@ namespace margelo::nitro::mapboxar::nativemap {
 
   public:
     // Properties
-    inline std::string getAccessToken() noexcept override {
-      auto __result = _swiftPart.getAccessToken();
+    inline std::string getStyleUri() noexcept override {
+      auto __result = _swiftPart.getStyleUri();
       return __result;
     }
-    inline void setAccessToken(const std::string& accessToken) noexcept override {
-      _swiftPart.setAccessToken(accessToken);
+    inline void setStyleUri(const std::string& styleUri) noexcept override {
+      _swiftPart.setStyleUri(styleUri);
     }
-    inline std::string getStyleURI() noexcept override {
-      auto __result = _swiftPart.getStyleURI();
+    inline std::optional<CameraTarget> getCamera() noexcept override {
+      auto __result = _swiftPart.getCamera();
       return __result;
     }
-    inline void setStyleURI(const std::string& styleURI) noexcept override {
-      _swiftPart.setStyleURI(styleURI);
+    inline void setCamera(const std::optional<CameraTarget>& camera) noexcept override {
+      _swiftPart.setCamera(camera);
     }
-    inline MapCamera getCamera() noexcept override {
-      return _swiftPart.getCamera();
+    inline std::optional<MapProjection> getProjection() noexcept override {
+      auto __result = _swiftPart.getProjection();
+      return __result;
     }
-    inline void setCamera(const MapCamera& camera) noexcept override {
-      _swiftPart.setCamera(std::forward<decltype(camera)>(camera));
+    inline void setProjection(std::optional<MapProjection> projection) noexcept override {
+      _swiftPart.setProjection(projection);
+    }
+    inline std::optional<bool> getEnableGestures() noexcept override {
+      auto __result = _swiftPart.getEnableGestures();
+      return __result;
+    }
+    inline void setEnableGestures(std::optional<bool> enableGestures) noexcept override {
+      _swiftPart.setEnableGestures(enableGestures);
     }
 
   public:
     // Methods
-    inline void setCamera(const MapCamera& camera) override {
-      auto __result = _swiftPart.setCamera(std::forward<decltype(camera)>(camera));
-      if (__result.hasError()) [[unlikely]] {
-        std::rethrow_exception(__result.error());
-      }
-    }
-    inline MapCamera getCamera() override {
-      auto __result = _swiftPart.getCamera();
+    inline std::shared_ptr<Promise<std::shared_ptr<HybridMapStyleSpec>>> loadStyle(const std::string& uri) override {
+      auto __result = _swiftPart.loadStyle(uri);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline void loadStyle(const std::string& styleURI) override {
-      auto __result = _swiftPart.loadStyle(styleURI);
+    inline std::shared_ptr<Promise<std::shared_ptr<HybridPointAnnotationManagerSpec>>> createPointAnnotationManager() override {
+      auto __result = _swiftPart.createPointAnnotationManager();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<CameraAnimationEnd>> flyTo(const CameraTarget& target, const std::optional<CameraAnimationOptions>& options) override {
+      auto __result = _swiftPart.flyTo(std::forward<decltype(target)>(target), options);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<CameraAnimationEnd>> easeTo(const CameraTarget& target, const std::optional<CameraAnimationOptions>& options) override {
+      auto __result = _swiftPart.easeTo(std::forward<decltype(target)>(target), options);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<CameraAnimationEnd>> fitBounds(const CoordinateBounds& bounds, const std::optional<FitBoundsOptions>& options) override {
+      auto __result = _swiftPart.fitBounds(std::forward<decltype(bounds)>(bounds), options);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<CameraState>> getCameraState() override {
+      auto __result = _swiftPart.getCameraState();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline ListenerSubscription addOnCameraChangedListener(const std::function<void(const CameraState& /* state */)>& listener) override {
+      auto __result = _swiftPart.addOnCameraChangedListener(listener);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline ListenerSubscription addOnMapTapListener(const std::function<void(const MapTapEvent& /* event */)>& listener) override {
+      auto __result = _swiftPart.addOnMapTapListener(listener);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline ListenerSubscription addOnStyleLoadedListener(const std::function<void(const std::shared_ptr<HybridMapStyleSpec>& /* style */)>& listener) override {
+      auto __result = _swiftPart.addOnStyleLoadedListener(listener);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline ListenerSubscription addOnMapLoadingErrorListener(const std::function<void(const std::exception_ptr& /* error */)>& listener) override {
+      auto __result = _swiftPart.addOnMapLoadingErrorListener(listener);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridRenderedFeatureSpec>>>> queryRenderedFeatures(const RenderedFeatureQuery& query) override {
+      auto __result = _swiftPart.queryRenderedFeatures(std::forward<decltype(query)>(query));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
     }
 
   private:

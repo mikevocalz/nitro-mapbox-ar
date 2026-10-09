@@ -3,13 +3,13 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import './style.css'
 
 import {
+  MapboxAR,
   MapboxNavigationClient,
   MapboxSearchClient,
   getBrowserRendererCapabilities,
-  getMapboxARCore,
   listMapboxFeatures,
   selectRendererBackend,
-} from '@mapbox/react-native-mapbox-ar'
+} from '@mikevocalz/nitro-mapbox-ar'
 
 const $ = <T extends HTMLElement>(id: string) => {
   const element = document.getElementById(id)
@@ -59,12 +59,11 @@ async function probeRuntime(): Promise<void> {
   addDiagnostic('JS CPU fallback', capabilities.jsCpu ? 'ready' : 'missing')
   addDiagnostic('Selected backend', backend)
 
-  const core = getMapboxARCore()
   const rgb = new Uint8Array([
     1, 134, 160, 255,
     1, 182, 217, 255,
   ])
-  const heights = new Float32Array(core.decodeTerrainRgb(rgb.buffer, 1))
+  const heights = new Float32Array(MapboxAR.decodeTerrainRgb(rgb.buffer, 1))
   addDiagnostic(
     'Terrain-RGB parity sample',
     `${heights[0].toFixed(1)}m / ${heights[1].toFixed(1)}m`,

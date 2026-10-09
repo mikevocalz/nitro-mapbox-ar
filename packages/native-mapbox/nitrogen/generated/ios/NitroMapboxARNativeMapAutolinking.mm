@@ -10,6 +10,7 @@
 #import "NitroMapboxARNativeMap-Swift-Cxx-Umbrella.hpp"
 #import <type_traits>
 
+#include "HybridMapboxMapsSpecSwift.hpp"
 #include "HybridMapboxMapViewSpecSwift.hpp"
 
 @interface NitroMapboxARNativeMapAutolinking : NSObject
@@ -21,6 +22,13 @@
   using namespace margelo::nitro;
   using namespace margelo::nitro::mapboxar::nativemap;
 
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "MapboxMaps",
+    []() -> std::shared_ptr<HybridObject> {
+      std::shared_ptr<HybridMapboxMapsSpec> hybridObject = NitroMapboxARNativeMap::NitroMapboxARNativeMapAutolinking::createMapboxMaps();
+      return hybridObject;
+    }
+  );
   HybridObjectRegistry::registerHybridObjectConstructor(
     "MapboxMapView",
     []() -> std::shared_ptr<HybridObject> {

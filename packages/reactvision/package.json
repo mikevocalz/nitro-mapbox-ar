@@ -1,6 +1,6 @@
 {
-  "name": "@mapbox/react-native-mapbox-ar-reactvision",
-  "version": "0.0.1",
+  "name": "@mikevocalz/nitro-mapbox-ar-reactvision",
+  "version": "0.1.0-alpha.0",
   "description": "Optional ReactVision/Viro geospatial adapter for Nitro Mapbox AR",
   "main": "src/index.ts",
   "react-native": "src/index.ts",
@@ -13,16 +13,17 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "peerDependencies": {
-    "@reactvision/react-viro": ">=3.0.2-0 <4.0.0",
+    "@reactvision/react-viro": ">=3.0.3 <4.0.0",
     "react": ">=19.0.0",
-    "react-native": ">=0.86.0 <0.89.0"
+    "react-native": ">=0.86.0 <0.87.0",
+    "@reactvision/react-native-visionos": ">=0.86.0 <0.87.0"
   },
   "devDependencies": {
-    "@reactvision/react-viro": "3.0.2",
-    "react": "19.2.3",
-    "react-native": "0.86.0",
+    "@reactvision/react-viro": "3.0.3",
+    "react": "19.3.0",
+    "react-native": "0.86.3",
     "typescript": "7.0.2",
-    "@types/react": "~19.2.17"
+    "@types/react": "19.3.0"
   },
   "license": "MIT",
   "repository": {
@@ -32,5 +33,20 @@
   },
   "dependencies": {
     "earcut": "^3.2.4"
+  },
+  "author": "Mike W. Allen (https://github.com/mikevocalz)",
+  "homepage": "https://github.com/mikevocalz/nitro-mapbox-ar#readme",
+  "bugs": {
+    "url": "https://github.com/mikevocalz/nitro-mapbox-ar/issues"
+  },
+  "funding": "https://github.com/sponsors/mikevocalz",
+  "peerDependenciesMeta": {
+    "@reactvision/react-native-visionos": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "next"
   }
 }

@@ -8,6 +8,13 @@ function assertFiniteCoordinate(value: number, label: string): void {
   }
 }
 
+/**
+ * Checks a {@linkcode BBox} and returns it unchanged.
+ *
+ * @throws {RangeError} When a coordinate is not finite, a longitude is outside
+ * ±180°, a latitude is outside ±85.05112878°, `south >= north`, or
+ * `west === east`.
+ */
 export function validateBBox(bbox: BBox): BBox {
   const [west, south, east, north] = bbox
 
@@ -42,6 +49,12 @@ export function validateBBox(bbox: BBox): BBox {
   return bbox
 }
 
+/**
+ * Whether a {@linkcode BBox} crosses the antimeridian, meaning `west > east`.
+ *
+ * @throws {RangeError} When the bbox is invalid, as
+ * {@linkcode validateBBox} defines it.
+ */
 export function bboxCrossesAntimeridian(bbox: BBox): boolean {
   validateBBox(bbox)
   return bbox[0] > bbox[2]

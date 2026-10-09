@@ -14,9 +14,14 @@ import {
 import { chunkWorldRoute, type RouteProjectionOptions } from './route'
 import type { EnuOrigin, GeoCoordinate } from './types'
 
-type ViroPolylineProps = React.ComponentProps<typeof ViroPolyline>
-type ForwardedPolylineProps = Omit<
-  ViroPolylineProps,
+/**
+ * `ViroPolyline` props passed through by {@linkcode MapboxViroRoute}. The
+ * component owns `points`, `materials` and `thickness`, so those are left out.
+ *
+ * @see {@linkcode MapboxViroRouteProps.polylineProps}
+ */
+export type ForwardedPolylineProps = Omit<
+  React.ComponentProps<typeof ViroPolyline>,
   'points' | 'materials' | 'thickness'
 >
 

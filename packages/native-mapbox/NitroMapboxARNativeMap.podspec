@@ -1,7 +1,7 @@
 require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
-mapbox_version = ENV.fetch("NITRO_MAPBOX_AR_MAPBOX_VERSION", "11.31.1")
+mapbox_version = ENV.fetch("NITRO_MAPBOX_AR_MAPBOX_VERSION", "11.32.0")
 
 Pod::Spec.new do |s|
   s.name         = "NitroMapboxARNativeMap"
@@ -10,7 +10,10 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/mikevocalz/nitro-mapbox-ar"
   s.license      = package["license"]
   s.authors      = "Nitro Mapbox AR contributors"
-  s.platform     = :ios, "14.0"
+  # MapboxMaps' CocoaPods spec is iOS-only (MapboxMaps.podspec:16 at 11.32.0).
+  # On visionOS the pod builds the #if os(visionOS) branches of HybridMapboxMaps
+  # and HybridMapboxMapView, which report isMapViewAvailable = false.
+  s.platforms    = { :ios => "14.0", :visionos => "1.0" }
   s.source       = {
     :git => "https://github.com/mikevocalz/nitro-mapbox-ar.git",
     :tag => "#{s.version}"
@@ -23,7 +26,9 @@ Pod::Spec.new do |s|
   load "nitrogen/generated/ios/NitroMapboxARNativeMap+autolinking.rb"
   add_nitrogen_files(s)
 
-  s.dependency "MapboxMaps", mapbox_version
+  s.ios.dependency "MapboxMaps", mapbox_version
+  # MapboxARAccessToken: the process-wide token set through MapboxAR.accessToken.
+  s.dependency "NitroMapboxAR"
   s.dependency "NitroModules"
   s.dependency "React-jsi"
   s.dependency "React-callinvoker"

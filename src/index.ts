@@ -1,6 +1,15 @@
+import { NitroModules } from 'react-native-nitro-modules'
+
+import type { MapboxAR as MapboxARSpec } from './native/MapboxAR.nitro'
+
+/** The process-wide native root. See {@linkcode MapboxARSpec}. */
+export const MapboxAR = NitroModules.createHybridObject<MapboxARSpec>('MapboxAR')
+/** Type of the {@linkcode MapboxAR} root. */
+export type MapboxAR = MapboxARSpec
+export type { MapboxAR as MapboxARSpec } from './native/MapboxAR.nitro'
+
 export { normalizeMapboxARConfig } from './core/config'
 export { bboxCrossesAntimeridian, validateBBox } from './geo/bbox'
-export { getMapboxARCore, type MapboxARCore } from './native/MapboxARCore'
 export {
   MapboxRasterClient,
   terrainRgbSourceZoom,

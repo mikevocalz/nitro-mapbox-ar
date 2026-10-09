@@ -3,23 +3,61 @@ import {
   makeSkiaImageFromWebGPUTexture,
 } from '../../rendering/graphite'
 
+/**
+ * Size and formats for {@linkcode createTerrainRenderTarget}.
+ */
 export interface TerrainRenderTargetOptions {
+  /** Target width in pixels. Must be a positive safe integer. */
   readonly width: number
+  /** Target height in pixels. Must be a positive safe integer. */
   readonly height: number
+  /**
+   * Color texture format.
+   * @default 'rgba8unorm'
+   */
   readonly format?: GPUTextureFormat
+  /**
+   * Depth texture format.
+   * @default 'depth24plus'
+   */
   readonly depthFormat?: GPUTextureFormat
 }
 
+/**
+ * A color and depth texture pair on the shared Graphite WebGPU device that
+ * terrain passes draw into. Created by {@linkcode createTerrainRenderTarget}.
+ *
+ * Whoever creates the target owns it and must call
+ * {@linkcode TerrainRenderTarget.dispose}. Keep it alive while any image from
+ * {@linkcode TerrainRenderTarget.makeImage} is still drawn.
+ */
 export interface TerrainRenderTarget {
+  /**
+   * Color texture. Usage is `RENDER_ATTACHMENT | TEXTURE_BINDING | COPY_SRC`.
+   */
   readonly texture: GPUTexture
+  /** Default view of {@linkcode TerrainRenderTarget.texture}, used as the color attachment. */
   readonly view: GPUTextureView
+  /** Depth texture. Usage is `RENDER_ATTACHMENT` only. */
   readonly depthTexture: GPUTexture
+  /** Default view of {@linkcode TerrainRenderTarget.depthTexture}, used as the depth attachment. */
   readonly depthView: GPUTextureView
+  /** Width in pixels. */
   readonly width: number
+  /** Height in pixels. */
   readonly height: number
+  /** Resolved color format. */
   readonly format: GPUTextureFormat
+  /** Resolved depth format. */
   readonly depthFormat: GPUTextureFormat
+  /**
+   * Wraps the color texture as a Skia image without a CPU copy. Each call
+   * returns a new image that the caller disposes.
+   *
+   * @throws {Error} When the target has been disposed.
+   */
   makeImage(): ReturnType<typeof makeSkiaImageFromWebGPUTexture>
+  /** Destroys both textures. Safe to call more than once. */
   dispose(): void
 }
 
@@ -29,6 +67,14 @@ function assertDimension(value: number, label: string): void {
   }
 }
 
+/**
+ * Allocates a color and depth texture of the same size on the shared Graphite
+ * WebGPU device.
+ *
+ * @returns A {@linkcode TerrainRenderTarget} the caller must dispose.
+ * @throws {RangeError} When `width` or `height` is not a positive safe integer.
+ * @throws {Error} When Skia Graphite is unavailable.
+ */
 export function createTerrainRenderTarget(
   options: TerrainRenderTargetOptions,
 ): TerrainRenderTarget {

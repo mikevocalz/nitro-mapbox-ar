@@ -33,11 +33,20 @@ target_sources(
   # Autolinking Setup
   ../nitrogen/generated/android/NitroMapboxARNativeMapOnLoad.cpp
   # Shared Nitrogen C++ sources
+  ../nitrogen/generated/shared/c++/HybridMapboxMapsSpec.cpp
   ../nitrogen/generated/shared/c++/HybridMapboxMapViewSpec.cpp
   ../nitrogen/generated/shared/c++/views/HybridMapboxMapViewComponent.cpp
+  ../nitrogen/generated/shared/c++/HybridMapStyleSpec.cpp
+  ../nitrogen/generated/shared/c++/HybridPointAnnotationManagerSpec.cpp
+  ../nitrogen/generated/shared/c++/HybridRenderedFeatureSpec.cpp
   # Android-specific Nitrogen C++ sources
+  ../nitrogen/generated/android/c++/JHybridMapboxMapsSpec.cpp
   ../nitrogen/generated/android/c++/JHybridMapboxMapViewSpec.cpp
+  ../nitrogen/generated/android/c++/JVariant_ScreenPoint_ScreenBox.cpp
   ../nitrogen/generated/android/c++/views/JHybridMapboxMapViewStateUpdater.cpp
+  ../nitrogen/generated/android/c++/JHybridMapStyleSpec.cpp
+  ../nitrogen/generated/android/c++/JHybridPointAnnotationManagerSpec.cpp
+  ../nitrogen/generated/android/c++/JHybridRenderedFeatureSpec.cpp
 )
 
 # From node_modules/react-native/ReactAndroid/cmake-utils/folly-flags.cmake

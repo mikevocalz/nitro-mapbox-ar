@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "noUnusedLocals": false
+  },
+  "include": [
+    "src/**/*.ts",
+    "packages/agent-mcp/src/**/*.ts",
+    "packages/native-mapbox/src/**/*.ts",
+    "packages/navigation/src/**/*.ts",
+    "packages/reactvision/src/**/*.ts",
+    "packages/reactvision/src/**/*.tsx",
+    "packages/specs/src/**/*.ts"
+  ],
+  "exclude": ["src/**/*.web.ts", "src/index.web.ts"]
+}

@@ -15,6 +15,16 @@
     "androidCxxLibName": "NitroMapboxARNativeMap"
   },
   "autolinking": {
+    "MapboxMaps": {
+      "ios": {
+        "language": "swift",
+        "implementationClassName": "HybridMapboxMaps"
+      },
+      "android": {
+        "language": "kotlin",
+        "implementationClassName": "HybridMapboxMaps"
+      }
+    },
     "MapboxMapView": {
       "ios": {
         "language": "swift",
