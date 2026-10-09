@@ -38,6 +38,12 @@ jobs:
       - name: Typecheck core
         run: npm run typecheck
 
+      - name: Typecheck API sketch
+        run: npm run typecheck:api-sketch
+
+      - name: Typecheck navigation package
+        run: npm run typecheck:navigation
+
       - name: Typecheck native-map package
         run: npm run typecheck:native-map
 

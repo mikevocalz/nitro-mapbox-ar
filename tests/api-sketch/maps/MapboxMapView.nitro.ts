@@ -12,7 +12,6 @@ import type { CameraState } from './CameraState'
 import type { CameraTarget } from './CameraTarget'
 import type { CoordinateBounds } from './CoordinateBounds'
 import type { FitBoundsOptions } from './FitBoundsOptions'
-import type { MapCapabilities } from './MapCapabilities'
 import type { MapProjection } from './MapProjection'
 import type { MapStyle } from './MapStyle.nitro'
 import type { MapTapEvent } from './MapTapEvent'
@@ -53,9 +52,6 @@ export interface MapboxMapViewProps extends HybridViewProps {
  * unavailable) they reject with a message naming the cause.
  */
 export interface MapboxMapViewMethods extends HybridViewMethods {
-  /** What this device's map renderer supports. */
-  readonly capabilities: MapCapabilities
-
   /**
    * Loads a style and resolves with its handle once it has loaded.
    *

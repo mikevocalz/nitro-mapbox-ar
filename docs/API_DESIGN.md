@@ -11,7 +11,23 @@ Status: **approved 2026-10-08** with the decisions recorded in section 11. Writt
 | `@mikevocalz/nitro-mapbox-ar-reactvision` | `getSpatialHostCapabilities` | none (JS over Viro) |
 | `@mikevocalz/nitro-mapbox-ar-agent-mcp` | unchanged by this phase | none |
 
-The public types live as a typechecked sketch in `tests/api-sketch/`, one file per type or HybridObject, split the way the `.nitro.ts` files will be split in Phase 3–5. Every example below is copied from `tests/api-sketch/call-sites.ts`; `tests/api-sketch/negative.ts` holds 22 `@ts-expect-error` fixtures for uses that must not compile.
+## 0. What shipped
+
+Phases 3 to 9 built this design. Where the code differs from the sketch below, the code wins, and the sketch in `tests/api-sketch/` was updated to match. Each row was checked against the file it names.
+
+| Sketch said | Shipped | Where | Commit |
+| --- | --- | --- | --- |
+| `MapboxMapViewMethods.capabilities` | `MapboxMaps.capabilities` on the root. Nitrogen 0.37.1 generates no properties from a Hybrid View's methods interface (`nitrogen/lib/createPlatformSpec.js`, `methods: methodsSpec?.methods`) | `packages/native-mapbox/src/specs/MapboxMaps.nitro.ts` | `07eaaa3` |
+| Decision 2: the size limit throws `RangeError` | Native throws `Error`. The C++ codec throws `std::length_error`, and Nitro rethrows any C++ exception as `jsi::JSError` with the method name prefixed (`react-native-nitro-modules/cpp/core/HybridFunction.hpp:124`). The web entry throws a real `RangeError` with the same message text | `cpp/TerrainRgbCodec.hpp:43`, `src/native/MapboxARWeb.ts` | `e9bc72d` |
+| `isImmersive` from Viro's `isVisionOS` constant (`ViroPlatform.d.ts:17`) | Viro's `isVisionOS()` function (`components/VisionOS/ViroVisionOSModule.d.ts:57`). The package root re-exports the function, not the constant | `packages/reactvision/src/createViroSpatialHostProbe.ts` | `b35f5fd` |
+| `SpatialHostProbe { isQuest, isVisionOS, ... }` | Host facts, no platform names: `isHeadMounted`, `hasPassthroughLayer`, `hasWebSocket`, `isARSupported()`, `isGeospatialModeSupported()`, `isColocationAvailable()`, `hasDeviceLocation()`, `isGraphiteAvailable()` | `packages/reactvision/src/SpatialHostProbe.ts` | `b35f5fd` |
+| Seven capability fields | Nine: decision 5 added `supportsPassthrough` and `supportsReplicatedState` | `packages/reactvision/src/SpatialHostCapabilities.ts` | `b35f5fd` |
+| `ColocationPlatform` closed literal | `string` (decision 7). `canShareColocationFrame` throws `TypeError` on an empty platform | `packages/reactvision/src/ColocationPeer.ts` | `b35f5fd` |
+| Navigation iOS 3.27.3 | iOS and Android default to 3.32.0. iOS 3.27.3 pins MapboxMaps 11.27.3 and cannot share an app with the maps package's 11.32.0 | `packages/navigation/NitroMapboxARNavigation.podspec:7`, `docs/NATIVE_NAVIGATION.md` | `99dba59` |
+| `TripProgress`, `ElectronicHorizonSnapshot` | `NavigationProgress`, `ElectronicHorizon`, native-facing copies. `NavigationManeuver.kind` is `string` (decision 6); `toCoreRouteLegs` maps unknown kinds to `'unknown'` | `packages/navigation/src/types/` | `99dba59` |
+| Decision 4: a raw-response client method | `MapboxNavigationClient.directionsWithRequestUrl()` | `src/navigation/client.ts:343` | `31a88cc` |
+
+The public types live as a typechecked sketch in `tests/api-sketch/`, one file per type or HybridObject, split the way the `.nitro.ts` files will be split in Phase 3–5. Every example below is copied from `tests/api-sketch/call-sites.ts`; `tests/api-sketch/negative.ts` holds 24 `@ts-expect-error` fixtures for uses that must not compile.
 
 ```sh
 npx tsc --noEmit -p tests/api-sketch/tsconfig.json   # exit 0 on 2026-10-08
@@ -26,9 +42,9 @@ MapboxAR (root, C++)            accessToken  ──read by──►  maps view, 
   ├─ decodeTerrainRgb()        sync, one tile
   └─ decodeTerrainRgbAsync()   worker queue
 
-MapboxMaps (root)               isMapViewAvailable, sdkVersion
+MapboxMaps (root)               isMapViewAvailable, sdkVersion,
+                                capabilities: MapCapabilities (struct, readonly)
 <MapboxMapView hybridRef>       one per mounted view
-  ├─ capabilities: MapCapabilities             (struct, readonly)
   ├─ loadStyle() ──────────► MapStyle          (replaced on every style load)
   ├─ addOnStyleLoadedListener ─► MapStyle
   ├─ createPointAnnotationManager() ─► PointAnnotationManager  (until removeFromMap)
@@ -157,7 +173,7 @@ Every method that touches the native map is `async`. Mapbox Maps on iOS and Andr
 
 | Member | Sync | Reason |
 | --- | --- | --- |
-| `capabilities` | readonly property | Resolved once when the view is created; reading it is a field load |
+| `MapboxMaps.capabilities` | readonly property on the root | Resolved once per process; reading it is a field load. Sketched on the view, shipped on the root (section 0) |
 | `addOn*Listener` | sync, returns `ListenerSubscription` | Registration only appends to a JS-thread list; the native side subscribes to the SDK signal once and multiplexes |
 
 | Method | Returns | Wraps |
@@ -196,7 +212,7 @@ unmount ──► managers, styles, subscriptions released; pending promises rej
 | `loadStyle` | malformed URI; HTTP failure (status in message); `Style load superseded` when another load starts first |
 | `flyTo` / `easeTo` / `fitBounds` | non-finite numbers, coordinates outside WGS84, negative `durationMs`, `southwest.latitude > northeast.latitude` |
 | `queryRenderedFeatures` | area outside the view, inverted box, empty `layerIds`, unknown layer id |
-| `MapStyle.*` | stale handle; duplicate id; unknown source/layer/`belowLayerId`; GeoJSON parse failure; `exaggeration` outside 0–1000; `setTerrain` when `capabilities.supportsTerrain` is false; `setStandardConfig` on a style without that import (message suggests `MapStyles.standard`) |
+| `MapStyle.*` | stale handle; duplicate id; unknown source/layer/`belowLayerId`; GeoJSON parse failure; `exaggeration` outside 0–1000; `setTerrain` when `MapboxMaps.capabilities.supportsTerrain` is false; `setStandardConfig` on a style without that import (message suggests `MapStyles.standard`) |
 | `PointAnnotationManager.setAnnotations` | duplicate annotation id; coordinate outside WGS84; manager removed |
 
 Asynchronous failures with no pending call (tile, sprite, glyph, source loads) go to `addOnMapLoadingErrorListener`; nothing is logged and dropped.
@@ -272,7 +288,7 @@ if (!MapboxMaps.isMapViewAvailable) {
 const map = mapRef.current
 if (map === null) return
 const style: MapStyle = await map.loadStyle(MapStyles.standard)
-if (map.capabilities.supportsTerrain) {
+if (MapboxMaps.capabilities.supportsTerrain) {
   await style.addRasterDemSource({
     id: 'mapbox-dem',
     url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
@@ -351,7 +367,7 @@ TripSession.stop() ──► stopped: every method rejects "TripSession was stop
 | Turn-by-turn progress from device GPS, rerouting, electronic horizon, replayed drives | `MapboxNavigation.createTripSession` |
 | Both, one API | `NavigationSession` with a `nativeProvider` adapter over `TripSession` (Phase 5: the adapter keeps the last `TripProgress` to answer `NativeNavigationProvider.getProgress()`) |
 
-**Native symbols.** The Navigation SDK is not installed anywhere on this machine (no `MapboxNavigationCore` pod, no `com.mapbox.navigationcore` artifact). Every binding (trip session start/stop, route setting from a Directions response, progress and reroute observers, electronic horizon observer, replay location provider) is to be inventoried in Phase 5 against https://github.com/mapbox/mapbox-navigation-ios (3.27.3) and https://github.com/mapbox/mapbox-navigation-android (3.32.0). No symbol names are proposed here.
+**Native symbols.** The Navigation SDK is not installed anywhere on this machine (no `MapboxNavigationCore` pod, no `com.mapbox.navigationcore` artifact). Every binding (trip session start/stop, route setting from a Directions response, progress and reroute observers, electronic horizon observer, replay location provider) is to be inventoried in Phase 5 against https://github.com/mapbox/mapbox-navigation-ios and https://github.com/mapbox/mapbox-navigation-android. No symbol names are proposed here. Shipped: both platforms default to 3.32.0, because iOS 3.27.3 pins MapboxMaps 11.27.3 (`docs/NATIVE_NAVIGATION.md`).
 
 Happy path:
 
@@ -441,7 +457,7 @@ It replaces `ReactVisionRuntimeCapabilities` and the `ReactVisionPlatform` liter
 
 | Field | Source (Viro 3.0.2 installed; Phase 1 moves to 3.0.3, re-check) |
 | --- | --- |
-| `isImmersive` | `isQuest` (`node_modules/@reactvision/react-viro/dist/components/Utilities/ViroPlatform.d.ts:7`), `isVisionOS` (`:17`) |
+| `isImmersive` | `isQuest` (`node_modules/@reactvision/react-viro/dist/components/Utilities/ViroPlatform.d.ts:7`), `isVisionOS()` (`components/VisionOS/ViroVisionOSModule.d.ts:57`, the function the package root exports, not the `ViroPlatform.d.ts:17` constant) |
 | `supportsGeospatialAnchors` | `arSceneNavigator.isGeospatialModeSupported(): Promise<ViroGeospatialSupportResult>` (`dist/components/AR/ViroARSceneNavigator.d.ts:777`; result `{ supported: boolean }`, `dist/components/Types/ViroEvents.d.ts:645`) |
 | `supportsVps` | same geospatial support; per-location availability stays `checkVPSAvailability(lat, lng)` (`ViroARSceneNavigator.d.ts:782`), which is a query, not a capability |
 | `supportsColocation` | `isColocationAvailable(): Promise<boolean>` (`dist/components/AR/ViroColocation.d.ts:63`) |
@@ -453,7 +469,7 @@ It replaces `ReactVisionRuntimeCapabilities` and the `ReactVisionPlatform` liter
 
 `selectRendererBackend` (`src/rendering/backend.ts`) keeps its signature; callers fill `RendererCapabilities.graphite` and `sharedDawnDevice` from `isGraphiteAvailable`, so `'auto'` lands on `webgpu` on visionOS without a platform check.
 
-Dropped from today's struct, pending open question 5: `mixedReality`, `webRenderer`, `replicatedState`.
+Decision 5 added `supportsPassthrough` (camera AR or a headset passthrough layer) and `supportsReplicatedState` (a JS `WebSocket` for `ViroReplicationClient`). `mixedReality` folded into `supportsPassthrough`; `webRenderer` was dropped.
 
 Happy path:
 
@@ -505,6 +521,8 @@ try {
     supportsGaze: false,
     isGraphiteAvailable: false,
     hasDeviceLocation: false,
+    supportsPassthrough: false,
+    supportsReplicatedState: false,
   }
 }
 ```
@@ -609,7 +627,7 @@ try {
 | `undefined` for absence | `getElectronicHorizon(): Promise<... \| undefined>`. Existing `NavigationSession` still uses `null`; unchanged here |
 | Model intent separately from resolved state | `CameraTarget` (request) vs `CameraState` (rendered); `TripSessionOptions` vs `capabilities` |
 | No ambient `platform` field | Removed from capabilities; kept only on `ColocationPeer`, where it is another device's data |
-| Do not freeze the platform matrix into types | `MapCapabilities`, `SpatialHostCapabilities`, `MapboxMaps.isMapViewAvailable` are runtime booleans. **Exception:** `ColocationPlatform` stays a closed literal (open question 7) |
+| Do not freeze the platform matrix into types | `MapCapabilities`, `SpatialHostCapabilities`, `MapboxMaps.isMapViewAvailable` are runtime booleans. `ColocationPlatform` is `string` (decision 7) |
 | One options object, no `ios`/`android` bags | None exist |
 | Requirements throw, preferences degrade | `setTerrain` throws when terrain is unsupported (visible correctness); `projection: 'globe'` on a host without globe renders Mercator and reports `supportsGlobeProjection: false` |
 | Split by semantic capability | Maps and Navigation are separate packages and roots; one-shot planning (JS) vs live session (native) |
@@ -650,7 +668,7 @@ Cited, with location:
 
 - MapboxMaps 11.3.0 (iOS), `~/whatsupps/apps/expo/ios/Pods/MapboxMaps/Sources/MapboxMaps/`: `MapView` managers, `MapboxMap`, `StyleManager.{addSource, removeSource, addLayer, removeLayer, setTerrain, setStyleImportConfigProperties, setProjection, mapStyle}`, `Terrain`, `StyleProjectionName.{mercator, globe}`, `StyleURI.standard`, `CameraAnimationsManager.{fly, ease, cancelAnimations}`, `MapboxMap.{camera(for:...), cameraState, onCameraChanged, onStyleLoaded, onMapLoadingError, queryRenderedFeatures}`, `CameraState`, `GestureManager.onMapTap`, `AnnotationOrchestrator.{makePointAnnotationManager, removeAnnotationManager}`, `PointAnnotationManager.annotations`, `PointAnnotation.{init(id:coordinate:), tapHandler}`. Line numbers in section 3.
 - Repo usage against the 11.31.1 pin: iOS `MapboxOptions.accessToken`, `MapView(frame:mapInitOptions:)`, `mapboxMap.setCamera(to:)`, `StyleURI.standardSatellite` (`packages/native-mapbox/ios/HybridMapboxMapView.swift`); Android `MapboxOptions.accessToken`, `MapView`, `mapboxMap.loadStyle`, `mapboxMap.cameraState`, `CameraOptions.Builder`, `Style.STANDARD`, `Style.STANDARD_SATELLITE` (`.../nativemap/HybridMapboxMapView.kt`).
-- Viro 3.0.2, `node_modules/@reactvision/react-viro/dist/`: `isQuest`, `hasOpenXRSupport`, `isVisionOS` (`components/Utilities/ViroPlatform.d.ts:7,16,17`), `isColocationAvailable` (`components/AR/ViroColocation.d.ts:63`), `isGeospatialModeSupported`, `getCameraGeospatialPose`, `checkVPSAvailability` (`components/AR/ViroARSceneNavigator.d.ts:777,781,782`), `ViroGeospatialSupportResult` (`components/Types/ViroEvents.d.ts:645`).
+- Viro 3.0.2, `node_modules/@reactvision/react-viro/dist/`: `isQuest`, `hasOpenXRSupport` (`components/Utilities/ViroPlatform.d.ts:7,16`), `isVisionOS()` (3.0.3, `components/VisionOS/ViroVisionOSModule.d.ts:57`; the shipped probe calls this function, not the `ViroPlatform.d.ts:17` constant), `isColocationAvailable` (`components/AR/ViroColocation.d.ts:63`), `isGeospatialModeSupported`, `getCameraGeospatialPose`, `checkVPSAvailability` (`components/AR/ViroARSceneNavigator.d.ts:777,781,782`), `ViroGeospatialSupportResult` (`components/Types/ViroEvents.d.ts:645`).
 - Nitro 0.37.1, `node_modules/react-native-nitro-modules/lib/typescript/`: `HybridObject`, `HybridView`, `HybridViewProps`, `HybridViewMethods`, `HybridRef`, `ReactNativeView`, `getHostComponent`, `AnyMap`.
 
 Not installed locally (inventory in Phase 4/5, `MAPS_SDK_INVENTORY.md`):
@@ -658,7 +676,7 @@ Not installed locally (inventory in Phase 4/5, `MAPS_SDK_INVENTORY.md`):
 - Mapbox Maps SDK **11.32.0**, iOS and Android: https://github.com/mapbox/mapbox-maps-ios/releases/tag/v11.32.0 and https://github.com/mapbox/mapbox-maps-android/releases. The 11.3.0 iOS copy above is a stand-in, not the target.
 - Any Android Maps symbol not already used by the repo (camera, annotation, gestures, location, viewport plugins; style source/layer/terrain; rendered-feature query).
 - `MapboxCommon` (`MapboxOptions` definition).
-- Mapbox Navigation SDK: iOS `MapboxNavigationCore` 3.27.3 (https://github.com/mapbox/mapbox-navigation-ios), Android 3.32.0 (https://github.com/mapbox/mapbox-navigation-android). No symbol is cited for any `TripSession` method.
+- Mapbox Navigation SDK: iOS `MapboxNavigationCore` (https://github.com/mapbox/mapbox-navigation-ios; shipped default 3.32.0, not the pack's 3.27.3), Android 3.32.0 (https://github.com/mapbox/mapbox-navigation-android). No symbol is cited for any `TripSession` method.
 
 ## 10. Freshness
 
@@ -692,12 +710,12 @@ Not installed locally (inventory in Phase 4/5, `MAPS_SDK_INVENTORY.md`):
 | # | Disposition | Decision |
 | --- | --- | --- |
 | 1 | BUILD | Accept the deviation: one process-wide token on `MapboxAR.accessToken`, no per-view prop. Phase 3 picks the mechanism after reading the installed Nitro and Mapbox sources, and records it in `docs/NITRO.md`. Swift/Kotlin never call into a C++ HybridObject unless that path is verified first. |
-| 2 | BUILD | Keep the 1 MiB hard limit on `decodeTerrainRgb`. The `RangeError` names `decodeTerrainRgbAsync` as the alternative. |
+| 2 | BUILD | Keep the 1 MiB hard limit on `decodeTerrainRgb`. The error names `decodeTerrainRgbAsync` as the alternative. Shipped as `Error` on native (Nitro rethrows C++ exceptions as `jsi::JSError`) and `RangeError` on web; see section 0. |
 | 3 | BUILD | Every map method is a Promise, including `getCamera()`. The break goes in `docs/MIGRATION.md`. |
 | 4 | BUILD | Add a `MapboxNavigationClient` method that returns the response JSON and the request URL. The URL carries the token, so it is never logged and the JSDoc says so. |
 | 5 | BUILD | Add `supportsPassthrough` and `supportsReplicatedState`. Drop `webRenderer`; renderer selection covers it. |
 | 6 | BUILD | The native-facing `kind` is `string`; JS keeps the `ManeuverType` union and maps unknown values to `'unknown'`. A new SDK maneuver must not crash the bridge. |
-| 7 | BUILD | Widen `ColocationPlatform` to `string`, so a new headset can join without a release. |
+| 7 | BUILD | Widen `ColocationPlatform` to `string`, so a new headset can join without a release. Shipped in `b35f5fd`; `tests/api-sketch/negative.ts` asserts a `'hololens'` peer compiles. |
 | 8 | DEFER | Keep the `NativeNavigationCapabilities` field names. Harlem Might reads them today; rename at 1.0 with a migration note. |
 | 9 | BUILD | Accept `AnyMap` for layer paint/layout until Phase 4 generates typed properties. |
 | 10 | BUILD | Phase 4 checks annotation lifetime against the installed 11.32.0 SDK and records the result in `docs/MAPS_SDK_INVENTORY.md`. Managers stay unscoped unless the SDK says otherwise. |

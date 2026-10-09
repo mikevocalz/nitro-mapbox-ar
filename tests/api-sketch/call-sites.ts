@@ -120,7 +120,7 @@ export async function mapViewUnavailable(): Promise<void> {
   const map = mapRef.current
   if (map === null) return
   const style: MapStyle = await map.loadStyle(MapStyles.standard)
-  if (map.capabilities.supportsTerrain) {
+  if (MapboxMaps.capabilities.supportsTerrain) {
     await style.addRasterDemSource({
       id: 'mapbox-dem',
       url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
@@ -281,6 +281,8 @@ export async function spatialInvalidInput(): Promise<SpatialHostCapabilities> {
       supportsGaze: false,
       isGraphiteAvailable: false,
       hasDeviceLocation: false,
+      supportsPassthrough: false,
+      supportsReplicatedState: false,
     }
   }
   // #endregion

@@ -1,17 +1,14 @@
 import type { canShareColocationFrame } from './canShareColocationFrame'
 
 /**
- * The platform a colocation peer reports. Kept as a literal because a peer
- * can run a different platform from the local device.
+ * The platform a colocation peer reports, lowercase: `'ios'`, `'android'`,
+ * `'quest'`, `'visionos'`, `'web'`, or any other non-empty string a newer
+ * device sends. Kept on peer data only, because a peer can run a different
+ * platform from the local device.
  *
  * @see {@linkcode ColocationPeer.platform}
  */
-export type ColocationPlatform =
-  | 'ios'
-  | 'android'
-  | 'quest'
-  | 'visionos'
-  | 'web'
+export type ColocationPlatform = string
 
 /**
  * A device in, or asking to join, a shared coordinate frame.

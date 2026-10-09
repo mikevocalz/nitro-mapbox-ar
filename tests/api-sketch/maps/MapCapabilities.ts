@@ -1,11 +1,11 @@
-import type { MapboxMapViewMethods } from './MapboxMapView.nitro'
+import type { MapboxMaps } from './MapboxMaps.nitro'
 import type { MapStyle } from './MapStyle.nitro'
 
 /**
- * What the map renderer on this device can do. Read once per view; values do
- * not change while the view is mounted.
+ * What the map renderer on this device can do. Values do not change while
+ * the process runs.
  *
- * @see {@linkcode MapboxMapViewMethods.capabilities}
+ * @see {@linkcode MapboxMaps.capabilities}
  */
 export interface MapCapabilities {
   /** `true` when `projection: 'globe'` renders as a globe. */

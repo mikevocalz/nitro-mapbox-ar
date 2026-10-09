@@ -70,7 +70,7 @@ export function invalidUses(): void {
   void style.flyTo({ zoom: 3 })
 
   // @ts-expect-error capabilities are observed state, not settings
-  map.capabilities.supportsTerrain = true
+  MapboxMaps.capabilities.supportsTerrain = true
 
   // @ts-expect-error availability is reported by the host
   MapboxMaps.isMapViewAvailable = true
@@ -107,9 +107,12 @@ export function invalidUses(): void {
   // @ts-expect-error the host's platform is not part of the capability model
   void host.platform
 
-  // @ts-expect-error 'hololens' is not a ColocationPlatform
-  const peer: ColocationPeer = { peerId: 'x', platform: 'hololens' }
+  // @ts-expect-error a peer must report its platform
+  const peer: ColocationPeer = { peerId: 'x' }
   void peer
+
+  // @ts-expect-error capabilities moved from the view to the MapboxMaps root
+  void map.capabilities
 }
 
 /** Shape checks that must compile. Never called. */
@@ -120,4 +123,9 @@ export function compatibleShapes(progress: TripProgress): void {
 
   const subscription: ListenerSubscription = trip.addOnProgressListener(() => {})
   subscription.remove()
+
+  // ColocationPlatform is open (decision 7): a new headset joins without a
+  // release.
+  const headset: ColocationPeer = { peerId: 'h1', platform: 'hololens' }
+  void headset
 }

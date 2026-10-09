@@ -1,6 +1,7 @@
 import type { HybridObject } from 'react-native-nitro-modules'
 
 import type { MapboxMapView } from './MapboxMapView.nitro'
+import type { MapCapabilities } from './MapCapabilities'
 
 /**
  * The root of `@mikevocalz/nitro-mapbox-ar-maps`. Reports whether this
@@ -20,4 +21,11 @@ export interface MapboxMaps
   readonly isMapViewAvailable: boolean
   /** Version of the linked Mapbox Maps SDK, for example `11.32.0`. */
   readonly sdkVersion: string
+  /**
+   * What the map renderer on this device supports, the same for every
+   * {@linkcode MapboxMapView} in the process. Lives on the root because
+   * Nitrogen 0.37.1 generates no properties from a Hybrid View's methods
+   * interface.
+   */
+  readonly capabilities: MapCapabilities
 }
