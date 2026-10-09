@@ -39,6 +39,9 @@
         {
           "android": {
             "minSdkVersion": 29
+          },
+          "ios": {
+            "enableSceneSupport": true
           }
         }
       ],

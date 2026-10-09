@@ -5,8 +5,10 @@ import {
   ViroARScene,
   ViroMaterials,
   ViroNode,
+  ViroScene,
   ViroSphere,
   ViroXRSceneNavigator,
+  isVisionOS,
 } from '@reactvision/react-viro'
 import { SpatialWindow } from '@metavr/layout-window-compat'
 import {
@@ -29,10 +31,21 @@ const TABLE_RADIUS_M = 0.35
 /** Rendered route thickness on the table. */
 const TABLE_LINE_M = 0.006
 const USER_MARKER = 'tabletop-user-marker'
+const ROUTE_DOT = 'tabletop-route-dot'
+/** Dots drawn along the route where ViroPolyline cannot render. */
+const MAX_ROUTE_DOTS = 64
 
 ViroMaterials.createMaterials({
   [USER_MARKER]: { diffuseColor: '#f97316', lightingModel: 'Constant' },
+  [ROUTE_DOT]: { diffuseColor: '#38bdf8', lightingModel: 'Constant' },
 })
+
+// visionOS rejects ARKit-rooted scenes ("View config not found for component
+// VRTARScene") and cannot compile ViroPolyline's GLSL shader modifier, per
+// Viro's visionOS setup guide. The headset scene is rooted in ViroScene and
+// draws the route as dots. isVisionOS() is needed because Platform.OS reports
+// "ios" there.
+const ON_VISION_OS = isVisionOS()
 
 interface TabletopSceneProps {
   /**
@@ -46,6 +59,18 @@ interface TabletopSceneProps {
 // Viro types the scene factory as `() => JSX.Element` but passes the
 // navigator props when it mounts the scene, so the props are optional here.
 function TabletopScene({ arSceneNavigator }: TabletopSceneProps = {}) {
+  return <TabletopContent arSceneNavigator={arSceneNavigator} rootedInAR />
+}
+
+function HeadsetTabletopScene() {
+  return <TabletopContent rootedInAR={false} />
+}
+
+function TabletopContent({
+  arSceneNavigator,
+  rootedInAR,
+}: TabletopSceneProps & { readonly rootedInAR: boolean }) {
+  const Root = rootedInAR ? ViroARScene : ViroScene
   const probeHost = useReferenceStore((state) => state.probeHost)
   const loadTabletopRoute = useReferenceStore((state) => state.loadTabletopRoute)
   const route = useReferenceStore((state) => state.tabletopRoute)
@@ -103,8 +128,17 @@ function TabletopScene({ arSceneNavigator }: TabletopSceneProps = {}) {
     ]
   }, [fit, origin, pose])
 
+  const routeDots = useMemo((): GeoWorldPosition[] => {
+    if (rootedInAR || origin === undefined || coordinates === undefined) {
+      return []
+    }
+    const enu = projectRouteToEnu(origin, coordinates)
+    const step = Math.max(1, Math.ceil(enu.length / MAX_ROUTE_DOTS))
+    return enu.filter((_, index) => index % step === 0)
+  }, [coordinates, origin, rootedInAR])
+
   return (
-    <ViroARScene>
+    <Root>
       <ViroAmbientLight color="#ffffff" />
       {origin !== undefined && coordinates !== undefined && fit !== undefined ? (
         <ViroNode position={TABLE_POSITION}>
@@ -112,11 +146,22 @@ function TabletopScene({ arSceneNavigator }: TabletopSceneProps = {}) {
             position={[fit.offset[0], fit.offset[1], fit.offset[2]]}
             scale={[fit.scale, fit.scale, fit.scale]}
           >
-            <MapboxViroRoute
-              route={coordinates}
-              origin={origin}
-              thickness={TABLE_LINE_M / fit.scale}
-            />
+            {rootedInAR ? (
+              <MapboxViroRoute
+                route={coordinates}
+                origin={origin}
+                thickness={TABLE_LINE_M / fit.scale}
+              />
+            ) : (
+              routeDots.map((position, index) => (
+                <ViroSphere
+                  key={index}
+                  position={[position[0], position[1], position[2]]}
+                  radius={TABLE_LINE_M / fit.scale}
+                  materials={[ROUTE_DOT]}
+                />
+              ))
+            )}
           </ViroNode>
           {userPosition !== undefined ? (
             <ViroSphere
@@ -127,7 +172,7 @@ function TabletopScene({ arSceneNavigator }: TabletopSceneProps = {}) {
           ) : null}
         </ViroNode>
       ) : null}
-    </ViroARScene>
+    </Root>
   )
 }
 
@@ -159,6 +204,7 @@ function QuestPanel({ enter }: { enter: () => void }) {
 }
 
 const tabletopScene = { scene: TabletopScene }
+const headsetTabletopScene = { scene: HeadsetTabletopScene }
 
 export interface TabletopScreenProps {
   /**
@@ -183,7 +229,10 @@ export function TabletopScreen({ map }: TabletopScreenProps) {
     <View style={styles.fill}>
       <ViroXRSceneNavigator
         style={styles.fill}
-        initialScene={tabletopScene}
+        arInitialScene={tabletopScene}
+        // Quest keeps the AR-rooted scene for passthrough; visionOS needs ViroScene.
+        vrInitialScene={ON_VISION_OS ? headsetTabletopScene : tabletopScene}
+        visionOSImmersionStyle="mixed"
         renderQuestPanel={(enter) => <QuestPanel enter={enter} />}
       />
       <Text style={styles.status}>
