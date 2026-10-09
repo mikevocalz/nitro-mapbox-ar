@@ -27,35 +27,124 @@ import {
   terrainTileKey,
 } from './plan'
 
+/**
+ * Construction options for {@linkcode TerrainNeighborhoodSession}. All values
+ * are fixed for the session's lifetime.
+ */
 export interface TerrainNeighborhoodSessionOptions {
+  /** Color and depth target width in pixels. Must be a positive safe integer. */
   readonly targetWidth: number
+  /** Color and depth target height in pixels. Must be a positive safe integer. */
   readonly targetHeight: number
+  /**
+   * Neighborhood radius in tiles around the center; `1` keeps a 3×3 block.
+   * Must be a non-negative safe integer.
+   *
+   * @default 1
+   */
   readonly radius?: number
+  /**
+   * Whether to lease satellite imagery for each non-water terrain tile and
+   * drape it over the terrain.
+   *
+   * @default true
+   */
   readonly imagery?: boolean
+  /**
+   * Terrain and satellite tile edge in pixels.
+   *
+   * @default 512
+   */
   readonly tileSize?: RasterTileSize
+  /**
+   * Encoded satellite format requested from Mapbox. Ignored when `imagery` is
+   * `false`.
+   *
+   * @default 'webp'
+   */
   readonly satelliteFormat?: SatelliteFormat
+  /**
+   * Dimensionless multiplier applied to every decoded height; `1` yields
+   * metres. Must be finite.
+   *
+   * @default 1
+   */
   readonly heightModifier?: number
+  /**
+   * Maximum tiles acquired at once during
+   * {@linkcode TerrainNeighborhoodSession.setCenter}, and the default
+   * concurrency for {@linkcode TerrainNeighborhoodSession.prefetchNextRing}.
+   * Must be a positive safe integer.
+   *
+   * @default 4
+   */
   readonly acquireConcurrency?: number
+  /**
+   * Color target texture format.
+   *
+   * @default 'rgba8unorm'
+   */
   readonly format?: GPUTextureFormat
+  /**
+   * Depth target texture format.
+   *
+   * @default 'depth24plus'
+   */
   readonly depthFormat?: GPUTextureFormat
 }
 
+/**
+ * Options for one {@linkcode TerrainNeighborhoodSession.setCenter} call.
+ */
 export interface TerrainNeighborhoodUpdateOptions {
+  /**
+   * Aborts this update. The previous neighborhood stays active and the call
+   * rejects with an `AbortError`.
+   */
   readonly signal?: AbortSignal
 }
 
+/**
+ * Options for {@linkcode TerrainNeighborhoodSession.prefetchNextRing}.
+ */
 export interface TerrainNeighborhoodPrefetchOptions {
+  /**
+   * Prefetch radius in tiles around the current center. Must be a
+   * non-negative safe integer.
+   *
+   * @default the session radius + 1
+   */
   readonly radius?: number
+  /**
+   * Maximum tiles loading at once.
+   *
+   * @default {@linkcode TerrainNeighborhoodSessionOptions.acquireConcurrency}
+   */
   readonly concurrency?: number
+  /** Cancels the prefetch; the call rejects with an `AbortError`. */
   readonly signal?: AbortSignal
 }
 
+/**
+ * Snapshot returned by {@linkcode TerrainNeighborhoodSession.stats} and
+ * {@linkcode TerrainNeighborhoodSession.setCenter}.
+ */
 export interface TerrainNeighborhoodSessionStats {
+  /**
+   * Center tile of the last successful
+   * {@linkcode TerrainNeighborhoodSession.setCenter}; `undefined` before one
+   * has succeeded.
+   */
   readonly center?: TileId
+  /** Neighborhood radius in tiles. */
   readonly radius: number
+  /** Tiles currently leased, including water tiles. */
   readonly activeTiles: number
+  /** Leased tiles with terrain geometry; water tiles are excluded. */
   readonly renderableTiles: number
+  /** `true` while a {@linkcode TerrainNeighborhoodSession.setCenter} call is in flight. */
   readonly updating: boolean
+  /** Stats of the shared residency cache at the time of the snapshot. */
   readonly cache: GpuResidencyCacheStats
 }
 
@@ -183,6 +272,7 @@ export class TerrainNeighborhoodSession {
     })
   }
 
+  /** Current session and cache counters. Each read builds a new snapshot. */
   get stats(): TerrainNeighborhoodSessionStats {
     return {
       center: this.#center,
@@ -196,6 +286,21 @@ export class TerrainNeighborhoodSession {
     }
   }
 
+  /**
+   * Moves the neighborhood to `center` as one transaction: keeps leases on
+   * overlapping tiles, acquires only new terrain and imagery, builds the
+   * replacement batch against the existing render target, swaps it in, then
+   * releases tiles that left the neighborhood.
+   *
+   * Starting a new call aborts the previous in-flight one. On failure or
+   * abort, newly acquired leases are released and the previous neighborhood
+   * stays active.
+   *
+   * @returns A promise of the post-update {@linkcode TerrainNeighborhoodSessionStats}.
+   * It rejects with an `AbortError` when superseded or when `options.signal`
+   * aborts, with an `Error` when the session has been disposed, and with any
+   * tile acquisition error.
+   */
   async setCenter(
     center: TileId,
     options: TerrainNeighborhoodUpdateOptions = {},
@@ -322,6 +427,15 @@ export class TerrainNeighborhoodSession {
     }
   }
 
+  /**
+   * Draws the current neighborhood into the session's persistent color and
+   * depth target.
+   *
+   * @throws {Error} When the session has been disposed, or when there are no
+   * renderable tiles: before the first successful
+   * {@linkcode TerrainNeighborhoodSession.setCenter}, or when every tile in
+   * the neighborhood is water.
+   */
   render(
     options: TerrainBatchFrameOptions,
   ): RenderedTerrainBatchFrame {
@@ -334,6 +448,17 @@ export class TerrainNeighborhoodSession {
     return this.#batch.render(options)
   }
 
+  /**
+   * Warms the shared cache with terrain, and imagery when enabled, for a
+   * larger ring around the current center. Prefetched tiles are not leased by
+   * the session, so they stay subject to LRU eviction until a later
+   * {@linkcode TerrainNeighborhoodSession.setCenter} acquires them.
+   *
+   * @returns A promise that rejects with an `Error` when the session has been
+   * disposed or no {@linkcode TerrainNeighborhoodSession.setCenter} call has
+   * succeeded yet, with a `RangeError` for an invalid radius or concurrency,
+   * and with an `AbortError` when `options.signal` aborts.
+   */
   async prefetchNextRing(
     options: TerrainNeighborhoodPrefetchOptions = {},
   ): Promise<void> {
@@ -371,6 +496,12 @@ export class TerrainNeighborhoodSession {
     }
   }
 
+  /**
+   * Aborts any in-flight {@linkcode TerrainNeighborhoodSession.setCenter},
+   * disposes the batch renderer and render target, and releases every lease
+   * the session holds. The shared cache is not disposed; dispose it after its
+   * sessions. Later calls to other methods throw. Calling it twice is a no-op.
+   */
   dispose(): void {
     if (this.#disposed) {
       return

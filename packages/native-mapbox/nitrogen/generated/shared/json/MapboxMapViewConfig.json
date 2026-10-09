@@ -1,0 +1,13 @@
+{
+  "uiViewClassName": "MapboxMapView",
+  "supportsRawText": false,
+  "bubblingEventTypes": {},
+  "directEventTypes": {},
+  "validAttributes": {
+    "styleUri": true,
+    "camera": true,
+    "projection": true,
+    "enableGestures": true,
+    "hybridRef": true
+  }
+}

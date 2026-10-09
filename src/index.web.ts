@@ -1,9 +1,6 @@
 export { normalizeMapboxARConfig } from './core/config'
 export { bboxCrossesAntimeridian, validateBBox } from './geo/bbox'
-export {
-  getMapboxARCore,
-  type MapboxARCore,
-} from './native/MapboxARCore.web'
+export { MapboxAR } from './native/MapboxAR.web'
 export {
   MapboxRasterClient,
   terrainRgbSourceZoom,
@@ -16,9 +13,17 @@ export {
 export {
   latToTileY,
   lonToTileX,
+  tileBounds,
   tilesForBBox,
+  type TileBounds,
   type TileId,
 } from './mapbox/tiles'
+export {
+  MAPBOX_STREETS_V8,
+  MapboxVectorClient,
+  type MapboxVectorClientOptions,
+  type VectorTileResult,
+} from './mapbox/vector'
 export {
   selectRendererBackend,
   type RendererBackend,
@@ -56,7 +61,19 @@ export {
   type NavigationProfile,
   type NavigationRoute,
   type NavigationRouteLeg,
+  type RouteGeometryCoordinate,
   type RouteLegAnnotation,
+  routeGeometryToCoordinates,
+  mapboxRouteLegs,
+  routeSteps,
+  type GeographicCoordinate,
+  type ManeuverModifier,
+  type ManeuverType,
+  type MapboxRouteStep,
+  type MapboxStepManeuver,
+  type NavigationManeuver,
+  type RouteLeg,
+  type RouteStep,
 } from './navigation/client'
 export {
   summarizeRouteTraffic,

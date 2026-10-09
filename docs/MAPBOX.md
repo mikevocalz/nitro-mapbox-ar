@@ -59,7 +59,7 @@ This mode should be optional.
 
 ## Versions checked on 2026-10-01
 
-- Mapbox Maps SDK for Android: **11.31.1**
+- Mapbox Maps SDK for Android: **11.32.0**
 - Mapbox Maps SDK for iOS: **11.31.0**
 - `@rnmapbox/maps`: **10.3.5**, supporting Mapbox SDK v11
 

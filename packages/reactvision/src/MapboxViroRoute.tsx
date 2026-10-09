@@ -2,28 +2,43 @@ import * as React from 'react'
 import type { ColorValue } from 'react-native'
 import {
   ViroMaterials,
+  ViroNode,
   ViroPolyline,
-  gpsToArWorld,
 } from '@reactvision/react-viro'
 
 import {
-  chunkWorldRoute,
-  projectRouteToWorld,
-  type RouteProjectionOptions,
-} from './route'
-import type { GeoCoordinate, ViroGeospatialPose } from './types'
+  projectRouteToEnu,
+  type EnuPlacement,
+  type solveEnuPlacement,
+} from './enu'
+import { chunkWorldRoute, type RouteProjectionOptions } from './route'
+import type { EnuOrigin, GeoCoordinate } from './types'
 
-type ViroPolylineProps = React.ComponentProps<typeof ViroPolyline>
-type ForwardedPolylineProps = Omit<
-  ViroPolylineProps,
+/**
+ * `ViroPolyline` props passed through by {@linkcode MapboxViroRoute}. The
+ * component owns `points`, `materials` and `thickness`, so those are left out.
+ *
+ * @see {@linkcode MapboxViroRouteProps.polylineProps}
+ */
+export type ForwardedPolylineProps = Omit<
+  React.ComponentProps<typeof ViroPolyline>,
   'points' | 'materials' | 'thickness'
 >
 
 export interface MapboxViroRouteProps extends RouteProjectionOptions {
   /** Mapbox/Directions route coordinates in WGS84 order. */
   readonly route: readonly GeoCoordinate[]
-  /** Current ReactVision geospatial camera pose used as the AR projection origin. */
-  readonly pose: ViroGeospatialPose
+  /**
+   * Fixed WGS84 origin the route is projected from, usually the route start.
+   * Keep this object stable: a new origin re-projects every vertex.
+   */
+  readonly origin: EnuOrigin
+  /**
+   * Where `origin` sits in the AR world, from {@linkcode solveEnuPlacement}.
+   * Updating it moves the route node without rebuilding geometry.
+   * @default the AR world origin with no rotation
+   */
+  readonly placement?: EnuPlacement
   /** Maximum points per native ViroPolyline. Adjacent chunks overlap by one point. */
   readonly maxPoints?: number
   /** Polyline thickness in metres. */
@@ -43,16 +58,19 @@ function materialSafeId(value: string): string {
 }
 
 /**
- * Projects a geographic Mapbox route into ReactVision world space and renders
- * bounded, overlapping ViroPolyline chunks.
+ * Projects a geographic Mapbox route into the East-North-Up frame of a fixed
+ * origin and renders bounded, overlapping ViroPolyline chunks under one node.
  *
- * The component deliberately does not create geospatial anchors for every
- * route vertex. Persistent POIs should use Terrain/WGS84/Rooftop anchors;
- * route ribbons stay lightweight and are re-projected from the current pose.
+ * Geometry depends only on `route` and `origin`, so camera pose updates never
+ * rebuild it. Viro 3.0.2 has no JS node that follows a geospatial anchor
+ * (`ViroARPlane.anchorId` binds plane anchors only), so the caller places the
+ * origin with `placement`, solved from two WGS84 anchors by
+ * {@linkcode solveEnuPlacement}, and refreshes it when Earth tracking improves.
  */
 export function MapboxViroRoute({
   route,
-  pose,
+  origin,
+  placement,
   maxPoints = 128,
   thickness = 0.06,
   color = '#00E5FF',
@@ -94,7 +112,7 @@ export function MapboxViroRoute({
       return []
     }
 
-    const points = projectRouteToWorld(gpsToArWorld, pose, route, {
+    const points = projectRouteToEnu(origin, route, {
       fallbackAltitude,
       verticalOffset,
     })
@@ -102,14 +120,32 @@ export function MapboxViroRoute({
     return chunkWorldRoute(points, maxPoints).filter(
       (chunk) => chunk.length >= 2,
     )
-  }, [fallbackAltitude, maxPoints, pose, route, verticalOffset])
+  }, [fallbackAltitude, maxPoints, origin, route, verticalOffset])
+
+  const nodePosition = React.useMemo(
+    (): [number, number, number] | undefined =>
+      placement
+        ? [placement.position[0], placement.position[1], placement.position[2]]
+        : undefined,
+    [placement],
+  )
+  const nodeRotation = React.useMemo(
+    (): [number, number, number] | undefined =>
+      placement
+        ? [placement.rotation[0], placement.rotation[1], placement.rotation[2]]
+        : undefined,
+    [placement],
+  )
 
   if (chunks.length === 0) {
     return null
   }
 
   return (
-    <>
+    <ViroNode
+      position={nodePosition}
+      rotation={nodeRotation}
+    >
       {chunks.map((chunk, index) => (
         <ViroPolyline
           key={index}
@@ -119,6 +155,6 @@ export function MapboxViroRoute({
           materials={resolvedMaterials}
         />
       ))}
-    </>
+    </ViroNode>
   )
 }

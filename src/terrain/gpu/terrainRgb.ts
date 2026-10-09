@@ -63,6 +63,9 @@ function assertDimension(value: number, label: string): void {
   }
 }
 
+/**
+ * Input for {@linkcode decodeTerrainRgbOnGpu}.
+ */
 export interface TerrainRgbDecodeOptions {
   /**
    * Source texture containing Mapbox Terrain-RGB pixels.
@@ -71,16 +74,38 @@ export interface TerrainRgbDecodeOptions {
    * created on the shared Graphite WebGPU device.
    */
   source: GPUTexture
+  /** Number of texel columns to decode. Must be a positive safe integer. */
   width: number
+  /** Number of texel rows to decode. Must be a positive safe integer. */
   height: number
+  /**
+   * Multiplier applied to every decoded elevation. Must be finite.
+   * @default 1
+   */
   heightModifier?: number
 }
 
+/**
+ * Elevations decoded by {@linkcode decodeTerrainRgbOnGpu}, kept in a GPU
+ * storage buffer. The caller owns the buffer and must call
+ * {@linkcode GpuHeightField.dispose}.
+ */
 export interface GpuHeightField {
+  /** Columns in the height grid. */
   readonly width: number
+  /** Rows in the height grid. */
   readonly height: number
+  /** Number of elevations, `width * height`. */
   readonly count: number
+  /**
+   * Storage buffer of `count` tightly packed `f32` elevations in metres,
+   * row-major with row 0 at the tile's north edge. Index is `y * width + x`.
+   */
   readonly buffer: GPUBuffer
+  /**
+   * Destroys the elevation buffer and its parameter uniform. Safe to call more
+   * than once.
+   */
   dispose(): void
 }
 

@@ -23,7 +23,7 @@ The browser entrypoint keeps the provider-neutral features:
 
 ## Terrain fallback
 
-`MapboxARCore.web` implements the same Terrain-RGB formula in typed JavaScript.
+`MapboxAR` in `src/native/MapboxAR.web.ts` implements the same Terrain-RGB formula in typed JavaScript.
 It is the final CPU fallback when browser WebGPU is unavailable.
 
 The order on web is:

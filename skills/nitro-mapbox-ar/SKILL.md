@@ -4,7 +4,7 @@ Use this skill when changing this repository or an application that consumes it.
 
 ## Architecture rules
 
-- Keep `@mapbox/react-native-mapbox-ar` lightweight.
+- Keep `@mikevocalz/nitro-mapbox-ar` lightweight.
 - Nitro is a native fast path, never the browser runtime.
 - Prefer Skia Graphite's shared Dawn device on native when available.
 - Prefer browser WebGPU on web; fall back to typed JavaScript CPU work.

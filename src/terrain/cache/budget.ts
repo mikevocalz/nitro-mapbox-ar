@@ -1,5 +1,12 @@
+/**
+ * Texel dimensions of a decoded tile, as read by
+ * {@linkcode estimateTerrainGpuBytes} and {@linkcode estimateSatelliteGpuBytes}.
+ * Both must be positive safe integers whose product is also a safe integer.
+ */
 export interface TerrainGpuFootprint {
+  /** Width in texels. */
   readonly width: number
+  /** Height in texels. */
   readonly height: number
 }
 

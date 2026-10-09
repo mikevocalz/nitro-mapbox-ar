@@ -1,4 +1,4 @@
-# @mapbox/react-native-mapbox-ar-agent-mcp
+# @mikevocalz/nitro-mapbox-ar-agent-mcp
 
 Tiny, optional configuration helpers for connecting development tools or
 server-side agents to Mapbox MCP.

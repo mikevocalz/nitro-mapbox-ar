@@ -1,11 +1,14 @@
 {
-  "name": "@mapbox/react-native-mapbox-ar-agent-mcp",
-  "version": "0.0.1",
+  "name": "@mikevocalz/nitro-mapbox-ar-agent-mcp",
+  "version": "0.1.0-alpha.0",
   "description": "Optional Mapbox MCP configuration helpers for Nitro Mapbox AR agent workflows",
   "main": "src/index.ts",
   "source": "src/index.ts",
   "types": "src/index.ts",
-  "files": ["src", "README.md"],
+  "files": [
+    "src",
+    "README.md"
+  ],
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
@@ -17,5 +20,15 @@
     "type": "git",
     "url": "https://github.com/mikevocalz/nitro-mapbox-ar.git",
     "directory": "packages/agent-mcp"
+  },
+  "author": "Mike W. Allen (https://github.com/mikevocalz)",
+  "homepage": "https://github.com/mikevocalz/nitro-mapbox-ar#readme",
+  "bugs": {
+    "url": "https://github.com/mikevocalz/nitro-mapbox-ar/issues"
+  },
+  "funding": "https://github.com/sponsors/mikevocalz",
+  "publishConfig": {
+    "access": "public",
+    "tag": "next"
   }
 }

@@ -1,6 +1,15 @@
+import { NitroModules } from 'react-native-nitro-modules'
+
+import type { MapboxAR as MapboxARSpec } from './native/MapboxAR.nitro'
+
+/** The process-wide native root. See {@linkcode MapboxARSpec}. */
+export const MapboxAR = NitroModules.createHybridObject<MapboxARSpec>('MapboxAR')
+/** Type of the {@linkcode MapboxAR} root. */
+export type MapboxAR = MapboxARSpec
+export type { MapboxAR as MapboxARSpec } from './native/MapboxAR.nitro'
+
 export { normalizeMapboxARConfig } from './core/config'
 export { bboxCrossesAntimeridian, validateBBox } from './geo/bbox'
-export { getMapboxARCore, type MapboxARCore } from './native/MapboxARCore'
 export {
   MapboxRasterClient,
   terrainRgbSourceZoom,
@@ -13,9 +22,17 @@ export {
 export {
   latToTileY,
   lonToTileX,
+  tileBounds,
   tilesForBBox,
+  type TileBounds,
   type TileId,
 } from './mapbox/tiles'
+export {
+  MAPBOX_STREETS_V8,
+  MapboxVectorClient,
+  type MapboxVectorClientOptions,
+  type VectorTileResult,
+} from './mapbox/vector'
 export {
   getGraphiteWebGPUContext,
   isGraphiteWebGPUAvailable,
@@ -174,7 +191,19 @@ export {
   type NavigationProfile,
   type NavigationRoute,
   type NavigationRouteLeg,
+  type RouteGeometryCoordinate,
   type RouteLegAnnotation,
+  routeGeometryToCoordinates,
+  mapboxRouteLegs,
+  routeSteps,
+  type GeographicCoordinate,
+  type ManeuverModifier,
+  type ManeuverType,
+  type MapboxRouteStep,
+  type MapboxStepManeuver,
+  type NavigationManeuver,
+  type RouteLeg,
+  type RouteStep,
 } from './navigation/client'
 export {
   summarizeRouteTraffic,

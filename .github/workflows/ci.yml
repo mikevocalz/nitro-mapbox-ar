@@ -12,25 +12,37 @@ permissions:
 
 jobs:
   core:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
           cache: npm
 
       - name: Install JavaScript dependencies
         run: npm install --ignore-scripts --no-audit --no-fund
 
-      - name: Generate Nitro native-map bindings
-        run: npm run codegen:native-map
+      - name: Install lint and docs toolchains (TypeScript 6 API)
+        run: npm run tooling:install
+
+      - name: Committed Nitrogen output matches the specs, every package
+        run: npm run check:nitrogen
+
+      - name: Lint
+        run: npm run lint
 
       - name: Typecheck core
         run: npm run typecheck
+
+      - name: Typecheck API sketch
+        run: npm run typecheck:api-sketch
+
+      - name: Typecheck navigation package
+        run: npm run typecheck:navigation
 
       - name: Typecheck native-map package
         run: npm run typecheck:native-map
@@ -40,6 +52,18 @@ jobs:
 
       - name: Typecheck agent MCP helpers
         run: npm run typecheck:agent-mcp
+
+      - name: Typecheck Specs adapter
+        run: npm run typecheck:specs
+
+      - name: Build the core entry (bob)
+        run: npm run build
+
+      - name: Core entry imports no React Native, Nitro, Skia or WebGPU
+        run: npm run check:core-imports
+
+      - name: Lens Studio example compiles against dist/core
+        run: npm run typecheck:specs-lens
 
       - name: TypeScript unit tests
         run: npm test
@@ -53,17 +77,23 @@ jobs:
       - name: Verify browser package surface
         run: npm run check:web-surface
 
+      - name: Verify every workspace tarball
+        run: npm run check:pack
+
+      - name: Build API reference (TypeDoc, warnings fail)
+        run: npm run docs
+
 
   web-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: '22.13.0'
+          node-version-file: .nvmrc
 
       - name: Install browser harness
         working-directory: examples/web-test

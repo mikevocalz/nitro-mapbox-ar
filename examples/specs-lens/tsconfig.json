@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022"],
+    "types": [],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "verbatimModuleSyntax": true,
+    "noUnusedLocals": true,
+    "paths": {
+      "@mikevocalz/nitro-mapbox-ar/core": ["../../dist/typescript/core/index.d.ts"],
+      "@mikevocalz/nitro-mapbox-ar-specs": ["../../packages/specs/src/index.ts"]
+    }
+  },
+  "include": ["Assets/**/*.ts", "types/**/*.d.ts"]
+}

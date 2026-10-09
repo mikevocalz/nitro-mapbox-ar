@@ -1,0 +1,35 @@
+{
+  "$schema": "https://nitro.margelo.com/nitro.schema.json",
+  "cxxNamespace": [
+    "mapboxar",
+    "navigation"
+  ],
+  "ios": {
+    "iosModuleName": "NitroMapboxARNavigation"
+  },
+  "android": {
+    "androidNamespace": [
+      "mapboxar",
+      "navigation"
+    ],
+    "androidCxxLibName": "NitroMapboxARNavigation"
+  },
+  "autolinking": {
+    "MapboxNavigation": {
+      "ios": {
+        "language": "swift",
+        "implementationClassName": "HybridMapboxNavigation"
+      },
+      "android": {
+        "language": "kotlin",
+        "implementationClassName": "HybridMapboxNavigation"
+      }
+    }
+  },
+  "ignorePaths": [
+    "**/node_modules",
+    "**/lib",
+    "typecheck"
+  ],
+  "gitAttributesGeneratedFlag": false
+}

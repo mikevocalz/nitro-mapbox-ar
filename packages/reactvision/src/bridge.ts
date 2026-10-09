@@ -1,7 +1,6 @@
-import {
-  gpsToArWorld,
-  type ViroGeospatialPose,
-} from '@reactvision/react-viro'
+import type { ViroGeospatialPose } from '@reactvision/react-viro'
+
+import { projectToDeviceFrame } from './enu'
 
 import {
   validateCoordinate,
@@ -95,7 +94,7 @@ export function createReactVisionSpatialBridge(
 
     projectCoordinate(pose, coordinate) {
       validateCoordinate(coordinate, { requireAltitude: true })
-      return gpsToArWorld(
+      return projectToDeviceFrame(
         pose,
         coordinate.latitude,
         coordinate.longitude,
@@ -104,12 +103,12 @@ export function createReactVisionSpatialBridge(
     },
 
     projectRoute(pose, route, options) {
-      return projectRouteToWorld(gpsToArWorld, pose, route, options)
+      return projectRouteToWorld(projectToDeviceFrame, pose, route, options)
     },
 
     projectRouteChunks(pose, route, options = {}) {
       const points = projectRouteToWorld(
-        gpsToArWorld,
+        projectToDeviceFrame,
         pose,
         route,
         options,
