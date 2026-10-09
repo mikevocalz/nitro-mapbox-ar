@@ -1,10 +1,21 @@
 import type { TileId } from '../../mapbox/tiles'
 import { tileGroundSpanMeters } from './grid'
 
+/**
+ * A 4x4 matrix as 16 numbers in column-major order, the layout WGSL
+ * `mat4x4<f32>` uses. Accepted by {@linkcode multiplyMatrix4}.
+ */
 export type Matrix4Like = Float32Array | readonly number[]
 
+/**
+ * Position of a tile's center relative to the origin tile's center, in metres
+ * on the origin's local tangent plane. Returned by
+ * {@linkcode getLocalTileOffset}.
+ */
 export interface LocalTileOffset {
+  /** East offset in metres. Wraps across the antimeridian. */
   readonly x: number
+  /** South offset in metres. XYZ tile rows grow southward, so +z is south. */
   readonly z: number
 }
 
@@ -16,6 +27,14 @@ function assertSameZoom(origin: TileId, tile: TileId): void {
   }
 }
 
+/**
+ * Column difference `tile.x - origin.x`, wrapped into
+ * `[-2^z / 2, 2^z / 2]` so the last XYZ column and column zero stay
+ * neighbours across the antimeridian.
+ *
+ * @returns Signed column delta in whole tiles.
+ * @throws {RangeError} When the two tiles have different zoom levels.
+ */
 export function wrappedTileDeltaX(origin: TileId, tile: TileId): number {
   assertSameZoom(origin, tile)
 
@@ -56,6 +75,16 @@ export function getLocalTileOffset(
   }
 }
 
+/**
+ * Builds a column-major 4x4 translation matrix. The translation sits in
+ * elements 12 to 14, matching {@linkcode Matrix4Like}.
+ *
+ * @param x Translation along x, in the caller's world units (metres for
+ * terrain).
+ * @param y Translation along y.
+ * @param z Translation along z.
+ * @throws {RangeError} When any component is not finite.
+ */
 export function makeTranslationMatrix(
   x: number,
   y: number,

@@ -13,10 +13,13 @@ import type { MapboxMapView } from './MapboxMapView.nitro'
 export interface MapboxMaps
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
   /**
-   * `false` when the linked Mapbox Maps SDK has no build for this platform
-   * (for example visionOS, unless the 11.32.0 xcframework ships a visionOS
-   * slice). A mounted {@linkcode MapboxMapView} on such a host renders
-   * nothing and reports a map loading error.
+   * `false` when the linked Mapbox Maps SDK has no build for this platform.
+   * A mounted {@linkcode MapboxMapView} on such a host renders nothing and
+   * reports a map loading error, so check this before mounting one.
+   *
+   * @platform ios, android: `true`. visionOS: `false`, because the
+   * `MapboxMaps` 11.32.0 CocoaPod declares iOS only and this package builds
+   * without it there.
    */
   readonly isMapViewAvailable: boolean
   /** Version of the linked Mapbox Maps SDK, for example `11.32.0`. */

@@ -1,11 +1,23 @@
 import type { TileId } from '../../mapbox/tiles'
 
+/**
+ * Diff between the current and desired tile sets, produced by
+ * {@linkcode planTerrainNeighborhoodTransition}. Keys use the
+ * {@linkcode terrainTileKey} format.
+ */
 export interface TerrainNeighborhoodTransitionPlan {
+  /** Keys present in both sets, in desired-tile order. Their leases are kept. */
   readonly retain: readonly string[]
+  /** Desired tiles not currently held, deduplicated, in desired-tile order. */
   readonly acquire: readonly TileId[]
+  /** Currently held keys that fall outside the desired set. */
   readonly release: readonly string[]
 }
 
+/**
+ * Builds the `z/x/y` string key that identifies a tile in
+ * {@linkcode TerrainNeighborhoodTransitionPlan}.
+ */
 export function terrainTileKey(tile: TileId): string {
   return `${tile.z}/${tile.x}/${tile.y}`
 }

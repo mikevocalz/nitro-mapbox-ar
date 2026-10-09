@@ -22,16 +22,38 @@ const CORE_ONLY_CAPABILITIES: NativeNavigationCapabilities = {
   electronicHorizon: false,
 }
 
+/**
+ * Construction options for {@linkcode NavigationSession}.
+ */
 export interface NavigationSessionOptions {
+  /** Directions client used by {@linkcode NavigationSession.planRoute}. */
   readonly client: MapboxNavigationClient
+  /**
+   * Native Navigation SDK bridge. When omitted, the session runs in JS:
+   * progress comes from {@linkcode NavigationSession.updateLocation} and
+   * every capability is `false`.
+   */
   readonly nativeProvider?: NativeNavigationProvider
 }
 
+/**
+ * Routes returned by {@linkcode NavigationSession.planRoute}. Pass any of
+ * them to {@linkcode NavigationSession.start}.
+ */
 export interface PlannedRoute {
+  /** First route in the Directions response. */
   readonly primary: NavigationRoute
+  /** The remaining routes in response order; empty when the API returned one route. */
   readonly alternatives: readonly NavigationRoute[]
 }
 
+/**
+ * Plans a route with a {@linkcode MapboxNavigationClient} and guides along
+ * it, either through a {@linkcode NativeNavigationProvider} or in JS.
+ * Call {@linkcode NavigationSession.start} to begin guidance and
+ * {@linkcode NavigationSession.stop} to end it; the session holds one active
+ * route at a time.
+ */
 export class NavigationSession {
   readonly #client: MapboxNavigationClient
   readonly #provider?: NativeNavigationProvider
@@ -41,19 +63,34 @@ export class NavigationSession {
   #lastProgress: NavigationProgressSnapshot | null = null
   readonly #sources = new WeakMap<NavigationRoute, { readonly requestUrl: string; readonly routeIndex: number }>()
 
+  /** Creates an idle session with no active route. */
   constructor(options: NavigationSessionOptions) {
     this.#client = options.client
     this.#provider = options.nativeProvider
   }
 
+  /**
+   * The native provider's capabilities, or all `false` when no provider is
+   * attached.
+   */
   get capabilities(): NativeNavigationCapabilities {
     return this.#provider?.capabilities ?? CORE_ONLY_CAPABILITIES
   }
 
+  /** The route passed to the last {@linkcode NavigationSession.start}, or `null` when stopped. */
   get activeRoute(): NavigationRoute | null {
     return this.#activeRoute
   }
 
+  /**
+   * Requests routes through {@linkcode MapboxNavigationClient.directionsWithRequestUrl}
+   * without starting guidance. The session remembers each returned route's
+   * request URL, so {@linkcode NavigationSession.start} can hand it to the
+   * native provider.
+   *
+   * @throws {Error} When the response has no routes. Request and validation
+   * errors from the client propagate unchanged.
+   */
   async planRoute(
     coordinates: readonly NavigationCoordinate[],
     options: DirectionsOptions = {},
@@ -76,6 +113,14 @@ export class NavigationSession {
     }
   }
 
+  /**
+   * Starts guidance along `route`, stopping any running guidance first and
+   * clearing the last progress. With a native provider it calls
+   * `setRoute(route, source)` then `startTripSession()`; `source` is set
+   * only for routes from {@linkcode NavigationSession.planRoute} on this
+   * session. Without a provider, follow with
+   * {@linkcode NavigationSession.updateLocation} calls.
+   */
   async start(route: NavigationRoute): Promise<void> {
     if (this.#started) {
       await this.stop()
@@ -94,6 +139,11 @@ export class NavigationSession {
     this.#started = true
   }
 
+  /**
+   * Ends guidance: with a native provider it calls `stopTripSession()` then
+   * `setRoute(null)`, and it clears the active route and last progress.
+   * Calling it when not started only clears the active route.
+   */
   async stop(): Promise<void> {
     if (!this.#started) {
       this.#activeRoute = null
@@ -157,6 +207,11 @@ export class NavigationSession {
     return Promise.resolve(this.#lastProgress)
   }
 
+  /**
+   * The provider's latest electronic horizon. Resolves `null` without
+   * calling the provider when there is no provider or
+   * {@linkcode NativeNavigationCapabilities.electronicHorizon} is `false`.
+   */
   electronicHorizon(): Promise<ElectronicHorizonSnapshot | null> {
     if (!this.#provider?.capabilities.electronicHorizon) {
       return Promise.resolve(null)

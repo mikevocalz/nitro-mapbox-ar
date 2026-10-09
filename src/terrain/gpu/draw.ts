@@ -9,12 +9,37 @@ import type { GpuSatelliteTile } from './imagery'
 import { TERRAIN_SHADER } from './shader'
 import type { GpuTerrainTile } from './tile'
 
+/**
+ * A 4x4 matrix as 16 finite numbers in column-major order, the layout WGSL
+ * `mat4x4<f32>` uses. Used by {@linkcode TerrainTileFrameOptions.mvp}.
+ */
 export type Matrix4 = Float32Array | readonly number[]
+/**
+ * Three-component vector. Used by
+ * {@linkcode TerrainTileFrameOptions.lightDirection}.
+ */
 export type Vec3 = readonly [number, number, number]
+/**
+ * Four-component vector, RGBA in 0 to 1 when used as a color. Used by
+ * {@linkcode TerrainTileFrameOptions.baseColor}.
+ */
 export type Vec4 = readonly [number, number, number, number]
 
+/**
+ * Pipeline formats and imagery for {@linkcode createTerrainTileRenderer}.
+ */
 export interface TerrainTileRendererOptions {
+  /**
+   * Color format of the pass this renderer draws into. Must match the color
+   * attachment.
+   * @default 'rgba8unorm'
+   */
   readonly format?: GPUTextureFormat
+  /**
+   * Depth format of the pass this renderer draws into. Must match the depth
+   * attachment.
+   * @default 'depth24plus'
+   */
   readonly depthFormat?: GPUTextureFormat
   /**
    * Optional satellite imagery decoded on the shared Graphite device.
@@ -23,15 +48,63 @@ export interface TerrainTileRendererOptions {
   readonly imagery?: Pick<GpuSatelliteTile, 'texture'>
 }
 
+/**
+ * Per-draw settings for {@linkcode TerrainTileRenderer.draw}. Validated on
+ * every draw; invalid values throw `RangeError`.
+ */
 export interface TerrainTileFrameOptions {
+  /**
+   * Column-major model-view-projection matrix applied to vertices in
+   * tile-local space: metres, origin at the tile center, +x east, +y up, +z
+ * south. Must hold 16 finite values.
+   */
   readonly mvp: Matrix4
+  /**
+   * Sample step between drawn vertices. 1 draws every height sample; 2 draws
+   * every second one, and so on. Must be a positive safe integer.
+   * @default 1
+   */
   readonly lodStride?: number
+  /**
+   * Multiplier on elevations before drawing. Horizontal spacing stays in real
+   * metres, so values above 1 exaggerate relief.
+   * @default 1
+   */
   readonly heightScale?: number
+  /**
+   * Direction toward the light in tile-local space. Normalized before use;
+   * must not be the zero vector.
+   * @default [0.35, 0.85, 0.4]
+   */
   readonly lightDirection?: Vec3
+  /**
+   * Ambient light share, clamped to 0 to 1 in the shader. The rest of the
+   * shading is Lambertian from `lightDirection`.
+   * @default 0.28
+   */
   readonly ambient?: number
+  /**
+   * RGBA albedo. Imagery is multiplied by its RGB; its alpha sets output
+   * alpha. Defaults to white with imagery and to green
+   * `[0.26, 0.58, 0.31, 1]` without.
+   */
   readonly baseColor?: Vec4
+  /**
+   * Multiplier on output alpha, clamped to 0 to 1.
+   * @default 1
+   */
   readonly opacity?: number
+  /**
+   * Blend from `baseColor` (0) to imagery times `baseColor` (1), clamped to
+   * 0 to 1. Defaults to 1 with imagery and 0 without.
+   */
   readonly imageryOpacity?: number
+  /**
+   * Height in metres of the vertical skirt drawn down from each tile edge to
+   * hide cracks between tiles at different strides. 0 draws no skirt. Must be
+   * 0 or greater. Not multiplied by `heightScale`.
+   * @default 0
+   */
   readonly skirtDepth?: number
   /**
    * Overrides the tile's natural local sample spacing.
@@ -42,19 +115,54 @@ export interface TerrainTileFrameOptions {
   readonly sampleSpacingMeters?: number
 }
 
+/**
+ * Draws one decoded terrain tile into a render pass the caller owns. Created
+ * by {@linkcode createTerrainTileRenderer}.
+ *
+ * The renderer owns two small uniform buffers and, when no imagery was given,
+ * a 1x1 white fallback texture. It borrows the height buffer and imagery
+ * texture. Call {@linkcode TerrainTileRenderer.dispose} before disposing the
+ * terrain tile or imagery it draws.
+ */
 export interface TerrainTileRenderer {
+  /** Terrain tile this renderer reads. Borrowed, not owned. */
   readonly terrain: Pick<
     GpuTerrainTile,
     'tile' | 'heights' | 'width' | 'height'
   >
+  /** Color format of the cached pipeline. */
   readonly format: GPUTextureFormat
+  /** Depth format of the cached pipeline. */
   readonly depthFormat: GPUTextureFormat
+  /**
+   * Ground metres per decoded texel at the tile's center latitude, from the
+   * tile's real width in texels.
+   */
   readonly metersPerPixel: number
+  /**
+   * Default distance in metres between neighboring height samples, chosen so
+   * the first and last samples land on the tile edges. Overridden per draw by
+   * {@linkcode TerrainTileFrameOptions.sampleSpacingMeters}.
+   */
   readonly sampleSpacingMeters: number
+  /**
+   * Writes this frame's uniforms and records one draw call into `pass`. The
+   * caller begins, ends, and submits the pass.
+   *
+   * @returns The grid layout drawn at the requested stride.
+   * @throws {RangeError} When an option is not finite, `lodStride` is not a
+   * positive integer, `skirtDepth` is negative, or `mvp` does not hold 16
+   * values.
+   * @throws {Error} When the renderer has been disposed.
+   */
   draw(
     pass: GPURenderPassEncoder,
     options: TerrainTileFrameOptions,
   ): TerrainGridLayout
+  /**
+   * Destroys the uniform buffers and the fallback imagery texture. Safe to
+   * call more than once.
+   */
   dispose(): void
 }
 

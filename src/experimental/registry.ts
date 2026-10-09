@@ -1,3 +1,9 @@
+/**
+ * Release maturity of a registry feature. `'host-validation'` means the
+ * consuming app must validate a compatible build before enabling it.
+ *
+ * @see {@linkcode MapboxFeatureDescriptor.status}
+ */
 export type MapboxFeatureStatus =
   | 'stable'
   | 'public-preview'
@@ -5,6 +11,11 @@ export type MapboxFeatureStatus =
   | 'private-preview'
   | 'host-validation'
 
+/**
+ * Id of a Mapbox or renderer feature in the registry.
+ *
+ * @see {@linkcode getMapboxFeature}
+ */
 export type MapboxFeatureId =
   | 'standard-indoor'
   | 'standard-hd-roads'
@@ -16,12 +27,22 @@ export type MapboxFeatureId =
   | 'agent-toolkit'
   | 'graphite-visionos'
 
+/**
+ * Maturity and platform facts for one feature, as
+ * {@linkcode listMapboxFeatures} and {@linkcode getMapboxFeature} return them.
+ */
 export interface MapboxFeatureDescriptor {
+  /** Feature id. */
   readonly id: MapboxFeatureId
+  /** Release maturity. */
   readonly status: MapboxFeatureStatus
+  /** Where the feature runs: `'android'`, `'ios'`, `'web'`, `'visionos'`, or `'service'` for a web API. */
   readonly platform: readonly string[]
+  /** Earliest SDK, style or framework version that has the feature, when one applies. */
   readonly minimumVersion?: string
+  /** Whether the feature is on without opting in. `false` for every current entry. */
   readonly defaultEnabled: boolean
+  /** How to enable the feature and what limits it has. */
   readonly notes: string
 }
 
@@ -95,10 +116,16 @@ const FEATURES: readonly MapboxFeatureDescriptor[] = [
   },
 ]
 
+/** Every feature in the registry. */
 export function listMapboxFeatures(): readonly MapboxFeatureDescriptor[] {
   return FEATURES
 }
 
+/**
+ * Looks up one feature by id.
+ *
+ * @throws {Error} When the id is not in the registry.
+ */
 export function getMapboxFeature(
   id: MapboxFeatureId,
 ): MapboxFeatureDescriptor {
@@ -109,10 +136,19 @@ export function getMapboxFeature(
   return value
 }
 
+/** The features a caller opted into, as {@linkcode createFeatureSet} returns them. */
 export interface EnabledFeatureSet {
+  /** Ids of the enabled features. */
   readonly enabled: ReadonlySet<MapboxFeatureId>
 }
 
+/**
+ * Enables the requested features. Every requested id is enabled, previews
+ * included, since requesting one is the explicit opt-in; nothing outside
+ * `requested` is enabled.
+ *
+ * @throws {Error} When an id is not in the registry.
+ */
 export function createFeatureSet(
   requested: readonly MapboxFeatureId[],
 ): EnabledFeatureSet {

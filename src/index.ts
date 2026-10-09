@@ -6,6 +6,7 @@ import type { MapboxAR as MapboxARSpec } from './native/MapboxAR.nitro'
 export const MapboxAR = NitroModules.createHybridObject<MapboxARSpec>('MapboxAR')
 /** Type of the {@linkcode MapboxAR} root. */
 export type MapboxAR = MapboxARSpec
+export type { MapboxAR as MapboxARSpec } from './native/MapboxAR.nitro'
 
 export { normalizeMapboxARConfig } from './core/config'
 export { bboxCrossesAntimeridian, validateBBox } from './geo/bbox'

@@ -1,7 +1,19 @@
 import type * as SkiaPackage from '@shopify/react-native-skia'
 import type * as WebGPUPackage from 'react-native-webgpu'
 
+/**
+ * The WebGPU device imported from Skia Graphite's native Dawn device, shared
+ * by Skia and `react-native-webgpu`.
+ *
+ * @see {@linkcode GraphiteWebGPUContext.device}
+ */
 export type SharedGraphiteDevice = ReturnType<typeof WebGPUPackage.importDevice>
+/**
+ * A WebGPU texture adopted from a native Skia texture, living on the shared
+ * Graphite device.
+ *
+ * @see {@linkcode DecodedGraphiteTexture.texture}
+ */
 export type AdoptedWebGPUTexture = ReturnType<typeof WebGPUPackage.adoptTexture>
 
 // Both packages are optional peers and load on first use, not at import.
@@ -21,19 +33,40 @@ function loadWebGPU(): typeof WebGPUPackage {
   return require('react-native-webgpu') as typeof WebGPUPackage
 }
 
+/**
+ * A WebGPU texture identified by its native pointer, as passed to
+ * {@linkcode makeSkiaImageFromWebGPUTexture}.
+ */
 export interface NativeWebGPUTexture {
+  /** Native `wgpu::Texture` pointer. `0n` is invalid. */
   readonly nativePointer: bigint
 }
 
+/**
+ * The one Dawn device Skia Graphite and WebGPU share, returned by
+ * {@linkcode getGraphiteWebGPUContext}.
+ */
 export interface GraphiteWebGPUContext {
+  /** Native pointer to Skia Graphite's Dawn device. Never `0n`. */
   readonly nativeDevice: bigint
+  /** WebGPU device wrapping {@linkcode GraphiteWebGPUContext.nativeDevice}. */
   readonly device: SharedGraphiteDevice
 }
 
+/**
+ * A decoded raster uploaded as a texture on the shared Graphite device,
+ * returned by {@linkcode makeWebGPUTextureFromEncodedBytes}. The caller owns
+ * the texture and must call {@linkcode DecodedGraphiteTexture.dispose} when
+ * done.
+ */
 export interface DecodedGraphiteTexture {
+  /** The GPU texture holding the decoded pixels. */
   readonly texture: AdoptedWebGPUTexture
+  /** Image width in pixels. */
   readonly width: number
+  /** Image height in pixels. */
   readonly height: number
+  /** Destroys the texture. Safe to call more than once. */
   dispose(): void
 }
 
@@ -60,6 +93,21 @@ function getNativeGraphiteDevice(): bigint {
   return pointer
 }
 
+/**
+ * Returns the WebGPU device shared with Skia Graphite, importing Skia's
+ * native Dawn device on the first call and caching it for the process
+ * lifetime. Use this device, not one from `navigator.gpu.requestDevice()`, for
+ * resources that need zero-copy Skia interop.
+ *
+ * Native only: requires an m154 Graphite build of
+ * `@shopify/react-native-skia` and `react-native-webgpu`. The browser
+ * entrypoint does not export this function.
+ *
+ * @throws {Error} When Skia Graphite is not installed or returns an invalid
+ * native device.
+ * @platform ios, android. Not on visionOS or web.
+ * @see {@linkcode isGraphiteWebGPUAvailable}
+ */
 export function getGraphiteWebGPUContext(): GraphiteWebGPUContext {
   if (sharedContext) {
     return sharedContext
@@ -76,6 +124,15 @@ export function getGraphiteWebGPUContext(): GraphiteWebGPUContext {
   return sharedContext
 }
 
+/**
+ * Reports whether {@linkcode getGraphiteWebGPUContext} succeeds. A `true`
+ * result leaves the shared context created and cached.
+ *
+ * Returns `false` where Skia Graphite is not linked, for example a Ganesh
+ * Skia build or visionOS.
+ *
+ * @platform ios, android. Always `false` on visionOS.
+ */
 export function isGraphiteWebGPUAvailable(): boolean {
   try {
     getGraphiteWebGPUContext()
@@ -85,6 +142,14 @@ export function isGraphiteWebGPUAvailable(): boolean {
   }
 }
 
+/**
+ * Wraps a texture on the shared Graphite device as a Skia image without
+ * copying pixels. The texture keeps ownership of the pointer: keep it alive
+ * while the image is in use, and dispose the image when the frame is replaced.
+ *
+ * @throws {Error} When `texture.nativePointer` is `0n`.
+ * @see {@linkcode getGraphiteWebGPUContext}
+ */
 export function makeSkiaImageFromWebGPUTexture(texture: NativeWebGPUTexture) {
   if (texture.nativePointer === 0n) {
     throw new Error('Cannot wrap a WebGPU texture with an invalid native pointer')

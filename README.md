@@ -93,7 +93,7 @@ Quest and visionOS rows describe what the code does. The reference app has not b
 
 ## Reference app
 
-`examples/reference-app` (Expo SDK 57, React Native 0.86) has five tabs: Map, Navigate, AR, Table (a tabletop route that runs over passthrough on Quest) and Agent. Setup and build flavours are in [docs/REFERENCE_APP.md](docs/REFERENCE_APP.md); the accessibility review and design critique are in [docs/reference-app/](docs/reference-app/).
+`examples/reference-app` (Expo SDK 57, React Native 0.86) has five tabs: Map, Navigate, AR, Table (a tabletop route that runs over passthrough on Quest) and Agent. Setup and build flavours are in [docs/REFERENCE_APP.md](docs/REFERENCE_APP.md); the [accessibility review](docs/reference-app/A11Y.md) and [design critique](docs/reference-app/CRITIQUE.md) are in `docs/reference-app/`.
 
 ## Development
 

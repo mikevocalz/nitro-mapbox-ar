@@ -45,6 +45,9 @@ export interface MapboxAR extends HybridObject<{ ios: 'c++'; android: 'c++' }> {
    * @throws {Error} When `rgba.byteLength` exceeds 1048576 bytes; the message
    * names `decodeTerrainRgbAsync`.
    * @throws {Error} When `heightModifier` is not finite.
+   * @platform ios, android: `Error`, because Nitro rethrows the C++ exception
+   * as a JS `Error` with the method name prefixed. Web: the same messages as
+   * `RangeError`. Match on the message, not the class.
    */
   decodeTerrainRgb(rgba: ArrayBuffer, heightModifier: number): ArrayBuffer
 

@@ -59,7 +59,7 @@ A budget may be temporarily exceeded while every resident entry is pinned.
 The neighborhood helper:
 
 - wraps XYZ x at the antimeridian;
-- clamps y at Mercator world edges;
+- skips rows above and below the Mercator world edge (y outside 0 to 2^z - 1);
 - deduplicates repeated wrapped tiles at low zoom.
 
 This is meant to keep the user's near-future AR/XR terrain warm without issuing

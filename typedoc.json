@@ -1,13 +1,17 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "name": "nitro-mapbox-ar",
-  "entryPointStrategy": "packages",
+  "entryPointStrategy": "resolve",
   "entryPoints": [
-    ".",
-    "packages/native-mapbox",
-    "packages/reactvision",
-    "packages/agent-mcp",
-    "packages/specs"
+    "src/index.ts",
+    "src/core/index.ts",
+    "src/navigation/client.ts",
+    "src/mapbox/index.ts",
+    "packages/native-mapbox/src/index.ts",
+    "packages/navigation/src/index.ts",
+    "packages/reactvision/src/index.ts",
+    "packages/agent-mcp/src/index.ts",
+    "packages/specs/src/index.ts"
   ],
   "out": "build/api",
   "treatWarningsAsErrors": true,
@@ -20,14 +24,65 @@
       "RouteLeg": "https://github.com/mikevocalz/nitro-mapbox-ar/blob/master/src/navigation/route.ts"
     },
     "react-native-nitro-modules": {
-      "HybridObject": "https://nitro.margelo.com/docs/hybrid-objects"
+      "HybridObject": "https://nitro.margelo.com/docs/hybrid-objects",
+      "other": "https://nitro.margelo.com/docs/hybrid-objects"
     }
   },
   "validation": {
     "notExported": true,
     "invalidLink": true,
     "rewrittenLink": false,
-    "notDocumented": false,
+    "notDocumented": true,
     "unusedMergeModuleWith": true
-  }
+  },
+  "tsconfig": "./tsconfig.docs.json",
+  "blockTags": [
+    "@defaultValue",
+    "@deprecated",
+    "@example",
+    "@jsx",
+    "@param",
+    "@privateRemarks",
+    "@remarks",
+    "@returns",
+    "@see",
+    "@throws",
+    "@typeParam",
+    "@author",
+    "@callback",
+    "@category",
+    "@categoryDescription",
+    "@default",
+    "@document",
+    "@extends",
+    "@augments",
+    "@yields",
+    "@group",
+    "@groupDescription",
+    "@import",
+    "@inheritDoc",
+    "@license",
+    "@module",
+    "@mergeModuleWith",
+    "@prop",
+    "@property",
+    "@return",
+    "@satisfies",
+    "@since",
+    "@sortStrategy",
+    "@template",
+    "@this",
+    "@type",
+    "@typedef",
+    "@summary",
+    "@preventInline",
+    "@inlineType",
+    "@preventExpand",
+    "@expandType",
+    "@platform"
+  ],
+  "intentionallyNotDocumented": [
+    "src.MapboxARSpec.__type.ios",
+    "src.MapboxARSpec.__type.android"
+  ]
 }

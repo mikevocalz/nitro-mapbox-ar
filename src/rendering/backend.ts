@@ -1,16 +1,37 @@
 import type { RendererPreference } from '../types'
 
+/**
+ * The renderer {@linkcode selectRendererBackend} resolved to.
+ *
+ * - `'graphite-webgpu'`: Skia Graphite and WebGPU on one Dawn device.
+ * - `'webgpu'`: WebGPU without Skia interop.
+ * - `'nitro-cpu'`: the Nitro C++ CPU path.
+ * - `'js-cpu'`: the JavaScript CPU Terrain-RGB path.
+ */
 export type RendererBackend =
   | 'graphite-webgpu'
   | 'webgpu'
   | 'nitro-cpu'
   | 'js-cpu'
 
+/**
+ * What the current runtime supports, as input to
+ * {@linkcode selectRendererBackend}.
+ */
 export interface RendererCapabilities {
+  /** Skia Graphite is linked. */
   graphite: boolean
+  /** WebGPU is available. */
   webgpu: boolean
+  /** Skia Graphite and WebGPU share one Dawn device. */
   sharedDawnDevice: boolean
+  /** The Nitro C++ CPU path is available. */
   nitro: boolean
+  /**
+   * The JavaScript CPU path is available.
+   *
+   * @default false
+   */
   jsCpu?: boolean
 }
 
@@ -26,6 +47,17 @@ function assertBackendAvailable(
   }
 }
 
+/**
+ * Resolves a renderer preference against the runtime's capabilities.
+ *
+ * `'auto'` takes the first available backend in this order: Graphite + WebGPU
+ * (needs `graphite`, `webgpu` and `sharedDawnDevice`), WebGPU, Nitro CPU, JS
+ * CPU. `'cpu'` prefers Nitro CPU over JS CPU. Any other preference must be
+ * available as asked.
+ *
+ * @throws {Error} When the requested backend is unavailable, or `'auto'` finds
+ * no backend.
+ */
 export function selectRendererBackend(
   preference: RendererPreference,
   capabilities: RendererCapabilities,

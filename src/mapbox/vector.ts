@@ -15,6 +15,7 @@ export interface MapboxVectorClientOptions {
  */
 export type VectorTileResult =
   | {
+      /** Mapbox returned the tile. */
       readonly kind: 'tile'
       /** The tile's protobuf bytes (Mapbox Vector Tile 2.1). */
       readonly bytes: ArrayBuffer
