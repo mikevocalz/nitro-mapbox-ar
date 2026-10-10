@@ -29,13 +29,26 @@ Pod::Spec.new do |s|
   # MapboxMaps comes from Swift Package Manager, not its CocoaPod. The
   # navigation package links MapboxNavigationCore through SPM, which depends on
   # this same package URL; a CocoaPod copy next to it fails the app build with
-  # "Redefinition of module 'MapboxMaps'". React Native's spm_dependency
-  # registers each package URL once, so both pods share one MapboxMaps.
-  spm_dependency(s,
+  # "Redefinition of module 'MapboxMaps'".
+  #
+  # The products are attached to the NitroMapboxAR pod target, not this one.
+  # With static pod libraries Xcode copies a package's object files into every
+  # pod library that lists one of its products, so a maps pod and a navigation
+  # pod that each listed theirs produced two copies of MapboxMaps.o and
+  # thousands of duplicate symbols at app link. NitroMapboxAR is a dependency
+  # of both pods, so it builds (and builds the packages) first, and its static
+  # library is the only one that carries the Mapbox objects. This pod compiles
+  # against the package modules through the search paths below.
+  spm_dependency(Struct.new(:name).new("NitroMapboxAR"),
     url: "https://github.com/mapbox/mapbox-maps-ios.git",
     requirement: { kind: "exactVersion", version: mapbox_version },
     products: ["MapboxMaps"]
   )
+  spm_products_dir = "${SYMROOT}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}"
+  s.pod_target_xcconfig = (s.attributes_hash["pod_target_xcconfig"] || {}).merge({
+    "SWIFT_INCLUDE_PATHS" => "$(inherited) #{spm_products_dir}",
+    "FRAMEWORK_SEARCH_PATHS" => "$(inherited) #{spm_products_dir} #{spm_products_dir}/PackageFrameworks",
+  })
   # MapboxARAccessToken: the process-wide token set through MapboxAR.accessToken.
   s.dependency "NitroMapboxAR"
   s.dependency "NitroModules"

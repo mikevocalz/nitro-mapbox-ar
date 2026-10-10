@@ -25,8 +25,10 @@ uses. Nitro Modules / Nitrogen 0.37.1.
   Put it in `~/.gradle/gradle.properties` as `MAPBOX_DOWNLOADS_TOKEN=...` or
   export `MAPBOX_DOWNLOADS_TOKEN` in CI. Never commit it.
 - iOS: the SDK is a Swift package. React Native adds it to the Pods project in
-  `post_install`; Xcode resolves it from GitHub. `USE_FRAMEWORKS=dynamic` is
-  recommended (React Native warns about static linking of Swift packages).
+  `post_install` and Xcode resolves it from GitHub. The package products are
+  linked by the core `NitroMapboxAR` pod, the same pod that links `MapboxMaps`
+  for the maps package, so apps with both packages link with static pods.
+  React Native's static-linking warning for `NitroMapboxAR` can be ignored.
 - Device trips need location permission; request it before calling
   `createTripSession`.
 

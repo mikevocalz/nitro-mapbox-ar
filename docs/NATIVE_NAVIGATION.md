@@ -41,9 +41,17 @@ with suffix `32.0` in `gradle/dependencies.gradle`).
 Package Manager only. The podspec links it with React Native's
 `spm_dependency` (`react-native/scripts/react_native_pods.rb`, implemented in
 `scripts/cocoapods/spm.rb`, `SPMManager.apply_on_post_install`), requesting the
-products `MapboxNavigationCore` and `MapboxDirections`. React Native logs a
-warning that static linking of Swift packages can fail and suggests
-`USE_FRAMEWORKS=dynamic`. Stable releases need no `.netrc` token.
+products `MapboxNavigationCore` and `MapboxDirections`. The products are
+attached to the core `NitroMapboxAR` pod target, the same owner the maps
+podspec uses for `MapboxMaps`. With static pod libraries Xcode copies a
+package's object files into every pod library that lists one of its products;
+when the maps and navigation pods each listed their own, the app link failed
+with 21,377 duplicate MapboxMaps symbols. The navigation pod compiles against
+the package modules through `SWIFT_INCLUDE_PATHS` and `FRAMEWORK_SEARCH_PATHS`
+on `${SYMROOT}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}`. React Native still
+logs its static-linking warning for `NitroMapboxAR`; static pods link (checked
+with the reference app on the iOS Simulator). Stable releases need no `.netrc`
+token.
 
 **Android.** `com.mapbox.navigationcore:navigation-ndk27` (group from
 `gradle/artifact-settings.gradle`, `mapboxArtifactGroupId`; artifact

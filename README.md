@@ -46,7 +46,7 @@ MapboxAR.accessToken = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN ?? ''
 
 The maps view and navigation trip sessions read it from there; there is no per-view token. Work that needs a token and finds it empty rejects with an `Error` whose message starts `Mapbox access token is not set` and names the operation. The JS clients (`MapboxNavigationClient`, `MapboxSearchClient`, and everything in `/core`) take `accessToken` in their constructor options instead, because `/core` has no native root.
 
-**Android build token (secret, `DOWNLOADS:READ` scope).** The maps and navigation packages pull their AARs from Mapbox's Maven repository, which needs a secret token at build time. Put it in `~/.gradle/gradle.properties` or the environment as `MAPBOX_DOWNLOADS_TOKEN`. Never ship it in app code or commit it. iOS needs no build token: the maps package links `MapboxMaps` and navigation links `MapboxNavigationCore`, both through Swift Package Manager, so the two share one copy of MapboxMaps.
+**Android build token (secret, `DOWNLOADS:READ` scope).** The maps and navigation packages pull their AARs from Mapbox's Maven repository, which needs a secret token at build time. Put it in `~/.gradle/gradle.properties` or the environment as `MAPBOX_DOWNLOADS_TOKEN`. Never ship it in app code or commit it. iOS needs no build token: `MapboxMaps` (maps package) and `MapboxNavigationCore` (navigation package) come from Swift Package Manager. Both podspecs attach their package products to the core `NitroMapboxAR` pod target, so one static library carries the Mapbox objects and an app with both packages links with static pods.
 
 ## Quick look
 
