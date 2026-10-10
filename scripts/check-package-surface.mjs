@@ -39,6 +39,9 @@ const required = [
   'NitroMapboxAR.podspec',
   'ios/Nitro/MapboxARAccessToken.mm',
   'react-native.config.js',
+  'app.plugin.js',
+  'plugin/withEmbeddedSwiftPackageFrameworks.js',
+  'plugin/embed-swift-package-frameworks.sh',
 ]
 
 for (const path of required) {
