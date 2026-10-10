@@ -48,6 +48,15 @@ The maps view and navigation trip sessions read it from there; there is no per-v
 
 **Android build token (secret, `DOWNLOADS:READ` scope).** The maps and navigation packages pull their AARs from Mapbox's Maven repository, which needs a secret token at build time. Put it in `~/.gradle/gradle.properties` or the environment as `MAPBOX_DOWNLOADS_TOKEN`. Never ship it in app code or commit it. iOS needs no build token: `MapboxMaps` (maps package) and `MapboxNavigationCore` (navigation package) come from Swift Package Manager. Both podspecs attach their package products to the core `NitroMapboxAR` pod target, so one static library carries the Mapbox objects and an app with both packages links with static pods.
 
+**iOS apps with the maps or navigation package need the config plugin.** MapboxCommon and MapboxCoreMaps are dynamic binary frameworks and Turf builds as a dynamic framework. A static pod target links them but cannot embed them, so without the plugin the app builds and then dies at launch in dyld with `Library not loaded: @rpath/MapboxCommon.framework/MapboxCommon`. Add the core package to the Expo plugins list:
+
+```js
+// app.json / app.config.ts
+plugins: ['@mikevocalz/nitro-mapbox-ar']
+```
+
+On every `expo prebuild` it adds one run-script phase, `[Nitro Mapbox AR] Embed Swift package frameworks`, to the app target. The phase reads the `@rpath` framework references of the linked app binary, copies each one that Xcode built from a Swift package and whose Mach-O is a dynamic library into `Frameworks/`, and signs it the way CocoaPods signs its own embedded frameworks. It names no Mapbox framework, so the Navigation SDK's binaries are covered by the same phase. It exits immediately on visionOS. If the app target sets `ENABLE_USER_SCRIPT_SANDBOXING = YES`, set it to `NO`; the sandbox denies the reads the phase needs. Bare React Native apps can add the same phase by hand from `plugin/embed-swift-package-frameworks.sh`.
+
 ## Quick look
 
 ```tsx

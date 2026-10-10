@@ -81,12 +81,19 @@ public one, assigned to `MapboxAR.accessToken` from `@mikevocalz/nitro-mapbox-ar
 
 ## iOS setup
 
-The current package uses Mapbox's CocoaPods distribution because React Native
-autolinking still consumes a podspec here. Mapbox has announced that new iOS SDK
-releases will stop being published to CocoaPods after **December 2026**.
+`MapboxMaps` comes from Swift Package Manager through React Native's
+`spm_dependency`, attached to the core `NitroMapboxAR` pod target (see the
+podspec). Its MapboxCommon and MapboxCoreMaps binaries are dynamic frameworks
+that a static pod cannot embed, so Expo apps must list the core package's
+config plugin:
 
-Before that deadline, move this optional Apple package to a Swift Package
-Manager-backed integration. The core Graphite/WebGPU/Viro path is unaffected.
+```js
+plugins: ['@mikevocalz/nitro-mapbox-ar']
+```
+
+Without it the app builds and then fails at launch with `Library not loaded:
+@rpath/MapboxCommon.framework/MapboxCommon`. The root README's Access tokens
+section describes the build phase the plugin adds.
 
 ## visionOS / React Vision
 

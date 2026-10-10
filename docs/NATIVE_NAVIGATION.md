@@ -53,6 +53,16 @@ logs its static-linking warning for `NitroMapboxAR`; static pods link (checked
 with the reference app on the iOS Simulator). Stable releases need no `.netrc`
 token.
 
+Static pods link the Mapbox frameworks but do not embed them. MapboxCommon and
+MapboxCoreMaps are dynamic binary xcframeworks and Turf builds dynamic, so an
+app without the core package's Expo config plugin (`plugins:
+['@mikevocalz/nitro-mapbox-ar']`) builds and then fails at launch with `Library
+not loaded: @rpath/MapboxCommon.framework/MapboxCommon`. The plugin's build
+phase copies and signs every dynamic framework the app links from a Swift
+package, found by Mach-O type rather than by name, so binaries the navigation
+packages add are embedded by the same phase. The README's Access tokens section
+describes it.
+
 **Android.** `com.mapbox.navigationcore:navigation-ndk27` (group from
 `gradle/artifact-settings.gradle`, `mapboxArtifactGroupId`; artifact
 `navigation$ndkVersionSuffix` in `navSdkArtifactSettings`) is served from

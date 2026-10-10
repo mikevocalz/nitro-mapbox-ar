@@ -77,6 +77,8 @@
     "ios/Nitro",
     "NitroMapboxAR.podspec",
     "react-native.config.js",
+    "app.plugin.js",
+    "plugin",
     "scripts/check-gpu-stack.mjs",
     "scripts/check-package-surface.mjs",
     "docs",
@@ -105,7 +107,8 @@
       "types": "./dist/typescript/core/index.d.ts",
       "import": "./dist/module/core/index.js",
       "default": "./dist/module/core/index.js"
-    }
+    },
+    "./app.plugin.js": "./app.plugin.js"
   },
   "peerDependenciesMeta": {
     "@shopify/react-native-skia": {
