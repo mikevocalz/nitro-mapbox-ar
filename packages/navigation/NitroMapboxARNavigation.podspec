@@ -28,11 +28,23 @@ Pod::Spec.new do |s|
   load "nitrogen/generated/ios/NitroMapboxARNavigation+autolinking.rb"
   add_nitrogen_files(s)
 
-  spm_dependency(s,
+  # Attached to the NitroMapboxAR pod target, the same owner the maps pod uses
+  # for MapboxMaps. MapboxNavigationCore depends on MapboxMaps, and with static
+  # pod libraries Xcode copies a package's object files into every pod library
+  # that lists one of its products; two owners meant two copies of
+  # MapboxMaps.o and duplicate symbols at app link. NitroMapboxAR is a
+  # dependency of this pod, so the packages are built before this pod compiles
+  # against them through the search paths below.
+  spm_dependency(Struct.new(:name).new("NitroMapboxAR"),
     url: "https://github.com/mapbox/mapbox-navigation-ios.git",
     requirement: { kind: "exactVersion", version: navigation_version },
     products: ["MapboxNavigationCore", "MapboxDirections"]
   )
+  spm_products_dir = "${SYMROOT}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}"
+  s.pod_target_xcconfig = (s.attributes_hash["pod_target_xcconfig"] || {}).merge({
+    "SWIFT_INCLUDE_PATHS" => "$(inherited) #{spm_products_dir}",
+    "FRAMEWORK_SEARCH_PATHS" => "$(inherited) #{spm_products_dir} #{spm_products_dir}/PackageFrameworks",
+  })
 
   s.dependency "NitroMapboxAR"
   s.dependency "NitroModules"
