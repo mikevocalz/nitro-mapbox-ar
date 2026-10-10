@@ -51,22 +51,15 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "AR uses the camera to place Mapbox content in the world.",
-        "NSLocationWhenInUseUsageDescription": "Location powers Mapbox search, routing and geospatial AR.",
-        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos",
-        "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos",
-        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to use your microphone"
-      },
-      "bundleIdentifier": "com.anonymous.nitromapboxarreference"
+        "NSLocationWhenInUseUsageDescription": "Location powers Mapbox search, routing and geospatial AR."
+      }
     },
     "android": {
       "permissions": [
         "CAMERA",
         "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION"
-      ],
-      "package": "com.anonymous.nitromapboxarreference"
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro"

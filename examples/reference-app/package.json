@@ -12,8 +12,7 @@
     "quest": "expo run:android --variant questDebug",
     "quest:release": "expo run:android --variant questRelease",
     "web": "expo start --web",
-    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.web.json",
-    "postinstall": "patch-package"
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.web.json"
   },
   "dependencies": {
     "@metavr/layout-compat": "1.0.0",
@@ -43,7 +42,6 @@
     "@react-native-community/cli": "20.2.0",
     "@types/react": "19.3.0",
     "babel-preset-expo": "57.0.14",
-    "typescript": "7.0.2",
-    "patch-package": "^8.0.0"
+    "typescript": "7.0.2"
   }
 }
