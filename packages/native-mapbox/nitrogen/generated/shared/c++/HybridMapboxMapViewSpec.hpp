@@ -17,6 +17,8 @@
 namespace margelo::nitro::mapboxar::nativemap { struct CameraTarget; }
 // Forward declaration of `MapProjection` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { enum class MapProjection; }
+// Forward declaration of `LocationPuckBearing` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class LocationPuckBearing; }
 // Forward declaration of `HybridMapStyleSpec` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { class HybridMapStyleSpec; }
 // Forward declaration of `HybridPointAnnotationManagerSpec` to properly resolve imports.
@@ -44,6 +46,7 @@ namespace margelo::nitro::mapboxar::nativemap { struct RenderedFeatureQuery; }
 #include "CameraTarget.hpp"
 #include <optional>
 #include "MapProjection.hpp"
+#include "LocationPuckBearing.hpp"
 #include <memory>
 #include "HybridMapStyleSpec.hpp"
 #include <NitroModules/Promise.hpp>
@@ -96,6 +99,10 @@ namespace margelo::nitro::mapboxar::nativemap {
       virtual void setProjection(std::optional<MapProjection> projection) = 0;
       virtual std::optional<bool> getEnableGestures() = 0;
       virtual void setEnableGestures(std::optional<bool> enableGestures) = 0;
+      virtual std::optional<bool> getShowUserLocation() = 0;
+      virtual void setShowUserLocation(std::optional<bool> showUserLocation) = 0;
+      virtual std::optional<LocationPuckBearing> getPuckBearing() = 0;
+      virtual void setPuckBearing(std::optional<LocationPuckBearing> puckBearing) = 0;
 
     public:
       // Methods

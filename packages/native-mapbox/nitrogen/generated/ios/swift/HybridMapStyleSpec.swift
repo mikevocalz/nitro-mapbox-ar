@@ -20,6 +20,8 @@ public protocol HybridMapStyleSpec_protocol: HybridObject {
   func removeSource(sourceId: String) throws -> Promise<Void>
   func addLayer(layer: StyleLayer, belowLayerId: String?) throws -> Promise<Void>
   func removeLayer(layerId: String) throws -> Promise<Void>
+  func addStyleImage(id: String, image: StyleImageSource, options: StyleImageOptions?) throws -> Promise<Void>
+  func removeStyleImage(id: String) throws -> Promise<Void>
   func setTerrain(terrain: TerrainOptions) throws -> Promise<Void>
   func clearTerrain() throws -> Promise<Void>
   func setStandardConfig(config: StandardStyleConfig) throws -> Promise<Void>

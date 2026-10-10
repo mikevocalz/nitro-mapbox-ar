@@ -22,6 +22,8 @@ namespace margelo::nitro::mapboxar::nativemap {
       prototype.registerHybridMethod("removeSource", &HybridMapStyleSpec::removeSource);
       prototype.registerHybridMethod("addLayer", &HybridMapStyleSpec::addLayer);
       prototype.registerHybridMethod("removeLayer", &HybridMapStyleSpec::removeLayer);
+      prototype.registerHybridMethod("addStyleImage", &HybridMapStyleSpec::addStyleImage);
+      prototype.registerHybridMethod("removeStyleImage", &HybridMapStyleSpec::removeStyleImage);
       prototype.registerHybridMethod("setTerrain", &HybridMapStyleSpec::setTerrain);
       prototype.registerHybridMethod("clearTerrain", &HybridMapStyleSpec::clearTerrain);
       prototype.registerHybridMethod("setStandardConfig", &HybridMapStyleSpec::setStandardConfig);

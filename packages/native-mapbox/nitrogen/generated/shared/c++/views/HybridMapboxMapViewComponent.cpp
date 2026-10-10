@@ -24,6 +24,8 @@ namespace margelo::nitro::mapboxar::nativemap::views {
     camera(nitro::ReactProp<std::optional<CameraTarget>>::fromRawValue("MapboxMapView", "camera", rawProps, sourceProps.camera)),
     projection(nitro::ReactProp<std::optional<MapProjection>>::fromRawValue("MapboxMapView", "projection", rawProps, sourceProps.projection)),
     enableGestures(nitro::ReactProp<std::optional<bool>>::fromRawValue("MapboxMapView", "enableGestures", rawProps, sourceProps.enableGestures)),
+    showUserLocation(nitro::ReactProp<std::optional<bool>>::fromRawValue("MapboxMapView", "showUserLocation", rawProps, sourceProps.showUserLocation)),
+    puckBearing(nitro::ReactProp<std::optional<LocationPuckBearing>>::fromRawValue("MapboxMapView", "puckBearing", rawProps, sourceProps.puckBearing)),
     hybridRef(nitro::ReactProp<std::optional<std::function<void(const std::shared_ptr<HybridMapboxMapViewSpec>& /* ref */)>>>::fromRawValue("MapboxMapView", "hybridRef", rawProps, sourceProps.hybridRef)) { }
 
   bool HybridMapboxMapViewProps::filterObjectKeys(const std::string& propName) {
@@ -32,6 +34,8 @@ namespace margelo::nitro::mapboxar::nativemap::views {
       case hashString("camera"): return true;
       case hashString("projection"): return true;
       case hashString("enableGestures"): return true;
+      case hashString("showUserLocation"): return true;
+      case hashString("puckBearing"): return true;
       case hashString("hybridRef"): return true;
       default: return false;
     }

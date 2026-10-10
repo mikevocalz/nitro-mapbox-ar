@@ -44,6 +44,23 @@ final class HybridMapStyle: HybridMapStyleSpec {
     mutate("removeLayer") { try $0.removeLayerChecked(layerId) }
   }
 
+  /// SDK: `StyleManager.addImage(_:id:sdf:contentInsets:)`
+  /// (`Style/StyleManager.swift:1188`), which takes the scale from `UIImage.scale`.
+  func addStyleImage(id: String, image: StyleImageSource, options: StyleImageOptions?) throws -> Promise<Void> {
+    let scale = options?.scale ?? 1
+    guard scale.isFinite, scale > 0 else {
+      return .rejected(withError: RuntimeError.error(withMessage: "options.scale must be greater than 0, got \(scale)"))
+    }
+    let sdf = options?.sdf ?? false
+    return MainThreadPromise.run(after: { image.loadImage(scale: scale, completion: $0) }) { decoded in
+      try self.liveStyleMap("addStyleImage").addImage(decoded, id: id, sdf: sdf)
+    }
+  }
+
+  func removeStyleImage(id: String) throws -> Promise<Void> {
+    mutate("removeStyleImage") { try $0.removeImageChecked(id) }
+  }
+
   func setTerrain(terrain: TerrainOptions) throws -> Promise<Void> {
     mutate("setTerrain") { try $0.setTerrain(terrain) }
   }
@@ -58,11 +75,16 @@ final class HybridMapStyle: HybridMapStyleSpec {
 
   private func mutate(_ operation: String, _ body: @escaping (MapboxMap) throws -> Void) -> Promise<Void> {
     MainThreadPromise.run {
-      guard let map = self.host?.liveStyleMap(generation: self.generation) else {
-        throw RuntimeError.error(withMessage: "This MapStyle was replaced (MapStyle.\(operation)); use the handle from the latest style load")
-      }
-      try body(map)
+      try body(self.liveStyleMap(operation))
     }
+  }
+
+  /// The map's style while this handle is current. Main thread only.
+  private func liveStyleMap(_ operation: String) throws -> MapboxMap {
+    guard let map = host?.liveStyleMap(generation: generation) else {
+      throw RuntimeError.error(withMessage: "This MapStyle was replaced (MapStyle.\(operation)); use the handle from the latest style load")
+    }
+    return map
   }
 }
 #endif

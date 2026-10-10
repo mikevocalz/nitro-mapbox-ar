@@ -51,6 +51,18 @@ abstract class HybridMapboxMapViewSpec: HybridView() {
   @set:DoNotStrip
   @set:Keep
   abstract var enableGestures: Boolean?
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
+  abstract var showUserLocation: Boolean?
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
+  abstract var puckBearing: LocationPuckBearing?
 
   // Methods
   @DoNotStrip

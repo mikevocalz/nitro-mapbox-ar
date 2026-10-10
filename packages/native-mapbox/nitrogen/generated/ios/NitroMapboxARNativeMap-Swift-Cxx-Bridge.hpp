@@ -34,6 +34,8 @@ namespace margelo::nitro::mapboxar::nativemap { class HybridPointAnnotationManag
 namespace margelo::nitro::mapboxar::nativemap { class HybridRenderedFeatureSpec; }
 // Forward declaration of `ListenerSubscription` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { struct ListenerSubscription; }
+// Forward declaration of `LocationPuckBearing` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class LocationPuckBearing; }
 // Forward declaration of `MapProjection` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { enum class MapProjection; }
 // Forward declaration of `MapTapEvent` to properly resolve imports.
@@ -46,6 +48,10 @@ namespace margelo::nitro::mapboxar::nativemap { struct ScreenBox; }
 namespace margelo::nitro::mapboxar::nativemap { struct ScreenPoint; }
 // Forward declaration of `StandardLightPreset` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { enum class StandardLightPreset; }
+// Forward declaration of `StandardTheme` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class StandardTheme; }
+// Forward declaration of `StyleImageOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct StyleImageOptions; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridMapStyleSpec_cxx` to properly resolve imports.
@@ -73,12 +79,15 @@ namespace NitroMapboxARNativeMap { class HybridRenderedFeatureSpec_cxx; }
 #include "HybridPointAnnotationManagerSpec.hpp"
 #include "HybridRenderedFeatureSpec.hpp"
 #include "ListenerSubscription.hpp"
+#include "LocationPuckBearing.hpp"
 #include "MapProjection.hpp"
 #include "MapTapEvent.hpp"
 #include "PointAnnotation.hpp"
 #include "ScreenBox.hpp"
 #include "ScreenPoint.hpp"
 #include "StandardLightPreset.hpp"
+#include "StandardTheme.hpp"
+#include "StyleImageOptions.hpp"
 #include <NitroModules/AnyMap.hpp>
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/PromiseHolder.hpp>
@@ -196,6 +205,21 @@ namespace margelo::nitro::mapboxar::nativemap::bridge::swift {
     return optional.has_value();
   }
   inline bool get_std__optional_bool_(const std::optional<bool>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<LocationPuckBearing>
+  /**
+   * Specialized version of `std::optional<LocationPuckBearing>`.
+   */
+  using std__optional_LocationPuckBearing_ = std::optional<LocationPuckBearing>;
+  inline std::optional<LocationPuckBearing> create_std__optional_LocationPuckBearing_(const LocationPuckBearing& value) noexcept {
+    return std::optional<LocationPuckBearing>(value);
+  }
+  inline bool has_value_std__optional_LocationPuckBearing_(const std::optional<LocationPuckBearing>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline LocationPuckBearing get_std__optional_LocationPuckBearing_(const std::optional<LocationPuckBearing>& optional) noexcept {
     return optional.value();
   }
   
@@ -675,6 +699,21 @@ namespace margelo::nitro::mapboxar::nativemap::bridge::swift {
     return optional.value();
   }
   
+  // pragma MARK: std::optional<StyleImageOptions>
+  /**
+   * Specialized version of `std::optional<StyleImageOptions>`.
+   */
+  using std__optional_StyleImageOptions_ = std::optional<StyleImageOptions>;
+  inline std::optional<StyleImageOptions> create_std__optional_StyleImageOptions_(const StyleImageOptions& value) noexcept {
+    return std::optional<StyleImageOptions>(value);
+  }
+  inline bool has_value_std__optional_StyleImageOptions_(const std::optional<StyleImageOptions>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline StyleImageOptions get_std__optional_StyleImageOptions_(const std::optional<StyleImageOptions>& optional) noexcept {
+    return optional.value();
+  }
+  
   // pragma MARK: std::optional<StandardLightPreset>
   /**
    * Specialized version of `std::optional<StandardLightPreset>`.
@@ -687,6 +726,21 @@ namespace margelo::nitro::mapboxar::nativemap::bridge::swift {
     return optional.has_value();
   }
   inline StandardLightPreset get_std__optional_StandardLightPreset_(const std::optional<StandardLightPreset>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<StandardTheme>
+  /**
+   * Specialized version of `std::optional<StandardTheme>`.
+   */
+  using std__optional_StandardTheme_ = std::optional<StandardTheme>;
+  inline std::optional<StandardTheme> create_std__optional_StandardTheme_(const StandardTheme& value) noexcept {
+    return std::optional<StandardTheme>(value);
+  }
+  inline bool has_value_std__optional_StandardTheme_(const std::optional<StandardTheme>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline StandardTheme get_std__optional_StandardTheme_(const std::optional<StandardTheme>& optional) noexcept {
     return optional.value();
   }
   

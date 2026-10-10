@@ -46,6 +46,85 @@ test('every spec method has a Swift and a Kotlin implementation and an inventory
   }
 })
 
+/** Field names declared in an interface body, in source order. */
+function interfaceFields(path: string, interfaceName: string): string[] {
+  const source = read(path)
+  const start = source.indexOf(`export interface ${interfaceName}`)
+  assert.notEqual(start, -1, `${interfaceName} not found in ${path}`)
+  const body = source.slice(source.indexOf('{', start), source.indexOf('\n}', start))
+  return [...body.matchAll(/^ {2}(\w+)\??:/gm)].map((match) => match[1] as string)
+}
+
+/** String members of an exported literal union type alias. */
+function unionMembers(path: string, typeName: string): string[] {
+  const match = read(path).match(new RegExp(`export type ${typeName} = ([^\\n]+)`))
+  assert.ok(match, `${typeName} not found in ${path}`)
+  return [...(match[1] as string).matchAll(/'([^']+)'/g)].map((member) => member[1] as string)
+}
+
+test('every view prop is stored by both natives and has an inventory row', () => {
+  const props = interfaceFields(join(pkg, 'src/specs/MapboxMapView.nitro.ts'), 'MapboxMapViewProps')
+  assert.ok(props.includes('showUserLocation') && props.includes('puckBearing'), `props parsed: ${props.join(', ')}`)
+  const swift = read(join(iosDir, 'HybridMapboxMapView.swift'))
+  const kotlin = read(join(androidDir, 'HybridMapboxMapView.kt'))
+  for (const prop of props) {
+    // Both the SDK branch and the visionOS fallback must declare it.
+    assert.equal(swift.match(new RegExp(`\\bvar ${prop}\\b`, 'g'))?.length, 2, `HybridMapboxMapView.swift declares ${prop} twice`)
+    assert.match(kotlin, new RegExp(`override var ${prop}\\b`), `HybridMapboxMapView.kt lacks ${prop}`)
+    assert.match(inventory, new RegExp(`\`${prop}\``), `MAPS_SDK_INVENTORY.md has no row for ${prop}`)
+  }
+})
+
+test('the location puck maps every bearing and the library never requests location permission', () => {
+  assert.deepEqual(unionMembers(join(pkg, 'src/types/LocationPuckBearing.ts'), 'LocationPuckBearing'), ['heading', 'course', 'none'])
+  const swift = read(join(iosDir, 'LocationOptions+LocationPuckBearing.swift'))
+  assert.match(swift, /case \.heading: bearing = \.heading/)
+  assert.match(swift, /case \.course: bearing = \.course/)
+  assert.match(swift, /case \.none: bearing = nil/)
+  assert.match(swift, /puckType: showUserLocation \? \.puck2D\(\.makeDefault\(showBearing: bearing != nil\)\) : nil/)
+  const kotlin = read(join(androidDir, 'LocationPuckBearing+toPuckBearing.kt'))
+  assert.match(kotlin, /LocationPuckBearing\.HEADING -> PuckBearing\.HEADING/)
+  assert.match(kotlin, /LocationPuckBearing\.COURSE -> PuckBearing\.COURSE/)
+  assert.match(kotlin, /LocationPuckBearing\.NONE -> null/)
+  const view = read(join(androidDir, 'HybridMapboxMapView.kt'))
+  assert.match(view, /enabled = visible/)
+  assert.match(view, /locationPuck = createDefault2DPuck\(bearing != null\)/)
+  assert.match(view, /puckBearingEnabled = bearing != null/)
+  const natives = nativeSources(iosDir, '.swift') + nativeSources(androidDir, '.kt')
+  assert.doesNotMatch(natives, /request(WhenInUse|Always)Authorization|requestPermissions|ActivityCompat|ACCESS_(FINE|COARSE)_LOCATION/)
+})
+
+test('every Standard config field reaches the import config in both natives', () => {
+  const typesFile = join(pkg, 'src/types/StandardStyleConfig.ts')
+  const keys = interfaceFields(typesFile, 'StandardStyleConfig').filter((field) => field !== 'importId')
+  assert.deepEqual(keys, ['lightPreset', 'theme', 'show3dObjects', 'showPointOfInterestLabels'])
+  // StandardTheme in Style/Generated/MapStyle+Standard.swift:158-172 at 11.32.0, minus `custom`.
+  assert.deepEqual(unionMembers(typesFile, 'StandardTheme'), ['default', 'faded', 'monochrome'])
+  const swift = read(join(iosDir, 'MapboxMap+Style.swift'))
+  const kotlin = read(join(androidDir, 'MapboxMap+Style.kt'))
+  for (const key of keys) {
+    assert.match(swift, new RegExp(`configs\\["${key}"\\] = `), `MapboxMap+Style.swift does not set ${key}`)
+    assert.match(kotlin, new RegExp(`properties\\["${key}"\\] = `), `MapboxMap+Style.kt does not set ${key}`)
+  }
+})
+
+test('style images load off the main thread and validate before the SDK call', () => {
+  const swiftStyle = read(join(iosDir, 'HybridMapStyle.swift'))
+  assert.match(swiftStyle, /MainThreadPromise\.run\(after: \{ image\.loadImage/)
+  assert.match(swiftStyle, /guard scale\.isFinite, scale > 0/)
+  const swiftLoader = read(join(iosDir, 'StyleImageSource+UIImage.swift'))
+  assert.match(swiftLoader, /Set exactly one of image\.uri and image\.base64/)
+  assert.match(swiftLoader, /case "file":[\s\S]*DispatchQueue\.global/)
+  assert.match(swiftLoader, /case "http", "https":[\s\S]*URLSession\.shared\.dataTask/)
+  const kotlinStyle = read(join(androidDir, 'HybridMapStyle.kt'))
+  assert.match(kotlinStyle, /load = \{ image\.decodeBitmap\(\) \}/)
+  assert.match(kotlinStyle, /scale\.isFinite\(\) && scale > 0/)
+  const kotlinLoader = read(join(androidDir, 'StyleImageSource+decodeBitmap.kt'))
+  assert.match(kotlinLoader, /Set exactly one of image\.uri and image\.base64/)
+  assert.match(kotlinLoader, /check\(status in 200\.\.299\)/)
+  assert.match(read(join(androidDir, 'MainThreadPromise.kt')), /worker\.execute \{[\s\S]*main\.post/)
+})
+
 test('the view takes no per-view access token (API_DESIGN decision 1)', () => {
   const config = JSON.parse(read(join(pkg, 'nitrogen/generated/shared/json/MapboxMapViewConfig.json'))) as {
     validAttributes: Record<string, boolean>
@@ -55,6 +134,8 @@ test('the view takes no per-view access token (API_DESIGN decision 1)', () => {
     'enableGestures',
     'hybridRef',
     'projection',
+    'puckBearing',
+    'showUserLocation',
     'styleUri',
   ])
   assert.match(read(join(iosDir, 'MapHost.swift')), /MapboxARAccessToken\.current/)

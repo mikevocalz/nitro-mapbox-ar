@@ -22,6 +22,10 @@ namespace margelo::nitro::mapboxar::nativemap {
       prototype.registerHybridSetter("projection", &HybridMapboxMapViewSpec::setProjection);
       prototype.registerHybridGetter("enableGestures", &HybridMapboxMapViewSpec::getEnableGestures);
       prototype.registerHybridSetter("enableGestures", &HybridMapboxMapViewSpec::setEnableGestures);
+      prototype.registerHybridGetter("showUserLocation", &HybridMapboxMapViewSpec::getShowUserLocation);
+      prototype.registerHybridSetter("showUserLocation", &HybridMapboxMapViewSpec::setShowUserLocation);
+      prototype.registerHybridGetter("puckBearing", &HybridMapboxMapViewSpec::getPuckBearing);
+      prototype.registerHybridSetter("puckBearing", &HybridMapboxMapViewSpec::setPuckBearing);
       prototype.registerHybridMethod("loadStyle", &HybridMapboxMapViewSpec::loadStyle);
       prototype.registerHybridMethod("createPointAnnotationManager", &HybridMapboxMapViewSpec::createPointAnnotationManager);
       prototype.registerHybridMethod("flyTo", &HybridMapboxMapViewSpec::flyTo);

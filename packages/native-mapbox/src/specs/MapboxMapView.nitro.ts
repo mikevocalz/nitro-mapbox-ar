@@ -11,6 +11,8 @@ import type { CameraState } from '../types/CameraState'
 import type { CameraTarget } from '../types/CameraTarget'
 import type { CoordinateBounds } from '../types/CoordinateBounds'
 import type { FitBoundsOptions } from '../types/FitBoundsOptions'
+import type { LocationPuckBearing } from '../types/LocationPuckBearing'
+import type { MapCapabilities } from '../types/MapCapabilities'
 import type { MapProjection } from '../types/MapProjection'
 import type { MapStyle } from './MapStyle.nitro'
 import type { MapTapEvent } from '../types/MapTapEvent'
@@ -41,6 +43,29 @@ export interface MapboxMapViewProps extends HybridViewProps {
   projection?: MapProjection
   /** Pan, zoom, rotate and pitch gestures. @default true */
   enableGestures?: boolean
+  /**
+   * Draw the SDK's default 2D puck at the device location.
+   *
+   * The library never asks for location permission. The app requests it
+   * first: on iOS, add `NSLocationWhenInUseUsageDescription` to Info.plist and
+   * call `requestWhenInUseAuthorization`; on Android, declare and request
+   * `ACCESS_FINE_LOCATION` or `ACCESS_COARSE_LOCATION`. Without permission the
+   * puck stays hidden. On iOS the Maps SDK itself prompts once when the
+   * Info.plist key exists and the status is not determined.
+   *
+   * Check {@linkcode MapCapabilities.supportsLocationPuck} before turning it
+   * on; on hosts without location hardware the puck never appears.
+   *
+   * @default false
+   */
+  showUserLocation?: boolean
+  /**
+   * What rotates the puck. Has no effect while `showUserLocation` is off.
+   * Any value other than `none` also draws the bearing arrow.
+   *
+   * @default 'none'
+   */
+  puckBearing?: LocationPuckBearing
 }
 
 /**

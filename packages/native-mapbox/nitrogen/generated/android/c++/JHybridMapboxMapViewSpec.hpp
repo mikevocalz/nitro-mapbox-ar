@@ -58,6 +58,10 @@ namespace margelo::nitro::mapboxar::nativemap {
     void setProjection(std::optional<MapProjection> projection) override;
     std::optional<bool> getEnableGestures() override;
     void setEnableGestures(std::optional<bool> enableGestures) override;
+    std::optional<bool> getShowUserLocation() override;
+    void setShowUserLocation(std::optional<bool> showUserLocation) override;
+    std::optional<LocationPuckBearing> getPuckBearing() override;
+    void setPuckBearing(std::optional<LocationPuckBearing> puckBearing) override;
 
   public:
     // Methods

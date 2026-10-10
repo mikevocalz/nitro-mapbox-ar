@@ -26,6 +26,9 @@ data class StandardStyleConfig(
   val lightPreset: StandardLightPreset?,
   @DoNotStrip
   @Keep
+  val theme: StandardTheme?,
+  @DoNotStrip
+  @Keep
   val show3dObjects: Boolean?,
   @DoNotStrip
   @Keep
@@ -38,6 +41,7 @@ data class StandardStyleConfig(
     if (other !is StandardStyleConfig) return false
     return Objects.deepEquals(this.importId, other.importId)
       && Objects.deepEquals(this.lightPreset, other.lightPreset)
+      && Objects.deepEquals(this.theme, other.theme)
       && Objects.deepEquals(this.show3dObjects, other.show3dObjects)
       && Objects.deepEquals(this.showPointOfInterestLabels, other.showPointOfInterestLabels)
   }
@@ -46,6 +50,7 @@ data class StandardStyleConfig(
     return arrayOf<Any?>(
       importId,
       lightPreset,
+      theme,
       show3dObjects,
       showPointOfInterestLabels
     ).contentDeepHashCode()
@@ -59,8 +64,8 @@ data class StandardStyleConfig(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(importId: String?, lightPreset: StandardLightPreset?, show3dObjects: Boolean?, showPointOfInterestLabels: Boolean?): StandardStyleConfig {
-      return StandardStyleConfig(importId, lightPreset, show3dObjects, showPointOfInterestLabels)
+    private fun fromCpp(importId: String?, lightPreset: StandardLightPreset?, theme: StandardTheme?, show3dObjects: Boolean?, showPointOfInterestLabels: Boolean?): StandardStyleConfig {
+      return StandardStyleConfig(importId, lightPreset, theme, show3dObjects, showPointOfInterestLabels)
     }
   }
 }

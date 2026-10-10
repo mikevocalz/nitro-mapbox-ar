@@ -13,6 +13,7 @@ final class HybridMapboxMapView: HybridMapboxMapViewSpec {
   private var appliedStyleUri: String?
   private var cameraChanged = false
   private var gesturesChanged = true
+  private var locationChanged = true
 
   var view: UIView {
     host.container
@@ -32,6 +33,14 @@ final class HybridMapboxMapView: HybridMapboxMapViewSpec {
     didSet { gesturesChanged = true }
   }
 
+  var showUserLocation: Bool? {
+    didSet { locationChanged = true }
+  }
+
+  var puckBearing: LocationPuckBearing? {
+    didSet { locationChanged = true }
+  }
+
   func afterUpdate() {
     // An invalid camera prop is reported by applyCameraProp below.
     let initialCamera = try? camera?.cameraOptions("camera")
@@ -44,6 +53,10 @@ final class HybridMapboxMapView: HybridMapboxMapViewSpec {
       gesturesChanged = false
       applyGestures(to: map)
     }
+    if locationChanged {
+      locationChanged = false
+      applyLocationPuck(to: map)
+    }
     if appliedStyleUri != styleUri, !styleUri.isEmpty {
       appliedStyleUri = styleUri
       host.loadStyle(styleUri, on: map, completion: nil)
@@ -55,6 +68,7 @@ final class HybridMapboxMapView: HybridMapboxMapViewSpec {
     appliedStyleUri = nil
     cameraChanged = true
     gesturesChanged = true
+    locationChanged = true
     host.cameraChanged.removeAll()
     host.mapTapped.removeAll()
     host.styleLoaded.removeAll()
@@ -152,6 +166,16 @@ final class HybridMapboxMapView: HybridMapboxMapViewSpec {
     options.quickZoomEnabled = enabled
     map.gestures.options = options
   }
+
+  /// SDK: `MapView.location` (`Foundation/MapView.swift:142`),
+  /// `LocationManager.options` (`Location/LocationManager.swift:120`).
+  /// Permission prompts are the app's job; see `showUserLocation`.
+  private func applyLocationPuck(to map: MapView) {
+    map.location.options = LocationOptions(
+      showUserLocation: showUserLocation ?? false,
+      puckBearing: puckBearing ?? LocationPuckBearing.none
+    )
+  }
 }
 #else
 /// The `MapboxMapView` Hybrid View where the Maps SDK is not linked
@@ -163,6 +187,8 @@ final class HybridMapboxMapView: HybridMapboxMapViewSpec {
   var camera: CameraTarget?
   var projection: MapProjection?
   var enableGestures: Bool?
+  var showUserLocation: Bool?
+  var puckBearing: LocationPuckBearing?
 
   func loadStyle(uri: String) throws -> Promise<any HybridMapStyleSpec> {
     .rejected(withError: Self.unavailable("loadStyle"))

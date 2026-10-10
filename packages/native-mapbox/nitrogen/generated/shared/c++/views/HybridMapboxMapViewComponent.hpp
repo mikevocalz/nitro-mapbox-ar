@@ -21,6 +21,7 @@
 #include "CameraTarget.hpp"
 #include <optional>
 #include "MapProjection.hpp"
+#include "LocationPuckBearing.hpp"
 #include <memory>
 #include "HybridMapboxMapViewSpec.hpp"
 #include <functional>
@@ -49,6 +50,8 @@ namespace margelo::nitro::mapboxar::nativemap::views {
     nitro::ReactProp<std::optional<CameraTarget>> camera;
     nitro::ReactProp<std::optional<MapProjection>> projection;
     nitro::ReactProp<std::optional<bool>> enableGestures;
+    nitro::ReactProp<std::optional<bool>> showUserLocation;
+    nitro::ReactProp<std::optional<LocationPuckBearing>> puckBearing;
     nitro::ReactProp<std::optional<std::function<void(const std::shared_ptr<HybridMapboxMapViewSpec>& /* ref */)>>> hybridRef;
 
     [[nodiscard]]
@@ -57,6 +60,8 @@ namespace margelo::nitro::mapboxar::nativemap::views {
              camera.hasSameValue(other.camera) &&
              projection.hasSameValue(other.projection) &&
              enableGestures.hasSameValue(other.enableGestures) &&
+             showUserLocation.hasSameValue(other.showUserLocation) &&
+             puckBearing.hasSameValue(other.puckBearing) &&
              hybridRef.hasSameValue(other.hybridRef);
     }
 
@@ -66,6 +71,8 @@ namespace margelo::nitro::mapboxar::nativemap::views {
              camera.isProvided() ||
              projection.isProvided() ||
              enableGestures.isProvided() ||
+             showUserLocation.isProvided() ||
+             puckBearing.isProvided() ||
              hybridRef.isProvided();
     }
 

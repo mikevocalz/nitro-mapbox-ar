@@ -73,6 +73,16 @@ void JHybridMapboxMapViewStateUpdater::updateViewProps(jni::alias_ref<jni::JClas
         : !newProps->enableGestures.hasSameValue(oldProps->enableGestures)) {
     hybridView->setEnableGestures(newProps->enableGestures.get());
   }
+  if (oldProps == nullptr
+        ? newProps->showUserLocation.isProvided()
+        : !newProps->showUserLocation.hasSameValue(oldProps->showUserLocation)) {
+    hybridView->setShowUserLocation(newProps->showUserLocation.get());
+  }
+  if (oldProps == nullptr
+        ? newProps->puckBearing.isProvided()
+        : !newProps->puckBearing.hasSameValue(oldProps->puckBearing)) {
+    hybridView->setPuckBearing(newProps->puckBearing.get());
+  }
 
   // Update hybridRef if it changed
   if (oldProps == nullptr
