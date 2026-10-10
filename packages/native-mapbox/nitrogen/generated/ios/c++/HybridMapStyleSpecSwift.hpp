@@ -22,12 +22,18 @@ namespace margelo::nitro::mapboxar::nativemap { struct VectorSource; }
 namespace margelo::nitro::mapboxar::nativemap { struct StyleLayer; }
 // Forward declaration of `StyleLayerType` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { enum class StyleLayerType; }
+// Forward declaration of `StyleImageSource` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct StyleImageSource; }
+// Forward declaration of `StyleImageOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct StyleImageOptions; }
 // Forward declaration of `TerrainOptions` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { struct TerrainOptions; }
 // Forward declaration of `StandardStyleConfig` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { struct StandardStyleConfig; }
 // Forward declaration of `StandardLightPreset` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { enum class StandardLightPreset; }
+// Forward declaration of `StandardTheme` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class StandardTheme; }
 
 #include <string>
 #include <NitroModules/Promise.hpp>
@@ -38,9 +44,12 @@ namespace margelo::nitro::mapboxar::nativemap { enum class StandardLightPreset; 
 #include "StyleLayer.hpp"
 #include "StyleLayerType.hpp"
 #include <NitroModules/AnyMap.hpp>
+#include "StyleImageSource.hpp"
+#include "StyleImageOptions.hpp"
 #include "TerrainOptions.hpp"
 #include "StandardStyleConfig.hpp"
 #include "StandardLightPreset.hpp"
+#include "StandardTheme.hpp"
 
 #include "NitroMapboxARNativeMap-Swift-Cxx-Umbrella.hpp"
 
@@ -145,6 +154,22 @@ namespace margelo::nitro::mapboxar::nativemap {
     }
     inline std::shared_ptr<Promise<void>> removeLayer(const std::string& layerId) override {
       auto __result = _swiftPart.removeLayer(layerId);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> addStyleImage(const std::string& id, const StyleImageSource& image, const std::optional<StyleImageOptions>& options) override {
+      auto __result = _swiftPart.addStyleImage(id, std::forward<decltype(image)>(image), options);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> removeStyleImage(const std::string& id) override {
+      auto __result = _swiftPart.removeStyleImage(id);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

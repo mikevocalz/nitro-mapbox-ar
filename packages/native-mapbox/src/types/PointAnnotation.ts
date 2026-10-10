@@ -1,4 +1,5 @@
 import type { GeographicCoordinate } from './GeographicCoordinate'
+import type { MapStyle } from '../specs/MapStyle.nitro'
 import type { PointAnnotationManager } from '../specs/PointAnnotationManager.nitro'
 
 /**
@@ -11,7 +12,11 @@ export interface PointAnnotation {
   id: string
   /** Position. `altitude` is ignored. */
   coordinate: GeographicCoordinate
-  /** Id of an image already in the style. Omit for a text-only marker. */
+  /**
+   * Id of an image already in the style, either from the style's sprite or
+   * added with {@linkcode MapStyle.addStyleImage}. Omit for a text-only
+   * marker.
+   */
   iconImageId?: string
   /** Label drawn next to the icon. */
   text?: string

@@ -14,6 +14,8 @@ public protocol HybridMapboxMapViewSpec_protocol: HybridObject, HybridView {
   var camera: CameraTarget? { get set }
   var projection: MapProjection? { get set }
   var enableGestures: Bool? { get set }
+  var showUserLocation: Bool? { get set }
+  var puckBearing: LocationPuckBearing? { get set }
 
   // Methods
   func loadStyle(uri: String) throws -> Promise<(any HybridMapStyleSpec)>

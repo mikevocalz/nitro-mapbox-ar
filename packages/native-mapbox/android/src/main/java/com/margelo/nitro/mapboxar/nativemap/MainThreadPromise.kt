@@ -3,6 +3,7 @@ package com.margelo.nitro.mapboxar.nativemap
 import android.os.Handler
 import android.os.Looper
 import com.margelo.nitro.core.Promise
+import java.util.concurrent.Executors
 
 /**
  * Settles a Nitro promise from work that must run on the main thread.
@@ -14,6 +15,9 @@ import com.margelo.nitro.core.Promise
 internal object MainThreadPromise {
   private val main = Handler(Looper.getMainLooper())
 
+  /** Idle threads exit after 60 s, so an unused pool costs nothing. */
+  private val worker = Executors.newCachedThreadPool()
+
   /** Runs [body] on the main thread and resolves with its result. */
   fun <T> run(body: () -> T): Promise<T> {
     val promise = Promise<T>()
@@ -22,6 +26,32 @@ internal object MainThreadPromise {
         promise.resolve(body())
       } catch (error: Throwable) {
         promise.reject(error)
+      }
+    }
+    return promise
+  }
+
+  /**
+   * Runs [load] on a worker thread, then [body] with its result on the main
+   * thread. Use it when reading or decoding must stay off the main thread and
+   * only the SDK call needs it. A throw from either rejects.
+   */
+  fun <L, T> run(load: () -> L, body: (L) -> T): Promise<T> {
+    val promise = Promise<T>()
+    worker.execute {
+      val loaded =
+        try {
+          load()
+        } catch (error: Throwable) {
+          promise.reject(error)
+          return@execute
+        }
+      main.post {
+        try {
+          promise.resolve(body(loaded))
+        } catch (error: Throwable) {
+          promise.reject(error)
+        }
       }
     }
     return promise

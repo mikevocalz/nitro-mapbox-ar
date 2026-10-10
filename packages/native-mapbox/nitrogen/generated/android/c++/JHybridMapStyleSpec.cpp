@@ -17,12 +17,18 @@ namespace margelo::nitro::mapboxar::nativemap { struct VectorSource; }
 namespace margelo::nitro::mapboxar::nativemap { struct StyleLayer; }
 // Forward declaration of `StyleLayerType` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { enum class StyleLayerType; }
+// Forward declaration of `StyleImageSource` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct StyleImageSource; }
+// Forward declaration of `StyleImageOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct StyleImageOptions; }
 // Forward declaration of `TerrainOptions` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { struct TerrainOptions; }
 // Forward declaration of `StandardStyleConfig` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { struct StandardStyleConfig; }
 // Forward declaration of `StandardLightPreset` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { enum class StandardLightPreset; }
+// Forward declaration of `StandardTheme` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class StandardTheme; }
 
 #include <string>
 #include <NitroModules/Promise.hpp>
@@ -41,12 +47,18 @@ namespace margelo::nitro::mapboxar::nativemap { enum class StandardLightPreset; 
 #include "JStyleLayerType.hpp"
 #include <NitroModules/AnyMap.hpp>
 #include <NitroModules/JAnyMap.hpp>
+#include "StyleImageSource.hpp"
+#include "JStyleImageSource.hpp"
+#include "StyleImageOptions.hpp"
+#include "JStyleImageOptions.hpp"
 #include "TerrainOptions.hpp"
 #include "JTerrainOptions.hpp"
 #include "StandardStyleConfig.hpp"
 #include "JStandardStyleConfig.hpp"
 #include "StandardLightPreset.hpp"
 #include "JStandardLightPreset.hpp"
+#include "StandardTheme.hpp"
+#include "JStandardTheme.hpp"
 
 namespace margelo::nitro::mapboxar::nativemap {
 
@@ -178,6 +190,36 @@ namespace margelo::nitro::mapboxar::nativemap {
   std::shared_ptr<Promise<void>> JHybridMapStyleSpec::removeLayer(const std::string& layerId) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* layerId */)>("removeLayer");
     auto __result = method(_javaPart, jni::make_jstring(layerId));
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridMapStyleSpec::addStyleImage(const std::string& id, const StyleImageSource& image, const std::optional<StyleImageOptions>& options) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* id */, jni::alias_ref<JStyleImageSource> /* image */, jni::alias_ref<JStyleImageOptions> /* options */)>("addStyleImage");
+    auto __result = method(_javaPart, jni::make_jstring(id), JStyleImageSource::fromCpp(image), options.has_value() ? JStyleImageOptions::fromCpp(options.value()) : nullptr);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridMapStyleSpec::removeStyleImage(const std::string& id) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* id */)>("removeStyleImage");
+    auto __result = method(_javaPart, jni::make_jstring(id));
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {

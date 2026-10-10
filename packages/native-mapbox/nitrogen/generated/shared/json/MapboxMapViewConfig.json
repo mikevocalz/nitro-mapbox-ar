@@ -8,6 +8,8 @@
     "camera": true,
     "projection": true,
     "enableGestures": true,
+    "showUserLocation": true,
+    "puckBearing": true,
     "hybridRef": true
   }
 }

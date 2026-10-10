@@ -14,6 +14,7 @@ import NitroModules
 /// `layerProperties(for:)` :933, `removeSource(withId:)` :1006,
 /// `sourceExists(withId:)` :1015, `sourceProperties(for:)` :1059,
 /// `setTerrain(_:)` :1293, `removeTerrain()` :1302, `styleImports` :620,
+/// `removeImage(withId:)` :1205, `imageExists(withId:)` :1216,
 /// `setStyleImportConfigProperties(for:configs:)` :678,
 /// `setProjection(_:)` :1861. `LayerPosition.below(String)` is in
 /// MapboxCoreMaps 11.32.0 (`arm64-apple-ios.swiftinterface` line 85).
@@ -92,6 +93,13 @@ extension MapboxMap {
     try removeLayer(withId: layerId)
   }
 
+  func removeImageChecked(_ imageId: String) throws {
+    guard imageExists(withId: imageId) else {
+      throw RuntimeError.error(withMessage: "No image has id \"\(imageId)\"")
+    }
+    try removeImage(withId: imageId)
+  }
+
   func setTerrain(_ options: TerrainOptions) throws {
     guard sourceExists(withId: options.sourceId), try sourceType(options.sourceId) == "raster-dem" else {
       throw RuntimeError.error(withMessage: "No raster DEM source has id \"\(options.sourceId)\"; add one with MapStyle.addRasterDemSource")
@@ -114,6 +122,7 @@ extension MapboxMap {
     }
     var configs: [String: Any] = [:]
     if let lightPreset = config.lightPreset { configs["lightPreset"] = lightPreset.stringValue }
+    if let theme = config.theme { configs["theme"] = theme.stringValue }
     if let show3dObjects = config.show3dObjects { configs["show3dObjects"] = show3dObjects }
     if let showLabels = config.showPointOfInterestLabels { configs["showPointOfInterestLabels"] = showLabels }
     try setStyleImportConfigProperties(for: importId, configs: configs)

@@ -30,10 +30,13 @@
 
 // Forward declaration of `StandardLightPreset` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { enum class StandardLightPreset; }
+// Forward declaration of `StandardTheme` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class StandardTheme; }
 
 #include <string>
 #include <optional>
 #include "StandardLightPreset.hpp"
+#include "StandardTheme.hpp"
 
 namespace margelo::nitro::mapboxar::nativemap {
 
@@ -44,12 +47,13 @@ namespace margelo::nitro::mapboxar::nativemap {
   public:
     std::optional<std::string> importId     SWIFT_PRIVATE;
     std::optional<StandardLightPreset> lightPreset     SWIFT_PRIVATE;
+    std::optional<StandardTheme> theme     SWIFT_PRIVATE;
     std::optional<bool> show3dObjects     SWIFT_PRIVATE;
     std::optional<bool> showPointOfInterestLabels     SWIFT_PRIVATE;
 
   public:
     StandardStyleConfig() = default;
-    explicit StandardStyleConfig(std::optional<std::string> importId, std::optional<StandardLightPreset> lightPreset, std::optional<bool> show3dObjects, std::optional<bool> showPointOfInterestLabels): importId(importId), lightPreset(lightPreset), show3dObjects(show3dObjects), showPointOfInterestLabels(showPointOfInterestLabels) {}
+    explicit StandardStyleConfig(std::optional<std::string> importId, std::optional<StandardLightPreset> lightPreset, std::optional<StandardTheme> theme, std::optional<bool> show3dObjects, std::optional<bool> showPointOfInterestLabels): importId(importId), lightPreset(lightPreset), theme(theme), show3dObjects(show3dObjects), showPointOfInterestLabels(showPointOfInterestLabels) {}
 
   public:
     friend bool operator==(const StandardStyleConfig& lhs, const StandardStyleConfig& rhs) = default;
@@ -67,6 +71,7 @@ namespace margelo::nitro {
       return margelo::nitro::mapboxar::nativemap::StandardStyleConfig(
         JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "importId"))),
         JSIConverter<std::optional<margelo::nitro::mapboxar::nativemap::StandardLightPreset>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "lightPreset"))),
+        JSIConverter<std::optional<margelo::nitro::mapboxar::nativemap::StandardTheme>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "theme"))),
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "show3dObjects"))),
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "showPointOfInterestLabels")))
       );
@@ -75,6 +80,7 @@ namespace margelo::nitro {
       jsi::Object obj(runtime);
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "importId"), JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.importId));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "lightPreset"), JSIConverter<std::optional<margelo::nitro::mapboxar::nativemap::StandardLightPreset>>::toJSI(runtime, arg.lightPreset));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "theme"), JSIConverter<std::optional<margelo::nitro::mapboxar::nativemap::StandardTheme>>::toJSI(runtime, arg.theme));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "show3dObjects"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.show3dObjects));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "showPointOfInterestLabels"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.showPointOfInterestLabels));
       return obj;
@@ -89,6 +95,7 @@ namespace margelo::nitro {
       }
       if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "importId")))) return false;
       if (!JSIConverter<std::optional<margelo::nitro::mapboxar::nativemap::StandardLightPreset>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "lightPreset")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::mapboxar::nativemap::StandardTheme>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "theme")))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "show3dObjects")))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "showPointOfInterestLabels")))) return false;
       return true;

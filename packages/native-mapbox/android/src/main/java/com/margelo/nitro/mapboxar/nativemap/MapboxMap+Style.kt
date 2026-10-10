@@ -1,8 +1,11 @@
 package com.margelo.nitro.mapboxar.nativemap
 
+import android.graphics.Bitmap
 import com.mapbox.maps.GeoJSONSourceData
 import com.mapbox.maps.LayerPosition
+import com.mapbox.maps.MapboxDelicateApi
 import com.mapbox.maps.MapboxMap
+import com.mapbox.maps.toMapboxImage
 import com.mapbox.maps.extension.style.terrain.generated.removeTerrain
 import com.mapbox.bindgen.Value
 import org.json.JSONObject
@@ -18,6 +21,8 @@ import org.json.JSONException
  * styleLayerExists :250, setStyleTerrain :247, setStyleGeoJSONSourceData :228,
  * setStyleImportConfigProperties :230, getStyleImports :182, setStyleProjection :238,
  * getStyleLayerProperty :185, getStyleLayers :186, getStyleSources :196.
+ * addStyleImage(String, Float, Image, Boolean, List, List, ImageContent?), removeStyleImage,
+ * hasStyleImage and Bitmap.toMapboxImage (ExtensionUtils.kt), read from the 11.32.0 AARs with javap.
  * MapboxStyleManager.removeTerrain (extension-style/.../terrain/generated/TerrainExt.kt:31),
  * GeoJSONSourceData.valueOf(String) (extension-style/.../sources/generated/GeoJsonSource.kt:112),
  * LayerPosition(above, below, at) (plugin-annotation/.../AnnotationManagerImpl.kt:197).
@@ -80,6 +85,18 @@ internal fun MapboxMap.removeLayerChecked(layerId: String) {
   removeStyleLayer(layerId).orThrow("removeLayer")
 }
 
+// toMapboxImage is delicate because it copies pixels and needs ARGB_8888;
+// decodeBitmap decodes to that config.
+@OptIn(MapboxDelicateApi::class)
+internal fun MapboxMap.addBitmapImage(imageId: String, bitmap: Bitmap, scale: Float, sdf: Boolean) {
+  addStyleImage(imageId, scale, bitmap.toMapboxImage(), sdf, emptyList(), emptyList(), null).orThrow("addStyleImage")
+}
+
+internal fun MapboxMap.removeStyleImageChecked(imageId: String) {
+  require(hasStyleImage(imageId)) { "No image has id \"$imageId\"" }
+  removeStyleImage(imageId).orThrow("removeStyleImage")
+}
+
 internal fun MapboxMap.setTerrain(options: TerrainOptions) {
   require(sourceType(options.sourceId) == "raster-dem") {
     "No raster DEM source has id \"${options.sourceId}\"; add one with MapStyle.addRasterDemSource"
@@ -103,6 +120,7 @@ internal fun MapboxMap.setStandardConfig(config: StandardStyleConfig) {
   }
   val properties = mutableMapOf<String, Any?>()
   config.lightPreset?.let { properties["lightPreset"] = it.name.lowercase() }
+  config.theme?.let { properties["theme"] = it.name.lowercase() }
   config.show3dObjects?.let { properties["show3dObjects"] = it }
   config.showPointOfInterestLabels?.let { properties["showPointOfInterestLabels"] = it }
   // An object Value holds HashMap<String, Value> (sdk-base/.../interactions/FeatureState.kt:26).

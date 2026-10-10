@@ -31,10 +31,16 @@ per row.
 | Gestures | `GestureManager` `Gestures/GestureManager.swift:17` (`MapView.gestures`, `:132`); `TapInteraction` `Interactions/Interactions.swift:48` | `gestures` plugin `plugin-gestures/.../GesturesExt.kt:18` |
 | Annotations | `AnnotationOrchestrator` `Annotations/AnnotationOrchestrator.swift` (`MapView.annotations`, `Foundation/MapView.swift:145`) | `annotations` plugin `plugin-annotation/.../AnnotationExt.kt:12` |
 
-Not bound: `LocationManager` / `location` plugin, `ViewportManager` /
-`viewport` plugin, offline, snapshots, view annotations, model sources,
-featureset interactions. `MapCapabilities.supportsLocationPuck` reports
-hardware only; there is no puck API in this package.
+| User location puck | `LocationManager.options` `Location/LocationManager.swift:120` (`MapView.location`, `Foundation/MapView.swift:142`) | `location` plugin, `LocationComponentUtils.getLocationComponent` (`LocationComponentExt.kt`), `LocationComponentSettingsInterface.updateSettings` |
+
+Bound partly: the location plugin draws the default 2D puck only (the
+`showUserLocation` and `puckBearing` props). No custom puck images, 3D
+puck, custom location provider, or location events. The package never
+requests location permission; the app does, before turning the puck on.
+`MapCapabilities.supportsLocationPuck` reports hardware only.
+
+Not bound: `ViewportManager` / `viewport` plugin, offline, snapshots, view
+annotations, model sources, featureset interactions.
 
 ## Members
 
@@ -64,6 +70,8 @@ the device, not one view.
 | `camera` | `MapboxMap.setCamera(to:)` `Foundation/MapboxMap.swift:923`; `CameraOptions.init(center:padding:anchor:zoom:bearing:pitch:)` (CoreMaps swiftinterface) | `MapboxMap.setCamera(CameraOptions)`, `CameraOptions.Builder` |
 | `projection` | `StyleManager.setProjection(_:)` `Style/StyleManager.swift:1861`, `StyleProjection(name:)` `Style/StyleProjection.swift:8` | `setStyleProjection(Value)` `sdk-base/api/Release/metalava.txt:238` |
 | `enableGestures` | `GestureOptions.panEnabled` … `quickZoomEnabled` `Gestures/GestureOptions.swift:23-68` | `GesturesSettings` `sdk-base/api/Release/metalava.txt:2583-2599`, `updateSettings` |
+| `showUserLocation` | `LocationOptions(puckType:puckBearing:puckBearingEnabled:)` `Location/LocationOptions.swift:44`; `PuckType.puck2D(Puck2DConfiguration.makeDefault(showBearing:))` `Location/Puck/PuckType.swift:6,147`; `nil` puck type hides it. `AppleLocationProvider` asks for when-in-use authorization by itself when Info.plist has `NSLocationWhenInUseUsageDescription` and the status is not determined (`Location/AppleLocationProvider.swift:132-134`) | `LocationComponentSettings.Builder.setEnabled` / `setLocationPuck`, `createDefault2DPuck(Boolean)` (`LocationComponentUtils`); read from the `maps-locationcomponent-ndk27` and `base-ndk27` 11.32.0 AARs with `javap`. Never prompts |
+| `puckBearing` | `LocationOptions.puckBearing` (`PuckBearing.heading` / `.course`, `Location/LocationOptions.swift:32,56`) and `puckBearingEnabled` `:37`; `none` sets `puckBearingEnabled = false` and drops the bearing arrow | `Builder.setPuckBearing(PuckBearing)` / `setPuckBearingEnabled`; `com.mapbox.maps.plugin.PuckBearing.HEADING` / `COURSE` (`base-ndk27` AAR) |
 
 ### `MapboxMapView` methods
 
@@ -94,7 +102,9 @@ the device, not one view.
 | `removeLayer` | `removeLayer(withId:)` :820, `layerExists(withId:)` :834 | `removeStyleLayer` :211, `styleLayerExists` :250 |
 | `setTerrain` | `setTerrain(_:)` :1293, `Terrain(sourceId:)` `Style/Generated/Terrain.swift:11`, `sourceProperties(for:)` :1059 | `setStyleTerrain` :247, `styleSources` :263 |
 | `clearTerrain` | `removeTerrain()` :1302 | `MapboxStyleManager.removeTerrain()` `extension-style/.../terrain/generated/TerrainExt.kt:31` |
-| `setStandardConfig` | `setStyleImportConfigProperties(for:configs:)` :678, `styleImports` :620; keys `lightPreset`, `show3dObjects`, `showPointOfInterestLabels` from `Style/Generated/MapStyle+Standard.swift:101-108` | `setStyleImportConfigProperties` :230, `getStyleImports` :182 |
+| `addStyleImage` | `addImage(_:id:sdf:contentInsets:)` :1188 (scale from `UIImage.scale`); decoded off main with `UIImage(data:scale:)` and `preparingForDisplay()`; `file://` read with `Data(contentsOf:)`, `http(s)://` with `URLSession.shared.dataTask` | `addStyleImage(String, Float, Image, Boolean, List, List, ImageContent?)` and `Bitmap.toMapboxImage()` (`com.mapbox.maps.ExtensionUtils`), read from the `base-ndk27` 11.32.0 AAR with `javap`; decoded off main with `BitmapFactory` (ARGB_8888), `http(s)://` with `HttpURLConnection` |
+| `removeStyleImage` | `removeImage(withId:)` :1205, `imageExists(withId:)` :1216 | `removeStyleImage(String)`, `hasStyleImage(String)` (`base-ndk27` AAR) |
+| `setStandardConfig` | `setStyleImportConfigProperties(for:configs:)` :678, `styleImports` :620; keys `theme`, `lightPreset`, `show3dObjects`, `showPointOfInterestLabels` from `Style/Generated/MapStyle+Standard.swift:100-108`; theme values `default`, `faded`, `monochrome` from `StandardTheme` `:158-172` (`custom` needs `theme-data` and is not bound) | `setStyleImportConfigProperties` :230, `getStyleImports` :182 |
 
 ### `PointAnnotationManager`
 
@@ -134,7 +144,8 @@ Managers survive style reloads on both platforms in 11.32.0, so
 
 `PointAnnotation.iconImageId` names an image in the style. An image that
 came with the old style is gone after a reload unless the new style has it
-too.
+too. Images added with `MapStyle.addStyleImage` are dropped the same way;
+re-add them from the style-loaded listener.
 
 ## Verification
 

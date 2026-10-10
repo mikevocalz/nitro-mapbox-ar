@@ -8,6 +8,8 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.margelo.nitro.core.Promise
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.gestures.gestures
+import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
+import com.mapbox.maps.plugin.locationcomponent.location
 
 /**
  * The `MapboxMapView` Hybrid View. Props arrive on the main thread and are
@@ -23,6 +25,7 @@ class HybridMapboxMapView(
   private var appliedStyleUri: String? = null
   private var cameraChanged = false
   private var gesturesChanged = true
+  private var locationChanged = true
   private var started = false
 
   init {
@@ -51,6 +54,18 @@ class HybridMapboxMapView(
       gesturesChanged = true
     }
 
+  override var showUserLocation: Boolean? = null
+    set(value) {
+      field = value
+      locationChanged = true
+    }
+
+  override var puckBearing: LocationPuckBearing? = null
+    set(value) {
+      field = value
+      locationChanged = true
+    }
+
   override fun afterUpdate() {
     super.afterUpdate()
     // An invalid camera prop is reported by applyCameraProp below.
@@ -67,6 +82,10 @@ class HybridMapboxMapView(
     if (gesturesChanged) {
       gesturesChanged = false
       applyGestures(map)
+    }
+    if (locationChanged) {
+      locationChanged = false
+      applyLocationPuck(map)
     }
     if (appliedStyleUri != styleUri && styleUri.isNotEmpty()) {
       appliedStyleUri = styleUri
@@ -173,6 +192,23 @@ class HybridMapboxMapView(
     }
   }
 
+  /**
+   * SDK: MapView.location (LocationComponentUtils / LocationComponentExt.kt),
+   * LocationComponentSettings.Builder enabled / locationPuck / puckBearing /
+   * puckBearingEnabled, createDefault2DPuck(Boolean), all read from the 11.32.0
+   * AARs with javap. Permission requests are the app's job; see `showUserLocation`.
+   */
+  private fun applyLocationPuck(map: MapView) {
+    val visible = showUserLocation ?: false
+    val bearing = (puckBearing ?: LocationPuckBearing.NONE).toPuckBearing()
+    map.location.updateSettings {
+      enabled = visible
+      locationPuck = createDefault2DPuck(bearing != null)
+      puckBearingEnabled = bearing != null
+      bearing?.let { puckBearing = it }
+    }
+  }
+
   private fun release() {
     if (started) {
       started = false
@@ -181,5 +217,6 @@ class HybridMapboxMapView(
     appliedStyleUri = null
     cameraChanged = true
     gesturesChanged = true
+    locationChanged = true
   }
 }

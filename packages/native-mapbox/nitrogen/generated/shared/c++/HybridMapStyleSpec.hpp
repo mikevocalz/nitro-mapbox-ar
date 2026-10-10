@@ -21,6 +21,10 @@ namespace margelo::nitro::mapboxar::nativemap { struct RasterDemSource; }
 namespace margelo::nitro::mapboxar::nativemap { struct VectorSource; }
 // Forward declaration of `StyleLayer` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { struct StyleLayer; }
+// Forward declaration of `StyleImageSource` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct StyleImageSource; }
+// Forward declaration of `StyleImageOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct StyleImageOptions; }
 // Forward declaration of `TerrainOptions` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { struct TerrainOptions; }
 // Forward declaration of `StandardStyleConfig` to properly resolve imports.
@@ -33,6 +37,8 @@ namespace margelo::nitro::mapboxar::nativemap { struct StandardStyleConfig; }
 #include "VectorSource.hpp"
 #include "StyleLayer.hpp"
 #include <optional>
+#include "StyleImageSource.hpp"
+#include "StyleImageOptions.hpp"
 #include "TerrainOptions.hpp"
 #include "StandardStyleConfig.hpp"
 
@@ -74,6 +80,8 @@ namespace margelo::nitro::mapboxar::nativemap {
       virtual std::shared_ptr<Promise<void>> removeSource(const std::string& sourceId) = 0;
       virtual std::shared_ptr<Promise<void>> addLayer(const StyleLayer& layer, const std::optional<std::string>& belowLayerId) = 0;
       virtual std::shared_ptr<Promise<void>> removeLayer(const std::string& layerId) = 0;
+      virtual std::shared_ptr<Promise<void>> addStyleImage(const std::string& id, const StyleImageSource& image, const std::optional<StyleImageOptions>& options) = 0;
+      virtual std::shared_ptr<Promise<void>> removeStyleImage(const std::string& id) = 0;
       virtual std::shared_ptr<Promise<void>> setTerrain(const TerrainOptions& terrain) = 0;
       virtual std::shared_ptr<Promise<void>> clearTerrain() = 0;
       virtual std::shared_ptr<Promise<void>> setStandardConfig(const StandardStyleConfig& config) = 0;

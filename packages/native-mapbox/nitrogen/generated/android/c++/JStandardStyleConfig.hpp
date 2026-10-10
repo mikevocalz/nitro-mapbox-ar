@@ -11,7 +11,9 @@
 #include "StandardStyleConfig.hpp"
 
 #include "JStandardLightPreset.hpp"
+#include "JStandardTheme.hpp"
 #include "StandardLightPreset.hpp"
+#include "StandardTheme.hpp"
 #include <optional>
 #include <string>
 
@@ -38,6 +40,8 @@ namespace margelo::nitro::mapboxar::nativemap {
       jni::local_ref<jni::JString> importId = this->getFieldValue(fieldImportId);
       static const auto fieldLightPreset = clazz->getField<JStandardLightPreset>("lightPreset");
       jni::local_ref<JStandardLightPreset> lightPreset = this->getFieldValue(fieldLightPreset);
+      static const auto fieldTheme = clazz->getField<JStandardTheme>("theme");
+      jni::local_ref<JStandardTheme> theme = this->getFieldValue(fieldTheme);
       static const auto fieldShow3dObjects = clazz->getField<jni::JBoolean>("show3dObjects");
       jni::local_ref<jni::JBoolean> show3dObjects = this->getFieldValue(fieldShow3dObjects);
       static const auto fieldShowPointOfInterestLabels = clazz->getField<jni::JBoolean>("showPointOfInterestLabels");
@@ -45,6 +49,7 @@ namespace margelo::nitro::mapboxar::nativemap {
       return StandardStyleConfig(
         importId != nullptr ? std::make_optional(importId->toStdString()) : std::nullopt,
         lightPreset != nullptr ? std::make_optional(lightPreset->toCpp()) : std::nullopt,
+        theme != nullptr ? std::make_optional(theme->toCpp()) : std::nullopt,
         show3dObjects != nullptr ? std::make_optional(static_cast<bool>(show3dObjects->value())) : std::nullopt,
         showPointOfInterestLabels != nullptr ? std::make_optional(static_cast<bool>(showPointOfInterestLabels->value())) : std::nullopt
       );
@@ -56,13 +61,14 @@ namespace margelo::nitro::mapboxar::nativemap {
      */
     [[maybe_unused]]
     static jni::local_ref<JStandardStyleConfig::javaobject> fromCpp(const StandardStyleConfig& value) {
-      using JSignature = JStandardStyleConfig(jni::alias_ref<jni::JString>, jni::alias_ref<JStandardLightPreset>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>);
+      using JSignature = JStandardStyleConfig(jni::alias_ref<jni::JString>, jni::alias_ref<JStandardLightPreset>, jni::alias_ref<JStandardTheme>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
         value.importId.has_value() ? jni::make_jstring(value.importId.value()) : nullptr,
         value.lightPreset.has_value() ? JStandardLightPreset::fromCpp(value.lightPreset.value()) : nullptr,
+        value.theme.has_value() ? JStandardTheme::fromCpp(value.theme.value()) : nullptr,
         value.show3dObjects.has_value() ? jni::JBoolean::valueOf(value.show3dObjects.value()) : nullptr,
         value.showPointOfInterestLabels.has_value() ? jni::JBoolean::valueOf(value.showPointOfInterestLabels.value()) : nullptr
       );

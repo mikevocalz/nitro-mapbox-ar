@@ -15,6 +15,8 @@ namespace margelo::nitro::mapboxar::nativemap { struct GeographicCoordinate; }
 namespace margelo::nitro::mapboxar::nativemap { struct EdgeInsets; }
 // Forward declaration of `MapProjection` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { enum class MapProjection; }
+// Forward declaration of `LocationPuckBearing` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class LocationPuckBearing; }
 // Forward declaration of `HybridMapStyleSpec` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { class HybridMapStyleSpec; }
 // Forward declaration of `HybridPointAnnotationManagerSpec` to properly resolve imports.
@@ -52,6 +54,8 @@ namespace margelo::nitro::mapboxar::nativemap { struct ScreenBox; }
 #include "JEdgeInsets.hpp"
 #include "MapProjection.hpp"
 #include "JMapProjection.hpp"
+#include "LocationPuckBearing.hpp"
+#include "JLocationPuckBearing.hpp"
 #include <memory>
 #include "HybridMapStyleSpec.hpp"
 #include <NitroModules/Promise.hpp>
@@ -158,6 +162,24 @@ namespace margelo::nitro::mapboxar::nativemap {
   void JHybridMapboxMapViewSpec::setEnableGestures(std::optional<bool> enableGestures) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JBoolean> /* enableGestures */)>("setEnableGestures");
     method(_javaPart, enableGestures.has_value() ? jni::JBoolean::valueOf(enableGestures.value()) : nullptr);
+  }
+  std::optional<bool> JHybridMapboxMapViewSpec::getShowUserLocation() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JBoolean>()>("getShowUserLocation");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional(static_cast<bool>(__result->value())) : std::nullopt;
+  }
+  void JHybridMapboxMapViewSpec::setShowUserLocation(std::optional<bool> showUserLocation) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JBoolean> /* showUserLocation */)>("setShowUserLocation");
+    method(_javaPart, showUserLocation.has_value() ? jni::JBoolean::valueOf(showUserLocation.value()) : nullptr);
+  }
+  std::optional<LocationPuckBearing> JHybridMapboxMapViewSpec::getPuckBearing() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JLocationPuckBearing>()>("getPuckBearing");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional(__result->toCpp()) : std::nullopt;
+  }
+  void JHybridMapboxMapViewSpec::setPuckBearing(std::optional<LocationPuckBearing> puckBearing) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JLocationPuckBearing> /* puckBearing */)>("setPuckBearing");
+    method(_javaPart, puckBearing.has_value() ? JLocationPuckBearing::fromCpp(puckBearing.value()) : nullptr);
   }
 
   // Methods

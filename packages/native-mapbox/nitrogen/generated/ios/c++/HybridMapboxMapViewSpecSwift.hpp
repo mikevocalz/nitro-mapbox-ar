@@ -20,6 +20,8 @@ namespace margelo::nitro::mapboxar::nativemap { struct GeographicCoordinate; }
 namespace margelo::nitro::mapboxar::nativemap { struct EdgeInsets; }
 // Forward declaration of `MapProjection` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { enum class MapProjection; }
+// Forward declaration of `LocationPuckBearing` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class LocationPuckBearing; }
 // Forward declaration of `HybridMapStyleSpec` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { class HybridMapStyleSpec; }
 // Forward declaration of `HybridPointAnnotationManagerSpec` to properly resolve imports.
@@ -53,6 +55,7 @@ namespace margelo::nitro::mapboxar::nativemap { struct ScreenBox; }
 #include "GeographicCoordinate.hpp"
 #include "EdgeInsets.hpp"
 #include "MapProjection.hpp"
+#include "LocationPuckBearing.hpp"
 #include <memory>
 #include "HybridMapStyleSpec.hpp"
 #include <NitroModules/Promise.hpp>
@@ -146,6 +149,20 @@ namespace margelo::nitro::mapboxar::nativemap {
     }
     inline void setEnableGestures(std::optional<bool> enableGestures) noexcept override {
       _swiftPart.setEnableGestures(enableGestures);
+    }
+    inline std::optional<bool> getShowUserLocation() noexcept override {
+      auto __result = _swiftPart.getShowUserLocation();
+      return __result;
+    }
+    inline void setShowUserLocation(std::optional<bool> showUserLocation) noexcept override {
+      _swiftPart.setShowUserLocation(showUserLocation);
+    }
+    inline std::optional<LocationPuckBearing> getPuckBearing() noexcept override {
+      auto __result = _swiftPart.getPuckBearing();
+      return __result;
+    }
+    inline void setPuckBearing(std::optional<LocationPuckBearing> puckBearing) noexcept override {
+      _swiftPart.setPuckBearing(puckBearing);
     }
 
   public:

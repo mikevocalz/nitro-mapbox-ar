@@ -122,6 +122,18 @@ using namespace margelo::nitro::mapboxar::nativemap::views;
           : !newViewProps.enableGestures.hasSameValue(oldViewProps->enableGestures)) {
       swiftPart.setEnableGestures(newViewProps.enableGestures.get());
     }
+    // showUserLocation: optional
+    if (oldViewProps == nullptr
+          ? newViewProps.showUserLocation.isProvided()
+          : !newViewProps.showUserLocation.hasSameValue(oldViewProps->showUserLocation)) {
+      swiftPart.setShowUserLocation(newViewProps.showUserLocation.get());
+    }
+    // puckBearing: optional
+    if (oldViewProps == nullptr
+          ? newViewProps.puckBearing.isProvided()
+          : !newViewProps.puckBearing.hasSameValue(oldViewProps->puckBearing)) {
+      swiftPart.setPuckBearing(newViewProps.puckBearing.get());
+    }
 
     // Update hybridRef if it changed
     if (oldViewProps == nullptr

@@ -2,6 +2,9 @@ import type { HybridObject } from 'react-native-nitro-modules'
 
 import type { MapCapabilities } from '../types/MapCapabilities'
 import type { MapboxMapViewMethods } from './MapboxMapView.nitro'
+import type { PointAnnotation } from '../types/PointAnnotation'
+import type { StyleImageOptions } from '../types/StyleImageOptions'
+import type { StyleImageSource } from '../types/StyleImageSource'
 import type { StandardStyleConfig } from '../types/StandardStyleConfig'
 import type { StyleLayer } from '../types/StyleLayer'
 import type { GeoJsonSource } from '../types/GeoJsonSource'
@@ -15,9 +18,9 @@ import type { TerrainOptions } from '../types/TerrainOptions'
  * with `This MapStyle was replaced`.
  *
  * Obtain one from {@linkcode MapboxMapViewMethods.loadStyle} or
- * {@linkcode MapboxMapViewMethods.addOnStyleLoadedListener}. Sources, layers
- * and terrain added here are dropped when the style is replaced; re-add them
- * from the style-loaded listener.
+ * {@linkcode MapboxMapViewMethods.addOnStyleLoadedListener}. Sources, layers,
+ * images and terrain added here are dropped when the style is replaced;
+ * re-add them from the style-loaded listener.
  *
  * All mutations run on the platform UI thread, so they are async.
  */
@@ -83,6 +86,34 @@ export interface MapStyle
    * @throws {Error} Rejects when no layer has that id.
    */
   removeLayer(layerId: string): Promise<void>
+
+  /**
+   * Decodes an image and adds it to the style under `id`, so
+   * {@linkcode PointAnnotation.iconImageId} and a symbol layer's
+   * `icon-image` can name it. An image with the same id, including one
+   * that came with the style, is replaced.
+   *
+   * Reading and decoding happen off the UI thread; only the final add runs
+   * on it. Like sources and layers, the image is dropped when the style is
+   * replaced.
+   *
+   * @throws {Error} Rejects when `image` sets both or neither of `uri` and
+   * `base64`, the URI scheme is not `file`, `http` or `https`, the download
+   * fails or returns a non-2xx status, the bytes do not decode as an image,
+   * `options.scale` is not greater than 0, or the style is stale.
+   */
+  addStyleImage(
+    id: string,
+    image: StyleImageSource,
+    options?: StyleImageOptions,
+  ): Promise<void>
+
+  /**
+   * Removes an image from the style.
+   *
+   * @throws {Error} Rejects when no image has that id.
+   */
+  removeStyleImage(id: string): Promise<void>
 
   /**
    * Enables 3D terrain from a raster DEM source.

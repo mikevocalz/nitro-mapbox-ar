@@ -62,6 +62,14 @@ abstract class HybridMapStyleSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
+  abstract fun addStyleImage(id: String, image: StyleImageSource, options: StyleImageOptions?): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun removeStyleImage(id: String): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
   abstract fun setTerrain(terrain: TerrainOptions): Promise<Unit>
   
   @DoNotStrip

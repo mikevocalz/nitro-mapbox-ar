@@ -61,6 +61,8 @@ namespace margelo::nitro::mapboxar::nativemap {
     std::shared_ptr<Promise<void>> removeSource(const std::string& sourceId) override;
     std::shared_ptr<Promise<void>> addLayer(const StyleLayer& layer, const std::optional<std::string>& belowLayerId) override;
     std::shared_ptr<Promise<void>> removeLayer(const std::string& layerId) override;
+    std::shared_ptr<Promise<void>> addStyleImage(const std::string& id, const StyleImageSource& image, const std::optional<StyleImageOptions>& options) override;
+    std::shared_ptr<Promise<void>> removeStyleImage(const std::string& id) override;
     std::shared_ptr<Promise<void>> setTerrain(const TerrainOptions& terrain) override;
     std::shared_ptr<Promise<void>> clearTerrain() override;
     std::shared_ptr<Promise<void>> setStandardConfig(const StandardStyleConfig& config) override;

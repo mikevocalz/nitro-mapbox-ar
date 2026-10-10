@@ -18,7 +18,7 @@ public extension StandardStyleConfig {
   /**
    * Create a new instance of `StandardStyleConfig`.
    */
-  init(importId: String?, lightPreset: StandardLightPreset?, show3dObjects: Bool?, showPointOfInterestLabels: Bool?) {
+  init(importId: String?, lightPreset: StandardLightPreset?, theme: StandardTheme?, show3dObjects: Bool?, showPointOfInterestLabels: Bool?) {
     self.init({ () -> bridge.std__optional_std__string_ in
       if let __unwrappedValue = importId {
         return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
@@ -28,6 +28,12 @@ public extension StandardStyleConfig {
     }(), { () -> bridge.std__optional_StandardLightPreset_ in
       if let __unwrappedValue = lightPreset {
         return bridge.create_std__optional_StandardLightPreset_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_StandardTheme_ in
+      if let __unwrappedValue = theme {
+        return bridge.create_std__optional_StandardTheme_(__unwrappedValue)
       } else {
         return .init()
       }
@@ -61,6 +67,11 @@ public extension StandardStyleConfig {
   @inline(__always)
   var lightPreset: StandardLightPreset? {
     return self.__lightPreset.value
+  }
+  
+  @inline(__always)
+  var theme: StandardTheme? {
+    return self.__theme.value
   }
   
   @inline(__always)

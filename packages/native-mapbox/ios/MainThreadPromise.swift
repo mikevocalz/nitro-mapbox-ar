@@ -20,6 +20,32 @@ enum MainThreadPromise {
     return promise
   }
 
+  /// Starts `load`, which reports once from any thread, then runs `body` with
+  /// the loaded value on the main queue. Use it when reading or decoding must
+  /// stay off the main thread and only the SDK call needs it. A failure from
+  /// `load` or a throw from `body` rejects.
+  static func run<Loaded, T>(
+    after load: (_ done: @escaping (Result<Loaded, Error>) -> Void) -> Void,
+    _ body: @escaping (Loaded) throws -> T
+  ) -> Promise<T> {
+    let promise = Promise<T>()
+    load { result in
+      switch result {
+      case .failure(let error):
+        promise.reject(withError: error)
+      case .success(let value):
+        DispatchQueue.main.async {
+          do {
+            promise.resolve(withResult: try body(value))
+          } catch {
+            promise.reject(withError: error)
+          }
+        }
+      }
+    }
+    return promise
+  }
+
   /// Runs `body` on the main queue and resolves when `body` calls `settle`.
   /// Use it for SDK calls that report through a completion handler. Only the
   /// first `settle` call takes effect; a throw from `body` rejects.

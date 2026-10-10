@@ -38,6 +38,8 @@ namespace margelo::nitro::mapboxar::nativemap { class HybridPointAnnotationManag
 namespace margelo::nitro::mapboxar::nativemap { class HybridRenderedFeatureSpec; }
 // Forward declaration of `ListenerSubscription` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { struct ListenerSubscription; }
+// Forward declaration of `LocationPuckBearing` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class LocationPuckBearing; }
 // Forward declaration of `MapCapabilities` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { struct MapCapabilities; }
 // Forward declaration of `MapProjection` to properly resolve imports.
@@ -58,6 +60,12 @@ namespace margelo::nitro::mapboxar::nativemap { struct ScreenPoint; }
 namespace margelo::nitro::mapboxar::nativemap { enum class StandardLightPreset; }
 // Forward declaration of `StandardStyleConfig` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { struct StandardStyleConfig; }
+// Forward declaration of `StandardTheme` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { enum class StandardTheme; }
+// Forward declaration of `StyleImageOptions` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct StyleImageOptions; }
+// Forward declaration of `StyleImageSource` to properly resolve imports.
+namespace margelo::nitro::mapboxar::nativemap { struct StyleImageSource; }
 // Forward declaration of `StyleLayerType` to properly resolve imports.
 namespace margelo::nitro::mapboxar::nativemap { enum class StyleLayerType; }
 // Forward declaration of `StyleLayer` to properly resolve imports.
@@ -83,6 +91,7 @@ namespace margelo::nitro::mapboxar::nativemap { struct VectorSource; }
 #include "HybridPointAnnotationManagerSpec.hpp"
 #include "HybridRenderedFeatureSpec.hpp"
 #include "ListenerSubscription.hpp"
+#include "LocationPuckBearing.hpp"
 #include "MapCapabilities.hpp"
 #include "MapProjection.hpp"
 #include "MapTapEvent.hpp"
@@ -93,6 +102,9 @@ namespace margelo::nitro::mapboxar::nativemap { struct VectorSource; }
 #include "ScreenPoint.hpp"
 #include "StandardLightPreset.hpp"
 #include "StandardStyleConfig.hpp"
+#include "StandardTheme.hpp"
+#include "StyleImageOptions.hpp"
+#include "StyleImageSource.hpp"
 #include "StyleLayer.hpp"
 #include "StyleLayerType.hpp"
 #include "TerrainOptions.hpp"
